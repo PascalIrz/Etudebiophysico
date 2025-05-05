@@ -43,9 +43,9 @@ dep <- c('22','29','35','56') # choix des numéros de département
 ## I2M2 et métriques
 ##l'interrogation de l'API est couteuse
 # aussi , on le fait une fois et on enregistre les donnees dans le fichier Multi_indice_minv
-if (file.exists("../Exploitationindicesminv/Data/Multi_indice_minv_all.Rdata"))
+if (file.exists("Data/Multi_indice_minv_all.Rdata"))
 {
-  load("../Exploitationindicesminv/Data/Multi_indice_minv_all.Rdata")
+  load("Data/Multi_indice_minv_all.Rdata")
 } else
 {
   Multi_indice_minv <- map_df(dep,f_get_minv_departement)%>%
@@ -53,7 +53,7 @@ if (file.exists("../Exploitationindicesminv/Data/Multi_indice_minv_all.Rdata"))
     select("code_station_hydrobio","code_qualification","libelle_qualification","libelle_indice","libelle_station_hydrobio","date_prelevement","code_indice","resultat_indice","latitude","longitude","code_departement","annee") %>% 
     arrange(code_station_hydrobio,annee)
   
-  save(Multi_indice_minv,file="../Exploitationindicesminv/Data/Multi_indice_minv_all.Rdata")
+  save(Multi_indice_minv,file="Data/Multi_indice_minv_all.Rdata")
 }
 
 ## rajout des résultats de l'année (non qualifiés)

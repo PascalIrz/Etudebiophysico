@@ -27,8 +27,8 @@ map(.x = functions,
     .f = source)
 
 # source(file="R/Fonctions_unitaires_appel_API.R")
-source(file = "../Exploitationindicesminv/R/mk_st_by_group.R")
-source(file = "../Exploitationindicesminv/R/Mann_kendall_div.R")
+source(file = "R/mk_st_by_group.R")
+source(file = "R/Mann_kendall_div.R")
 # source(file = "../Exploitationindicesminv/R/Seee_to_df.R")
 # source(file = "../Exploitationindicesminv/R/Calcule_I2M2_métriques.R")
 source(file ="Script/Seee_diat_to_dataframe.R")

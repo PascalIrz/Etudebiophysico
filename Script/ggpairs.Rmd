@@ -1,0 +1,30 @@
+---
+title: "Relations linéaire"
+output: html_document
+date: "2025-04-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+library(corrplot)
+library(GGally)
+
+load(file = "../Data/10_donnees_pretraitees.rda")
+load(file = "../Data/70_choix_parametre.rda")
+load(file = "../Data/81_donnees_globales_trans.rda")
+load(file = "../Data/81_acp_rda")
+```
+## corrélations
+```{r graphique, fig.height=30,echo=FALSE,warning=F,fig.width=20}
+df_global_sans_station <- df_global %>% 
+  select(`7613`:`1841`)
+
+ggpairs(df_global_sans_station,
+        lower = list(continuous = wrap("smooth", method = lm, se=FALSE)),
+        diag=list(continuous = wrap("densityDiag")),
+        upper=list(continuous = wrap("cor",method="spearman",size=4)),
+        proportions = 'auto')
+```
+

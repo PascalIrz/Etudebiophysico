@@ -1,0 +1,24 @@
+recuperer_donnees_physico <- function(liste_stations, liste_parametres) {
+  
+  library(purrr)
+  library(hubeau)
+  library(dplyr)
+  
+  # Fonction unitaire : récupération des données pour une station
+  f_get_physico_station <- function(stations) {
+    get_qualite_rivieres_analyse_pc(
+      code_station = stations,
+      code_parametre = c(
+        "1295","1301","1302","1303","1311","1312","1313",
+        "1305","1309","1350","1340","1339","1433","1335","1841","1337","1338"),
+      date_debut_prelevement = '2015-01-01'
+    )
+  }
+  
+  # Appliquer à toutes les stations
+  resultats <- map_df(stations, f_get_physico_station)
+  
+  return(resultats)
+}
+
+  

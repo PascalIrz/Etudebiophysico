@@ -26,7 +26,7 @@ if (file.exists("data/Liste_taxo_diat.Rdata")){
 return(Liste_taxo_diat)
 }
 
-# exemple de traitement
+# exemple de traitement-
 Stations <- '04199370'# pour exemple; normalement Stations est une liste de codes station
 Liste_taxo_diat <- recuperer_liste_diat()
 #exploration des données

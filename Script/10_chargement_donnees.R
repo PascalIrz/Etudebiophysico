@@ -150,8 +150,8 @@ mapview(stations_map %>% filter(code_station_hydrobio=="04195000"),
 #################################################################################
 #                       import IBD                                              #
 #################################################################################
-if (file.exists("../Exploitationindicesminv/Data/Indice_ibd.Rdata")) {
-  load("../Exploitationindicesminv/Data/Indice_ibd.Rdata")
+if (file.exists("Data/Indice_ibd.Rdata")) {
+  load("Data/Indice_ibd.Rdata")
 } else {
   Indice_ibd <- map_df(dep,f_get_ibd_departement)%>%
     mutate(date_prelevement = as.Date(sub("T.*", "", date_prelevement))) %>% 
@@ -181,7 +181,7 @@ annee = format(date_prelevement, "%Y")) %>%
 
 Indice_ibd <- bind_rows(Indice_ibd, indicesdiatcomplement)
 
-save(Indice_ibd,file="../Exploitationindicesminv/Data/Indice_ibd.Rdata")
+save(Indice_ibd,file="Data/Indice_ibd.Rdata")
 
 
 
@@ -287,21 +287,17 @@ stations <- c(stations_inv, stations_ibd) %>%
   unique()
 
 # Chargement seulement s'il n'y a pas déjà un fichier de données dans le sous-répertoire Data
-if (file.exists("../Exploitationindicesminv/Data/parametres_physico.Rdata")) {
+if (file.exists("Data/parametres_physico.Rdata")) {
   
-  load("../Exploitationindicesminv/Data/parametres_physico.Rdata")  # Charger les données existantes
+  load("Data/parametres_physico.Rdata")  # Charger les données existantes
   
 } else {
   
   parametres_physico <- recuperer_donnees_physico(stations)  # Récupérer les données
-  save(parametres_physico, file = "../Exploitationindicesminv/Data/parametres_physico.Rdata")  # Sauvegarder
+  save(parametres_physico, file = "Data/parametres_physico.Rdata")  # Sauvegarder
   
 }
 
-nb_stations <- parametres_physico %>%
-  distinct(code_station) %>%
-  nrow()
-print(nb_stations)
 
 # on avait 233 stations avec de la bio et seulement 232 avec de la physico => pb ?
 setdiff(nb_annees_par_station_ibd$code_station_hydrobio,
@@ -310,19 +306,20 @@ setdiff(nb_annees_par_station_ibd$code_station_hydrobio,
 ##On nettoie jeu de donnee
 
 parametres_physico <- parametres_physico %>%
-  select(
-    code_station,
+  rename(code_station_hydrobio = code_station)
+
+  
+parametres_physico <- parametres_physico %>% 
+  dplyr::select(code_station_hydrobio,
     libelle_station,
     libelle_fraction,
     code_fraction,
     code_parametre,
     resultat,
     libelle_parametre,
-    libelle_parametre,
     date_prelevement,
     code_support
   ) %>%
-  rename(code_station_hydrobio = code_station) %>%
   filter(code_support == 3) # seulement l'eau (on enlève les sédiments)
 
 parametres_physico <- parametres_physico %>%
@@ -364,32 +361,68 @@ parametres_physico <- parametres_physico %>%
 parametres_physico <- unique(parametres_physico)
 
 # On enlève les valeurs aberrantes
-parametres_physico <- parametres_physico %>% 
-  group_by(code_parametre, annee) %>%
-  mutate(
-    moyenne = mean(resultat, na.rm = TRUE),
-    ecart_type = sd(resultat, na.rm = TRUE),
-    seuil_min = moyenne - 4 * ecart_type,
-    seuil_max = moyenne + 4 * ecart_type
-  ) %>%
-  ungroup() %>%
-  filter(resultat >= seuil_min & resultat <= seuil_max)
+#parametres_physico <- parametres_physico %>% 
+  #group_by(code_parametre, annee) %>%
+  #mutate(
+    #moyenne = mean(resultat, na.rm = TRUE),
+    #ecart_type = sd(resultat, na.rm = TRUE),
+    #seuil_min = moyenne - 4 * ecart_type,
+    #seuil_max = moyenne + 4 * ecart_type
+  #) %>%
+  #ungroup() %>%
+  #filter(resultat >= seuil_min & resultat <= seuil_max)
   #select(-moyenne, -ecart_type, -seuil_min, -seuil_max)
 
-#On renvoie les valeurs supprimées 
-
-valeurs_supprimées <- anti_join(
-  parametres_physico,
-  parametres_physico_clean,
-  by = c("code_parametre", "resultat", "code_station_hydrobio", "date_prelevement")
-) %>%
-  select(libelle_station, code_station_hydrobio, date_prelevement, code_parametre, resultat) %>%
-  rename(
-    station = libelle_station,
-    date = date_prelevement,
-    parametre = code_parametre,
-    valeur_supprimée = resultat
+#On essaye une autre méthode :
+comparaison_outliers <- parametres_physico %>%
+  group_by(code_parametre) %>%
+  mutate(
+    # Méthode IQR
+    Q1 = quantile(resultat, 0.25, na.rm = TRUE),
+    Q3 = quantile(resultat, 0.75, na.rm = TRUE),
+    IQR = Q3 - Q1,
+    lower_iqr = Q1 - 1.5 * IQR,
+    upper_iqr = Q3 + 1.5 * IQR,
+    outlier_iqr = resultat < lower_iqr | resultat > upper_iqr,
+    
+    # Méthode des percentiles extrêmes (1% et 99%)
+    lower_pct = quantile(resultat, 0.01, na.rm = TRUE),
+    upper_pct = quantile(resultat, 0.99, na.rm = TRUE),
+    outlier_pct = resultat < lower_pct | resultat > upper_pct
   )
+
+# Comparaison des résultats
+comparaison_table <- comparaison_outliers %>%
+  summarise(
+    total = n(),
+    outliers_iqr = sum(outlier_iqr, na.rm = TRUE),
+    outliers_pct = sum(outlier_pct, na.rm = TRUE),
+    concordance = sum(outlier_iqr == outlier_pct, na.rm = TRUE)
+  )
+
+# Affichage des résultats
+print(comparaison_table)
+
+#On choisie d'utiliser IQR 
+parametres_physico <- parametres_physico %>%
+  group_by(code_parametre) %>%
+  mutate(Q1 = quantile(resultat, 0.25, na.rm = TRUE),
+         Q3 = quantile(resultat, 0.75, na.rm = TRUE),
+         IQR = Q3 - Q1,
+         lower = Q1 - 1.5 * IQR,
+         upper = Q3 + 1.5 * IQR)
+  #filter(resultat >= lower & resultat <= upper) %>%
+  #select(-Q1, -Q3, -IQR, -lower, -upper)  # Supprime les colonnes temporaires
+
+
+#On renvoie les valeurs supprimées 
+valeurs_supp <- parametres_physico %>% 
+  filter(resultat < lower | resultat > upper)
+
+#On filtre parametre_physico
+parametres_physico <- parametres_physico %>% 
+  filter(resultat >= lower & resultat <= upper) %>% 
+  dplyr::select(-Q1, -Q3, -IQR, -lower, -upper)
 
 
 # Df utiles pour la fenêtre glissante
@@ -423,7 +456,7 @@ count(
 ) %>% filter(n > 1 & code_parametre %in% code_pc)
 
 parametre_trans <- parametres_physico %>%
-  select(code_station_hydrobio,annee,mois,jour,code_parametre,resultat) %>% 
+  dplyr::select(code_station_hydrobio,annee,mois,jour,code_parametre,resultat) %>% 
   distinct() %>% 
   pivot_wider(names_from = "code_parametre",
               values_from = "resultat",
@@ -432,6 +465,7 @@ parametre_trans <- parametres_physico %>%
 #################################################################################
 #                       Sauvegarde                                              #
 #################################################################################
+
 save(clean_ibd,
      clean_minv,
      parametres_physico,

@@ -492,3 +492,9 @@ ggplot(quantiles_par_annee_ibd, aes(x = annee, color = as.factor(code_indice))) 
        color = "Indice") +
   theme_minimal()
 
+
+
+save(med_par_station_pc,
+     file = "Data/40_statistiques_descriptives.rda"
+  
+)

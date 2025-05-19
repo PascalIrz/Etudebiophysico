@@ -1,7 +1,7 @@
 #Chargement des données 
 load(file = "Data/10_donnees_pretraitees.rda")
-source(file = "../Exploitationindicesminv/R/mk_st_by_group.R")
-source(file = "../Exploitationindicesminv/R/Mann_kendall_div.R")
+source(file = "R/mk_st_by_group.R")
+source(file = "R/Mann_kendall_div.R")
 
 #Librairies
 library(tidyverse)
@@ -26,7 +26,7 @@ map(.x = functions,
 
 #On calcule les tendances
 Tendances_multi <-mk_st_by_group(clean_minv,resultat_indice,code_indice,code_indice,code_station_hydrobio)
-Tendance_i2m2 <- filter(Tendances_multi, code_indice==7613) %>% select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_i2m2 <- filter(Tendances_multi, code_indice==7613) %>% dplyr::select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
 Tendance_ASPT <-filter(Tendances_multi,code_indice==8057)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
 Tendance_OVI <-filter(Tendances_multi,code_indice==8055)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
 Tendance_POL <-filter(Tendances_multi,code_indice==8056)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
@@ -55,7 +55,7 @@ ric_et_trend <- left_join(RIC,Tendance_RIC,by="code_station_hydrobio")
 
 # Cartographie
 
-mapview(i2m2_et_trend, xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution")
+mapview(i2m2_et_trend, xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution I2M2")
 mapview(aspt_et_trend,xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution")
 mapview(ovi_et_trend,xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution")
 mapview(pol_et_trend,xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution")
@@ -510,6 +510,7 @@ nbsta <- length(unique(ips_56$code_station_hydrobio))
 hauteurfacet56 <-  ceiling(nbsta/nbcol)*tailleligne
 
 save(i2m2,
+     ibd,
      file = "Data/50_chroniques_et_tendance.rda")
 
 

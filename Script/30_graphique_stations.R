@@ -70,7 +70,7 @@ data_presence_pc <- parametres_physico %>%
 data_presence_complet_pc <- data_presence_pc %>%
   left_join(
     parametres_physico %>%
-      select(code_station_hydrobio, libelle_station) %>%
+      dplyr::select(code_station_hydrobio, libelle_station) %>%
       distinct(),
     by = "code_station_hydrobio"
   )
@@ -79,7 +79,7 @@ data_presence_complet_pc <- data_presence_pc %>%
 ggplot(data_presence_complet_pc,
        aes(
          x = as.factor(annee),
-         y = factor(code_station_hydrobio),
+         y = factor(libelle_station),
          fill = as.factor(presence)
        )) +
   geom_tile(

@@ -27,8 +27,7 @@ labs(title = "Distribution des valeurs des métriques de l'I2M2",
   theme_minimal()
 
 # Test de la normalité
-shapiro_result<- apply(acp, 2, shapiro.test)
-print(shapiro_result)
+
 
 # Box plot
 ggplot(clean_minv, aes (x=factor(annee), y = resultat_indice)) +

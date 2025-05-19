@@ -1,0 +1,1229 @@
+---
+title: "Visio mi-parcours"
+output: html_document
+date: "2025-05-16"
+---
+
+Les données sont chargées à partir d'HUB'EAU, un service Eau France. Le package "hubeau" interroge les APIs du système d'informations.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+library(hubeau)
+library(tidyverse)
+library(sf)
+library(DT)
+library(cowplot)
+library(DT)
+library(httr)#utiliser POST pour calcul i2m2 à partir du SEEE
+library(trend)
+library(ggrepel)
+library(mapview)
+library(lubridate)
+library(httr)
+library(ggplot2)
+library(dplyr)
+
+functions <- list.files(path = "R",
+                        pattern = ".R$",
+                        full.names = TRUE)
+
+map(.x = functions,
+    .f = source)
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+load(file = "../Data/10_donnees_pretraitees.rda")
+
+```
+
+Dans un premier temps, la distributions des variables a été étudiée. Cela a permis de repérer les outliers, les erreurs de rentrée et de les supprimées
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=7}
+
+#Création de l'histogramme : donnees I2M2 et métriques 
+ggplot(clean_minv, aes(x = resultat_indice)) +
+  geom_histogram(bins = 30, fill = "#0072B2", color = "white", alpha = 0.7) +  # Histogramme avec 30 bins
+  facet_wrap(~ libelle_indice, scales = "free") +  # Un histogramme par métrique
+  labs(title = "Distribution des valeurs des métriques de l'I2M2",
+       x = "Valeur de la métrique",
+       y = "Fréquence") +
+  theme_minimal()
+
+ggplot(clean_minv, aes(x = resultat_indice)) +
+  geom_histogram(bins = 30, fill = "#0072B2", color = "white", alpha = 0.7) +
+  facet_wrap(~ libelle_indice, scales = "free") +  # Un histogramme par métrique
+  scale_x_log10() +
+labs(title = "Distribution des valeurs des métriques de l'I2M2",
+     x = "Valeur de la métrique",
+     y = "Fréquence") +
+  theme_minimal()
+
+
+ggplot(clean_minv, aes (x=factor(annee), y = resultat_indice)) +
+  geom_boxplot() +
+  facet_wrap(~ code_indice, scales = "free_y") +
+  labs(x = "Mois", y= "Valeur", title ="Distribution des métriques par année") +
+  theme_bw()
+
+ggplot(clean_ibd, aes(x = resultat_indice)) +
+  geom_histogram(bins = 30, fill = "#0072B2", color = "white", alpha = 0.7) +
+  facet_wrap(~ libelle_indice, scales = "free") +
+  labs(title = "Distribution des valeurs des indices",
+       x = "Valeur de l'indice",
+       y = "Fréquence") +
+  theme_minimal()
+
+ggplot(clean_ibd, aes (x=factor(annee), y = resultat_indice)) +
+  geom_boxplot() +
+  facet_wrap(~ code_indice, scales = "free_y") +
+  labs(x = "Annee", y= "Valeur", title ="Distribution des indices par années") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(parametres_physico, aes(x =resultat)) +
+  geom_histogram(bins = 50, fill = "#0072B2", color = "white", alpha = 0.7) +  # Histogramme avec 30 bins
+  facet_wrap(~ libelle_parametre, scales = "free") +
+  labs(title = "Distribution des valeurs physico-chimiques",
+       x = "",
+       y = "Fréquence") +
+  theme_minimal() 
+
+parametres_physico <- parametres_physico %>% 
+  mutate(resultat_log = log10(resultat))
+
+ggplot(parametres_physico, aes(x =resultat_log)) +
+  geom_histogram(bins = 50, fill = "#0072B2", color = "white", alpha = 0.7) +  # Histogramme avec 30 bins
+  facet_wrap(~ libelle_parametre, scales = "free") +
+  labs(title = "Distribution logarithmiques des valeurs physico-chimiques ",
+       x = "",
+       y = "Fréquence") +
+  theme_minimal() 
+
+parametres_physico_mois <- parametres_physico %>% 
+  group_by(code_parametre,mois) %>% 
+  summarise(
+    moy_mois=mean(resultat, na.rm =TRUE),
+    med_mois=median(resultat, na.rm = TRUE),
+    ecart_type_mois=sd(resultat, na.rm = TRUE),
+    max_mois=max(resultat, na.rm =TRUE),
+    min_mois=min(resultat, na.rm = TRUE)
+  )
+
+
+ggplot(parametres_physico, aes (x=factor(mois), y = resultat)) +
+  geom_boxplot() +
+  facet_wrap(~ code_parametre, scales = "free_y") +
+  labs(x = "Mois", y= "Valeur", title ="Distribution des parametres par mois") +
+  theme_bw()
+
+```
+
+La visualisation de la disponibilité des données nous a aidé à fixer un seuil à partir du quel on ne retient pas les stations. Ici, les stations de prélèvement biologiques sont retenues si le nombre d'années de prélèvement est supérieur à 5.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=15, fig.height=40}
+#Préparation des données : présence/absence
+data_presence <- clean_minv %>%
+  filter(libelle_indice == "Indice Invertébrés Multimétrique (I2M2)") %>%
+  group_by(code_station_hydrobio, annee) %>%
+  summarise(presence = ifelse(n() > 0, 1, 0), .groups = "drop") # 1 si données, 0 sinon
+
+#On joint les libellés des stations au dataframe
+data_presence_complet <- data_presence %>%
+  left_join(
+    clean_minv %>%
+      select(code_station_hydrobio, libelle_station_hydrobio) %>%
+      distinct(),
+    by = "code_station_hydrobio"
+  )
+
+#Création du graphique
+ggplot(data_presence_complet,
+       aes(
+         x = as.factor(annee),
+         y = factor(libelle_station_hydrobio),
+         fill = as.factor(presence)
+       )) +
+  geom_tile(
+    color = "black",
+    size = 0.1,
+    height = 1.2,
+    width = 1
+  ) +
+  scale_fill_manual(values = c("0" = "grey", "1" = "blue"), name = "Présence") +
+  labs(title = "Présence des données I2M2 par station et par année",
+       x = "Année",
+       y = "Station") +
+  theme_minimal(base_size = 146) +
+  theme_light(base_size = 5) +
+  theme(
+    axis.text.y = element_text(size=10),
+    panel.grid.major = element_line(color = "#ffffff", size = 0.1),
+    panel.grid.minor = element_line(color = "#ffffff",size = 0.1),
+    panel.background = element_rect(fill = "red"),
+    legend.position = "bottom"
+  ) +
+  scale_y_discrete(guide = guide_axis(n.dodge = 2)) +
+scale_x_discrete(expand = c(0.05, 0.05))
+
+nb_stations <- clean_minv %>%
+  distinct(code_station_hydrobio) %>%
+  nrow()
+print(nb_stations)
+
+#Préparation des données : présence/absence
+data_presence_ibd <- clean_ibd %>%
+  filter(code_indice == "5856") %>%
+  group_by(code_station_hydrobio, annee) %>%
+  summarise(presence = ifelse(n() > 0, 1, 0), .groups = "drop") # 1 si données, 0 sinon
+
+#On joint les libellés des stations au dataframe
+data_presence_complet_ibd <- data_presence_ibd %>%
+  left_join(
+    clean_ibd %>%
+      select(code_station_hydrobio, libelle_station_hydrobio) %>%
+      distinct(),
+    by = "code_station_hydrobio"
+  )
+
+ggplot(data_presence_complet_ibd,
+       aes(
+         x = as.factor(annee),
+         y = factor(libelle_station_hydrobio),
+         fill = as.factor(presence)
+       )) +
+  geom_tile(
+    color = "black",
+    size = 0.1,
+    height = 1.2,
+    width = 1
+  ) +
+  scale_fill_manual(values = c("0" = "grey", "1" = "blue"), name = "Présence") +
+  labs(title = "Présence des données IBD par station et par année",
+       x = "Année",
+       y = "Station") +
+  theme_minimal(base_size = 146) +
+  theme_light(base_size = 5) +
+  theme(
+    axis.text.y = element_text(size=7),
+    panel.grid.major = element_line(color = "#ffffff", size = 0.1),
+    panel.grid.minor = element_line(color = "#ffffff",size = 0.1),
+    panel.background = element_rect(fill = "red"),
+    legend.position = "bottom"
+  ) +
+  scale_y_discrete(guide = guide_axis(n.dodge = 2)) +
+  scale_x_discrete(expand = c(0.05, 0.05))
+
+#Préparation des données : présence/absence
+data_presence_pc <- parametres_physico %>%
+  filter(code_parametre%in%code_pc) %>%
+  group_by(code_station_hydrobio,annee,mois) %>%
+  summarise(presence = ifelse(n() > 0, 1, 0), .groups = "drop") # 1 si données, 0 sinon
+
+#On joint les libellés des stations au dataframe
+data_presence_complet_pc <- data_presence_pc %>%
+  left_join(
+    parametres_physico %>%
+      dplyr::select(code_station_hydrobio, libelle_station) %>%
+      distinct(),
+    by = "code_station_hydrobio"
+  )
+
+#Création du graphique
+ggplot(data_presence_complet_pc,
+       aes(
+         x = as.factor(annee),
+         y = factor(code_station_hydrobio),
+         fill = as.factor(presence)
+       )) +
+  geom_tile(
+    color = "black",
+    size = 0.1
+  ) +
+  scale_fill_manual(values = c("0" = "grey", "1" = "blue"), name = "Présence") +
+  labs(title = "Présence des données physico-chimiques par station et par année",
+       x = "Année",
+       y = "Station") +
+  theme_minimal(base_size = 146) +
+  theme_light(base_size = 5) +
+  theme(
+    axis.text.y = element_text(size=7),
+    panel.grid.major = element_line(color = "#ffffff", size = 0.1),
+    panel.grid.minor = element_line(color = "#ffffff", size=0.1),
+    panel.background = element_rect(fill = "red"),
+    legend.position = "bottom"
+  ) +
+  scale_y_discrete(guide = guide_axis(n.dodge = 2)) +
+  scale_x_discrete(expand = c(0.05, 0.05))
+```
+
+Analyse univariée des variables
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=15, fig.height=7}
+
+## Calcul de la variance par année pour chaque indice
+var_par_annee <- clean_minv %>%
+  group_by(libelle_indice, annee) %>%
+  summarise(var = var(resultat_indice, na.rm = TRUE), .groups = "drop")
+
+# Graphique de la variance par année avec facet_wrap()
+plot_var_annee <- ggplot(var_par_annee, aes(x = annee, y = var, color = libelle_indice, group = libelle_indice)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~libelle_indice, scales = "free_y") +
+  theme_minimal() + coord_cartesian(ylim=c(0,0.25))
+labs(title = "Variance de l'indice et ses métriques au fil des années", x = "Année", y = "Variance")
+
+
+med_par_annee <- clean_minv %>%
+  group_by(libelle_indice, annee) %>%
+  summarise(med = median(resultat_indice, na.rm = TRUE),
+            var=var(resultat_indice, na.rm = TRUE),
+            ecart_type=sd(resultat_indice, na.rm = TRUE),
+            .groups = "drop")
+
+
+ggplot(med_par_annee, aes(x = annee, y = med, color = as.factor(libelle_indice))) +
+  geom_point() +
+  geom_line() +
+  geom_errorbar(aes(ymin= med - ecart_type, ymax= med + ecart_type),width=0.2) +
+  facet_wrap(~libelle_indice, scales = "free_y") +
+  labs(title = "Médiane des indices par année",
+       x = "Année",
+       y = "Médiane de l'indice",
+       color = "Indice") +
+  theme_minimal()+coord_cartesian(ylim=c(0,1))
+
+
+## Calcul de la variance par année pour chaque indice
+var_par_annee_ibd <- clean_ibd %>%
+  group_by(libelle_indice, annee) %>%
+  summarise(var = var(resultat_indice, na.rm = TRUE), .groups = "drop")
+
+# Graphique de la variance par année avec facet_wrap()
+plot_var_annee_ibd <- ggplot(var_par_annee_ibd, aes(x = annee, y = var, color = libelle_indice, group = libelle_indice)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~libelle_indice, scales = "free_y") +
+  theme_minimal() 
+labs(title = "Variance des indices au fil des années", x = "Année", y = "Variance")
+
+print(plot_var_annee_ibd)
+
+### Calcul de la médiane par année et par station
+
+med_par_annee_ibd <- clean_ibd %>%
+  group_by(libelle_indice, annee) %>%
+  summarise(med = median(resultat_indice, na.rm = TRUE),
+            var=var(resultat_indice, na.rm = TRUE),
+            ecart_type=sd(resultat_indice, na.rm = TRUE),
+            .groups = "drop")
+
+ggplot(med_par_annee_ibd, aes(x = annee, y = med, color = as.factor(libelle_indice))) +
+  geom_point() +
+  geom_line() +
+  geom_errorbar(aes(ymin= med - ecart_type, ymax= med + ecart_type),width=0.2) +
+  facet_wrap(~libelle_indice, scales = "free_y") +
+  labs(title = "Médiane des indices par année",
+       x = "Année",
+       y = "Médiane du paramètre",
+       color = "Indice") +
+  theme_minimal()
+
+
+## Calcul de la variance par année pour chaque indice
+var_par_annee_pc <- parametres_physico %>%
+  group_by(libelle_parametre, annee) %>%
+  summarise(var = var(resultat, na.rm = TRUE), .groups = "drop")
+
+# Graphique de la variance par année avec facet_wrap()
+plot_var_annee_pc <- ggplot(var_par_annee_pc, aes(x = annee, y = var, color = libelle_parametre, group = libelle_parametre)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~libelle_parametre, scales = "free_y") +
+  theme_minimal() 
+labs(title = "Variance des paramètres physico-chimiques au fil des années", x = "Année", y = "Variance")
+
+
+med_par_annee_pc <- parametres_physico %>%
+  group_by(libelle_parametre, annee) %>%
+  summarise(med = median(resultat, na.rm = TRUE),
+            var=var(resultat, na.rm = TRUE),
+            ecart_type=sd(resultat, na.rm = TRUE),
+            .groups = "drop")
+
+ggplot(med_par_annee_pc, aes(x = annee, y = med, color = as.factor(libelle_parametre))) +
+  geom_point() +
+  geom_line() +
+  geom_errorbar(aes(ymin= med - ecart_type, ymax= med + ecart_type),width=0.2) +
+  facet_wrap(~libelle_parametre, scales = "free_y") +
+  labs(title = "Médiane des paramètres par année",
+       x = "Année",
+       y = "Médiane du paramètre",
+       color = "Paramètre") +
+  theme_minimal()
+
+
+
+```
+
+\
+\
+Tendances des indices et métriques.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=5, fig.height=5}
+source(file = "../R/mk_st_by_group.R")
+source(file = "../R/Mann_kendall_div.R")
+
+#On calcule les tendances
+Tendances_multi <-mk_st_by_group(clean_minv,resultat_indice,code_indice,code_indice,code_station_hydrobio)
+Tendance_i2m2 <- filter(Tendances_multi, code_indice==7613) %>% select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_ASPT <-filter(Tendances_multi,code_indice==8057)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_OVI <-filter(Tendances_multi,code_indice==8055)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_POL <-filter(Tendances_multi,code_indice==8056)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_SHA <-filter(Tendances_multi,code_indice==8058)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_RIC <-filter(Tendances_multi,code_indice==8054)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+
+#----Tendances remarquables par métriques----
+
+i2m2 <- filter(clean_minv,code_indice==7613)
+i2m2_et_trend <- left_join(i2m2,Tendance_i2m2,by="code_station_hydrobio")
+
+ASPT <- filter(clean_minv,code_indice==8057)
+aspt_et_trend <- left_join(ASPT,Tendance_ASPT,by="code_station_hydrobio")
+
+OVI <- filter(clean_minv,code_indice==8055)
+ovi_et_trend <- left_join(OVI,Tendance_OVI,by="code_station_hydrobio")
+
+POL <- filter(clean_minv,code_indice==8056)
+pol_et_trend <- left_join(POL,Tendance_POL,by="code_station_hydrobio")
+
+SHA <- filter(clean_minv,code_indice==8058)
+sha_et_trend <- left_join(SHA,Tendance_SHA,by="code_station_hydrobio")
+
+RIC <- filter(clean_minv,code_indice==8054)
+ric_et_trend <- left_join(RIC,Tendance_RIC,by="code_station_hydrobio")
+
+# Cartographie
+
+mapview(i2m2_et_trend, xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution")
+mapview(aspt_et_trend,xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution")
+mapview(ovi_et_trend,xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution")
+mapview(pol_et_trend,xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution")
+mapview(sha_et_trend,xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution")
+mapview(ric_et_trend,xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution")
+
+#On calcule les tendances
+Tendances_donneesdiat<-mk_st_by_group(clean_ibd,resultat_indice,code_indice,code_indice,code_station_hydrobio)
+Tendance_ibd <- filter(Tendances_donneesdiat, code_indice==5856) %>% select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_ips <-filter(Tendances_donneesdiat,code_indice==1022)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+
+ibd <- filter(clean_ibd,code_indice==5856)
+ibd_et_trend <- left_join(ibd,Tendance_ibd,by="code_station_hydrobio")
+
+ips <- filter(clean_ibd, code_indice==1022)
+ips_et_trend <- left_join(ips, Tendance_ips, by="code_station_hydrobio")
+
+
+# On cartographie 
+
+mapview(ibd_et_trend, xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution")
+mapview(ips_et_trend,xcol="longitude", ycol="latitude", zcol="trend", crs= 4326, grid=FALSE, layer.name="Evolution")
+
+
+```
+
+On s'est intéressé aux classes d'état des indices I2M2 et IBD par station au cours du temps. On y observe un gradient ouest-est.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=7}
+
+load(file = "../Data/50_chroniques_et_tendance.rda")
+
+#On crée les couleurs par classe
+couleursi2m2<-c(
+  "Très bon" = "darkgreen",
+  "Bon" = "lightgreen",
+   "Moyen" = "yellow",
+  "Médiocre"="orange",
+  "Mauvais" = "red"
+  
+)
+
+#On va regarder l'évolution de la classe d'i2m2 au cours du temps 
+i2m2test <- i2m2 %>%
+  mutate(classe_etat= case_when(... = 
+                                resultat_indice > 0.665 ~ "Très bon",
+                                resultat_indice > 0.443 ~ "Bon",
+                                resultat_indice > 0.295 ~ "Moyen",
+                                resultat_indice > 0.148 ~ "Médiocre",
+                                TRUE                    ~ "Mauvais"
+
+  ))
+
+i2m2test<- i2m2test %>%
+  mutate(classe_etat=factor(classe_etat,levels=c("Très bon","Bon","Moyen","Médiocre","Mauvais")))
+
+mapview(i2m2test, zcol="classe_etat", col.regions=couleursi2m2, xcol="longitude", ycol="latitude", crs= 4326, grid=FALSE,cex=4.5)
+
+#On teste avec facet_wrap
+
+i2m2_sf<-st_as_sf(i2m2test, coords=c("longitude","latitude"),crs=4326)
+
+ggplot(i2m2_sf) + 
+  geom_sf(aes(color = classe_etat), size = 3) +
+  scale_color_manual(values = couleursi2m2) + 
+  facet_wrap(~ as.factor(annee)) +
+  labs(title = "Évolution des classes d'état I2M2 par année",
+       color = "Classe d'état") +
+  theme_minimal()
+
+
+#On crée les couleurs par classe
+couleursibd<-c(
+  "Très bon" = "darkgreen",
+  "Bon" = "lightgreen",
+  "Moyen" = "yellow",
+  "Médiocre"="orange",
+  "Mauvais" = "red"
+  
+)
+
+#On va regarder l'évolution de la classe d'i2m2 au cours du temps 
+ibdtest <- ibd %>%
+  mutate(classe_etat= case_when(... = 
+                                  resultat_indice > 16.4 ~ "Très bon",
+                                resultat_indice > 13.8 ~ "Bon",
+                                resultat_indice > 10 ~ "Moyen",
+                                resultat_indice > 5.9 ~ "Médiocre",
+                                TRUE                    ~ "Mauvais"
+                                
+  ))
+
+ibdtest<- ibdtest %>%
+  mutate(classe_etat=factor(classe_etat,levels=c("Très bon","Bon","Moyen","Médiocre","Mauvais")))
+
+mapview(ibdtest, zcol="classe_etat", col.regions=couleursi2m2, xcol="longitude", ycol="latitude", crs= 4326, grid=FALSE,cex=4.5)
+
+#On teste avec facet_wrap
+
+ibd_sf<-st_as_sf(ibdtest, coords=c("longitude","latitude"),crs=4326)
+
+ggplot(ibd_sf) + 
+  geom_sf(aes(color = classe_etat), size = 3) +
+  scale_color_manual(values = couleursi2m2) + 
+  facet_wrap(~ as.factor(annee)) +
+  labs(title = "Évolution des classes d'état IBD par année",
+       color = "Classe d'état") +
+  theme_minimal()
+
+```
+
+Les prélèvements physico-chimiques sont réalisés tout au long de l'année, parfois plus d'une fois par mois. Afin de réaliser des analyses bi-variées puis multivariées, il était nécessaire de retenir une période temporelle pour les paramètres physico-chimiques. Les critères sur lesquels se base cette sélection sont :
+
+-   coefficient de corrélation
+-   profondeur de la période
+-   cohérence écologique
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE, fig.show='hide'}
+source (file = "../R/calculer_indicateur.R")
+
+#Constitution des combinaisons de mois : avoir toutes les combinaisons possibles
+#entre le mois de début et le mois de fin
+combin_mois <- expand.grid(1:12, 1:12) %>%
+  set_names("mois_debut", "mois_fin") %>%
+  filter(mois_debut <= mois_fin)
+
+#Vérification
+combin_mois %>%
+  mutate(remp = 1) %>%
+  pivot_wider(names_from = mois_fin,
+              values_from = remp)
+
+#Assemblage du jeu de données 
+
+window_data <- expand.grid(stations_parametre,
+                           code_pc,
+                           2015:2024,
+                           1:12) %>%
+  set_names("code_station_hydrobio", "code_parametre", "annee", "mois")
+
+mean_physico <- parametres_physico %>% 
+  group_by(code_station_hydrobio,
+         code_parametre,
+         annee,
+         mois) %>% 
+  summarise(para_moy = mean(resultat, na.rm = TRUE))
+
+
+donnees_jointure <- window_data %>% 
+  left_join(y = mean_physico)
+
+
+glimpse(window_data)
+
+
+# test pour toutes les combinaisons de mois de début (.x) et de fin (.y)
+
+resultat2 <- map2_df(
+  .df = donnees_jointure,
+  .f = calculer_indicateur,
+  .var_mois = mois,
+  .var_valeur = para_moy,
+  .x = combin_mois$mois_debut,
+  .y = combin_mois$mois_fin,
+  code_station_hydrobio,
+  code_parametre
+)
+
+indices_moy_par_sta <- clean_minv %>% 
+  group_by(code_station_hydrobio,
+           code_indice) %>% 
+  summarise(indice_moy = mean(resultat_indice, na.rm = TRUE),
+            .groups = "drop")
+
+resultat_i2m2 <- resultat2 %>%
+  rename(para_moy = moy) %>% 
+  left_join(y = indices_moy_par_sta)
+            
+cor_i2m2 <- resultat_i2m2 %>% 
+  drop_na() %>% 
+  group_by(code_parametre,
+           code_indice,
+           debut,
+           fin) %>% 
+  summarise(correlation = cor.test(para_moy,
+                              indice_moy,
+                              method = "spearman")$estimate,
+            p_value = cor.test(para_moy,indice_moy, method="spearman")$p.value,
+            .groups = "drop"
+            )
+
+cor_i2m2 %>% 
+  ggplot(aes(x = debut,
+             y = fin,
+             fill = correlation,
+             col = correlation)) +
+  geom_point(size = 3) +
+  scale_fill_distiller(palette = "Spectral", direction = 1) +
+  scale_color_distiller(palette = "Spectral", direction = 1) +
+  scale_x_continuous(breaks = 1:12) +
+  scale_y_continuous(breaks = 1:12) +
+  facet_grid(code_indice~code_parametre) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank()) +
+  labs(x = "Mois de début",
+       y = "Mois de fin")
+
+indices_moy_par_sta_ibd <- clean_ibd %>% 
+  group_by(code_station_hydrobio,
+           code_indice) %>% 
+  summarise(indice_moy = mean(resultat_indice, na.rm = TRUE),
+            .groups = "drop")
+
+  
+resultat_ibd <- resultat2 %>%
+  rename(para_moy = moy) %>% 
+  left_join(y = indices_moy_par_sta_ibd)
+
+
+cor_ibd <- resultat_ibd %>% 
+  drop_na() %>% 
+  group_by(code_parametre,
+           code_indice,
+           debut,
+           fin) %>% 
+  summarise(correlation = cor.test(para_moy,
+                                   indice_moy,
+                                   method = "spearman")$estimate,
+            p_value = cor.test(para_moy,indice_moy, method="spearman")$p.value,
+            .groups = "drop"
+  )
+
+cor_ibd %>% 
+  ggplot(aes(x = debut,
+             y = fin,
+             fill = correlation,
+             col = correlation)) +
+  geom_point(size = 3) +
+  scale_fill_distiller(palette = "Spectral", direction = 1) +
+  scale_color_distiller(palette = "Spectral", direction = 1) +
+  scale_x_continuous(breaks = 1:12) +
+  scale_y_continuous(breaks = 1:12) +
+  facet_grid(code_indice~code_parametre) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(panel.grid.minor = element_blank()) +
+  labs(x = "Mois de début",
+       y = "Mois de fin")
+  
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=15, fig.height=15}
+#Ajouter les noms
+cor_i2m2_label <- cor_i2m2 %>%
+  mutate(
+    nom_parametre = case_when(
+      code_parametre == "1301" ~ "T°",
+      code_parametre == "1302" ~ "pH",
+      code_parametre == "1303" ~ "Conductiv",
+      code_parametre == "1305" ~ "MES",
+      code_parametre == "1311" ~ "O2 dissous",
+      code_parametre == "1312" ~ "Satur.O2",
+      code_parametre == "1313" ~ "DBO5",
+      code_parametre == "1335" ~ "NH4+",
+      code_parametre == "1339" ~ "NO2-",
+      code_parametre == "1340" ~ "NO3-",
+      code_parametre == "1350" ~ "P total",
+      code_parametre == "1433" ~ "PO4-",
+      code_parametre == "1295" ~ "Turbidité",
+      code_parametre == "1841" ~ "C organique",
+      TRUE ~ code_parametre
+    ),
+    nom_indice = case_when(
+      code_indice == "7613" ~ "I2M2",
+      code_indice == "8054" ~ "RichesI2M2",
+      code_indice == "8055" ~ "OvovivI2M2",
+      code_indice == "8056" ~ "PolyvolI2M2",
+      code_indice == "8057" ~ "ASPT",
+      code_indice == "8058" ~ "H'",
+      TRUE ~ code_indice
+    ),
+    nom_parametre = factor(nom_parametre, levels= c("NH4+","NO2-","NO3-","P total","PO4-","C organique","O2 dissous","Satur.O2","DBO5","MES","Turbidité","Conductiv","pH","T°")),
+    nom_indice = factor(nom_indice, levels= c("I2M2","H'","RichesI2M2","OvovivI2M2","PolyvolI2M2","ASPT"))
+  )
+
+
+#Création du graphique
+cor_i2m2_label %>% 
+ggplot(aes(x = debut, 
+           y = fin, 
+           fill = correlation, 
+           col = correlation)) +
+  geom_point(size = 3) +
+  geom_point(data = cor_i2m2_label %>% filter(p_value < 0.01),
+             aes(x = debut, y = fin),
+             fill = NA, color = "grey", size = 0.5) +
+  scale_fill_distiller(palette = "Spectral", direction = 1) +
+  scale_color_distiller(palette = "Spectral", direction = 1) +
+  scale_x_continuous(breaks = seq(1, 12, by = 2)) +
+  scale_y_continuous(breaks = seq(1, 12, by = 2)) +
+    
+  facet_grid(nom_indice ~ nom_parametre) +
+    
+
+  theme_bw() +
+  theme(
+    panel.grid.major = element_blank(),  # suppression du quadrillage principal
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  ) +
+    
+
+  labs(
+    x = "Mois de début",
+    y = "Mois de fin",
+    fill = "Corrélation",
+    color = "Corrélation"
+  )
+
+cor_ibd_label <- cor_ibd %>%
+  mutate(
+    nom_parametre = case_when(
+      code_parametre == "1301" ~ "T°",
+      code_parametre == "1302" ~ "pH",
+      code_parametre == "1303" ~ "Conductiv",
+      code_parametre == "1305" ~ "MES",
+      code_parametre == "1311" ~ "O2 dissous",
+      code_parametre == "1312" ~ "Satur.O2",
+      code_parametre == "1313" ~ "DBO5",
+      code_parametre == "1335" ~ "NH4+",
+      code_parametre == "1339" ~ "NO2-",
+      code_parametre == "1340" ~ "NO3-",
+      code_parametre == "1350" ~ "P total",
+      code_parametre == "1433" ~ "PO4-",
+      code_parametre == "1295" ~ "Turbidité",
+      code_parametre == "1841" ~ "C organique",
+      TRUE ~ code_parametre
+    ),
+    nom_indice = case_when(
+      code_indice == "1022" ~ "IPS",
+      code_indice == "5856" ~ "IBD",
+    ),
+    nom_parametre = factor(nom_parametre, levels= c("NH4+","NO2-","NO3-","P total","PO4-","C organique","O2 dissous","Satur.O2","DBO5","MES","Turbidité","Conductiv","pH","T°")),
+    nom_indice = factor(nom_indice, levels= c("IPS","IBD"))
+  )
+
+cor_ibd_label %>% 
+  ggplot(aes(x = debut, 
+             y = fin, 
+             fill = correlation, 
+             col = correlation)) +
+  geom_point(size = 3) +
+  geom_point(data = cor_ibd_label %>% filter(p_value < 0.05),
+             aes(x = debut, y = fin),
+             fill = NA, color = "grey", size = 0.5) +
+  scale_fill_distiller(palette = "Spectral", direction = 1) +
+  scale_color_distiller(palette = "Spectral", direction = 1) +
+  scale_x_continuous(breaks = seq(1, 12, by = 2)) +
+  scale_y_continuous(breaks = seq(1, 12, by = 2)) +
+  
+  facet_grid(nom_indice ~ nom_parametre) +
+  
+  
+  theme_bw() +
+  theme(
+    panel.grid.major = element_blank(),  # suppression du quadrillage principal
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  ) +
+  
+  
+  labs(
+    x = "Mois de début",
+    y = "Mois de fin",
+    fill = "Corrélation",
+    color = "Corrélation"
+  )
+```
+
+On néglige la richesse taxonomique et l'indice de Shannon dans le choix des périodes temporelle.
+
+On retient alors : mars à décembre pour le taux de saturation en oxygène et l’oxygène dissous ; de janvier à mars pour la concentration en nitrates (période de lessivage due aux précipitations hivernales) et annuelle pour le reste des paramètres. A partir de ce choix, on calcule les moyennes annuelles puis interannuelles, cela nous permet d’avoir une approche entièrement spatiale (à l'échelle de la station). L'hypothèse de choisir une année au hasard est également possible, en sachant qu'il y a une stabilité des variables au cours du temps.
+
+Après avoir fait le df, on obtient donc 232 lignes (correspondant au nombre de stations retenue pour la physico-chimie), et 14 colonnes correspondantes aux différents paramètres.
+
+Les matrices de corrélation sont réalisées à partir de ce jeu de données. Le test utilisé est Spearman, car les valeurs n’ont pas une distribution normale (pour la plupart).
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=15, fig.height=15}
+load(file = "../Data/70_choix_parametre.rda")
+load(file = "../Data/80_donnees_globales_trans.rda")
+load(file = "../Data/90_acp.rda")
+
+library(corrplot)
+library(GGally)
+
+i2m2_ibd_matrix <- i2m2_ibd %>% 
+  cor(method="spearman")
+corrplot.mixed(i2m2_ibd_matrix,upper="ellipse") 
+
+physico_wide_matrix <- physico_wide %>% 
+  dplyr::select(`1295`:`1841`) %>%
+  cor(method="spearman", use = "pairwise")
+
+label_physico <- c(
+  "1301" = "T°",
+  "1302" = "pH",
+  "1303" = "Conductiv",
+  "1305" = "MES",
+  "1311" = "O2 dissous",
+  "1312" = "Satur.O2",
+  "1313" = "DBO5",
+  "1335" = "NH4+",
+  "1339" = "NO2-",
+  "1340" = "NO3-",
+  "1350" = "P total",
+  "1433" = "PO4-",
+  "1295" = "Turbidité",
+  "1841" = "C organique")
+
+colnames(physico_wide_matrix) <- label_physico
+rownames(physico_wide_matrix) <- label_physico
+  
+corrplot(physico_wide_matrix, 
+         lower = "number",
+         upper = "ellipse",
+         order = "hclust",
+         addrect = 2,
+         rect.col = "black",
+         rect.lwd = 2)
+
+corrplot.mixed(physico_wide_matrix,
+               upper="ellipse")
+
+physico_wide_parametres <- physico_wide %>% 
+  dplyr::select(`1295`:`1841`)
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=20, fig.height=20}
+
+ggpairs(physico_wide_parametres,
+        lower = list(continuous = wrap("smooth", method = lm, se=FALSE)),
+        diag=list(continuous = wrap("densityDiag")),
+        upper=list(continuous = wrap("cor",method="spearman",size=4)))
+
+df_global_sans_station <- df_global %>% 
+  select(`7613`:`1841`)
+
+ggpairs(df_global_sans_station,
+        lower = list(continuous = wrap("smooth", method = lm, se=FALSE)),
+        diag=list(continuous = wrap("densityDiag")),
+        upper=list(continuous = wrap("cor",method="spearman",size=4)))
+
+```
+
+L'analyse des composantes principales est une méthode statistique appartenant à la famille des analyses multivariées, c'est-à-dire permettant de synthétiser les relations entre plusieurs variables différentes. Deux ACP ont été réalisé, une sur les variables d'indices biologiques et une sur les paramètres physico-chimiques. On a analysé les résultats pour certaines années, on obtient des résultats très simlaires, à l'exception de 2022 et 2023. Cela pourrait être expliqué par la séchersse de ces années là. 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=10 }
+
+library(FactoMineR)
+library(devtools)
+library(factoextra)
+
+
+
+i2m2_ibd <- i2m2_wide %>% 
+  left_join(ibd_wide, by = "code_station_hydrobio") %>% 
+  select(`7613`:`5856`)
+
+donnees_centrees_reduites_bio <- scale(i2m2_ibd,center=TRUE,scale=TRUE)
+
+resultat_acp_bio<- PCA(donnees_centrees_reduites_bio, graph=TRUE)
+print(resultat_acp_bio)
+valeurspropres_bio<- resultat_acp_bio$eig
+valeurspropres_bio
+
+label_bio <- c("7613" = "I2M2",
+               "8054" = "RichesI2M2",
+               "8055" = "OvovivI2M2",
+               "8056" = "PolyvolI2M2",
+               "8057" = "ASPT",
+               "8058" = "H'",
+               "5856" = "IBD",
+               "1022" = "IPS"
+  
+)
+
+old_names_bio <- rownames(resultat_acp_bio$var$coord)
+new_names_bio <- old_names_bio
+new_names_bio[old_names_bio %in% names(label_bio)] <- label_bio[old_names_bio[old_names_bio %in% names(label_bio)]]
+
+
+barplot(valeurspropres_bio[,2],names.arg=1:nrow(valeurspropres_bio),
+        main="Pourcentage de la variance expliquée par chaque composante",
+        xlab="Composantes principales",
+        ylab="Pourcentage de variance expliquée",
+        col="steelblue")
+#Add connected line segments to the plot
+lines(x=1:nrow(valeurspropres_bio),valeurspropres_bio[,2],
+      type="b", pch=19, col="red")
+
+resultat_acp_bio$var$coord <- `rownames<-`(resultat_acp_bio$var$coord, new_names_bio)
+resultat_acp_bio$var$contrib <- `rownames<-`(resultat_acp_bio$var$contrib, new_names_bio)
+resultat_acp_bio$var$cos2 <- `rownames<-`(resultat_acp_bio$var$cos2, new_names_bio)
+resultat_acp_bio$var$cor <- `rownames<-`(resultat_acp_bio$var$cor, new_names_bio)
+
+fviz_pca_var(resultat_acp_bio,
+             col.var="cos2",
+             gradient.cols=c("deeppink", "maroon","navy"),
+             repel=TRUE,
+             title="Cercle de Corrélation des Variables")
+fviz_contrib(resultat_acp_bio,choice="var", axes=1, top = 10)
+fviz_contrib(resultat_acp_bio,choice="var", axes=2, top = 10)
+
+acp_physico <- physico_wide %>%
+  dplyr::select(`1295`:`1841`)
+
+donnees_centrees_reduites_pc_2 <- scale(acp_physico,center=TRUE,scale=TRUE)
+resultat_acp_physico_2<- PCA(donnees_centrees_reduites_pc_2, graph=TRUE)
+print(resultat_acp_physico_2)
+valeurspropres_pc_2<- resultat_acp_physico_2$eig
+valeurspropres_pc_2
+
+old_names <- rownames(resultat_acp_physico_2$var$coord)
+new_names <- old_names
+new_names[old_names %in% names(label_physico)] <- label_physico[old_names[old_names %in% names(label_physico)]]
+
+resultat_acp_physico_2$var$cos2 <- `rownames<-`(resultat_acp_physico_2$var$cos2, new_names)
+
+
+barplot(valeurspropres_pc_2[,2],names.arg=1:nrow(valeurspropres_pc_2),
+        main="Pourcentage de la variance expliquée par chaque composante",
+        xlab="Composantes principales",
+        ylab="Pourcentage de variance expliquée",
+        col="steelblue")
+#Add connected line segments to the plot
+lines(x=1:nrow(valeurspropres_pc_2),valeurspropres_pc_2[,2],
+      type="b", pch=19, col="red")
+
+resultat_acp_physico_2$var$coord <- `rownames<-`(resultat_acp_physico_2$var$coord, new_names)
+resultat_acp_physico_2$var$contrib <- `rownames<-`(resultat_acp_physico_2$var$contrib, new_names)
+resultat_acp_physico_2$var$cos2 <- `rownames<-`(resultat_acp_physico_2$var$cos2, new_names)
+resultat_acp_physico_2$var$cor <- `rownames<-`(resultat_acp_physico_2$var$cor, new_names)
+
+fviz_pca_var(resultat_acp_physico_2,
+             col.var="cos2",
+             gradient.cols=c("deeppink", "maroon","navy"),
+             repel=TRUE,
+             title="Cercle de Corrélation des Variables")
+
+
+fviz_contrib(resultat_acp_physico_2,choice="var", axes=1, top = 10)
+fviz_contrib(resultat_acp_physico_2,choice="var", axes=2, top = 10)
+fviz_contrib(resultat_acp_physico_2,choice="var", axes=3, top = 10)
+
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=5, fig.height=5}
+
+functions <- list.files(path = "R",
+                        pattern = ".R$",
+                        full.names = TRUE)
+
+map(.x = functions,
+    .f = source)
+map_dim <- function(data, dim_col) {
+  mapview(data,
+          zcol = dim_col,
+          col.regions = c("blue", "white", "red"),  # négatif ↔ positif
+          at = c(min(data[[dim_col]], na.rm = TRUE),
+                 0,
+                 max(data[[dim_col]], na.rm = TRUE)),
+          layer.name = dim_col)
+}
+
+
+acp_liste_pc <- physico_wide %>% 
+  mutate(
+    num_line = row_number()) %>% 
+  arrange(code_station_hydrobio) %>% 
+  dplyr::select(code_station_hydrobio,num_line)
+  
+
+dim_acp <- as.data.frame(resultat_acp_physico_2[["ind"]][["coord"]]) %>% 
+  mutate(
+    num_line = row_number()) 
+
+gradient <- acp_liste_pc %>% 
+  left_join(dim_acp, by = "num_line") %>% 
+  left_join(clean_ibd %>% 
+              dplyr::select(code_station_hydrobio, longitude, latitude) %>% 
+              distinct(),
+            by = "code_station_hydrobio"
+            )
+
+gradient_sf <- gradient %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
+
+map_dim1 <- map_dim(gradient_sf, "Dim.1")
+map_dim1
+map_dim2 <- map_dim(gradient_sf, "Dim.2")
+map_dim2
+map_dim3 <- map_dim(gradient_sf, "Dim.3")
+map_dim3
+map_dim4 <- map_dim(gradient_sf, "Dim.4")
+map_dim4
+map_dim5 <- map_dim(gradient_sf, "Dim.5")
+map_dim5
+
+
+#############################################################################
+#                                  Nitrites et nitrates  
+###############################################################################
+
+load(file = "../Data/40_statistiques_descriptives.rda")
+
+# Nitrites 
+
+classenit<-c(
+  "1" = "darkgreen",
+  "2" = "yellow",
+  "3" = "orange",
+  "4"="red"
+)
+
+nit_carte <- med_par_station_pc %>%
+  filter(code_parametre == "1339") %>%
+  arrange(code_station_hydrobio) %>% 
+  mutate(classe_nitrites= case_when(... = 
+                                med <= 0.01 ~ "1",
+                                med >= 0.01 ~ "2",
+                                med >= 0.1 ~ "3",
+                                med >= 1 ~ "4"
+                                
+))
+
+
+nit_carte <- nit_carte %>%
+  mutate(classe_nitrites=factor(classe_nitrites,levels=c("1","2","3","4")))
+
+gradient_nit <- nit_carte %>% 
+  left_join(clean_ibd %>% 
+            dplyr::select(code_station_hydrobio, longitude, latitude) %>% 
+            distinct(),
+            by = "code_station_hydrobio"
+) 
+
+mapview(gradient_nit, zcol="classe_nitrites", col.regions=classenit, xcol="longitude", ycol="latitude", crs= 4326, grid=FALSE,cex=4.5)
+
+
+#Nitrates 
+
+classe_nitt <- c(
+  "1" = "darkgreen",
+  "2" = "lightgreen",
+  "3" = "yellow",
+  "4"="orange",
+  "5"="darkorange3",
+  "6"="red"
+)
+
+nitrates_carte <- med_par_station_pc %>%
+  filter(code_parametre == "1340") %>%
+  arrange(code_station_hydrobio) %>% 
+  mutate(classe_nitrates= case_when(... = 
+                                      med < 0.1 ~ "1",
+                                    med < 3 ~ "2",
+                                    med < 5 ~ "3",
+                                    med < 10 ~ "4",
+                                    med < 15 ~ "5",
+                                    med >= 15 ~ "6"
+                                    
+  ))
+
+
+nitrates_carte <- nitrates_carte %>%
+  mutate(classe_nitrates=factor(classe_nitrates,levels=c("1","2","3","4","5","6")))
+
+gradient_nitrates <- nitrates_carte %>% 
+  left_join(clean_ibd %>% 
+              dplyr::select(code_station_hydrobio, longitude, latitude) %>% 
+              distinct(),
+            by = "code_station_hydrobio"
+  ) 
+
+mapview(gradient_nitrates, zcol="classe_nitrates", col.regions=classe_nitt, xcol="longitude", ycol="latitude", crs= 4326, grid=FALSE,cex=4.5)
+
+
+#############################################################################
+#                                  Taux de saturations en oxygène  
+###############################################################################
+
+classe_oxy <- c(
+  "1" = "darkgreen",
+  "2" = "lightgreen",
+  "3" = "yellow",
+  "4"="orange",
+  "5"="darkorange3",
+  "6"="red"
+)
+
+tsat_carte <- med_par_station_pc %>%
+  filter(code_parametre == "1312") %>%
+  arrange(code_station_hydrobio) %>% 
+  mutate(classe_tsat= case_when(... = 
+                                      med >= 90 ~ "1",
+                                    med < 90 ~ "2",
+                                    med < 70 ~ "3",
+                                    med < 50 ~ "4",
+                                    med < 30 ~ "5",
+                                    med < 10 ~ "6"
+                                    
+  ))
+
+
+tsat_carte <- tsat_carte %>%
+  mutate(classe_tsat=factor(classe_tsat,levels=c("1","2","3","4","5","6")))
+
+gradient_tsat <- tsat_carte %>% 
+  left_join(clean_ibd %>% 
+              dplyr::select(code_station_hydrobio, longitude, latitude) %>% 
+              distinct(),
+            by = "code_station_hydrobio"
+  ) 
+
+mapview(gradient_tsat, zcol="classe_tsat", col.regions=classe_oxy, xcol="longitude", ycol="latitude", crs= 4326, grid=FALSE,cex=4.5)
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=10}
+# On renomme les variables
+df_global <- df_global %>% 
+  rename(I2M2 = `7613`,
+         richesI2M2 = `8054`,
+         ovovivI2M2 = `8055`,
+         polyvolI2M2 = `8056`,
+         ASPT = `8057`,
+         ShannonI2M2 = `8058`,
+         IPS = `1022`,
+         IBD = `5856`,
+         turbidité = `1295`,
+         Temp = `1301`,
+         pH = `1302`,
+         conductiv = `1303`,
+         MES = `1305`,
+         O2dissous = `1311`,
+         SaturO2 = `1312`,
+         DBO5 = `1313`,
+         NH4 = `1335`,
+         NO2 = `1339`,
+         NO3 = `1340`,
+         Ptot = `1350`,
+         PO4 = `1433`,
+         Corga = `1841`)
+
+#On garde seulement les variables numériques
+df_global_sans_stations <- df_global %>% 
+  dplyr::select(`I2M2`:`Corga`) 
+
+
+#On transforme les variables
+
+#Transformation logarithmique
+log_values <- log(df_global_sans_stations)
+
+#Centrées-réduites
+donnees_scale_global <- scale(df_global_sans_stations,center=TRUE,scale=TRUE)
+
+#Racine carrée
+df_sqrt <- sqrt(df_global_sans_stations)
+
+#Arcsin
+df_inverse <- 1/ df_global_sans_stations
+
+#Données loggées et centrées réduites
+donnees_scale_globa_log <- scale(log_values,center=TRUE,scale=TRUE)
+
+#Transformation en df
+df_donnees_scale_global <- as.data.frame(donnees_scale_global)
+df_donnees_scale_global_log <- as.data.frame(donnees_scale_globa_log)
+
+
+###################################################################################
+#                                           Loi normale - variables non transformées  
+###################################################################################
+load(file = "../Data/80_donnees_globales_trans.rda")
+library(car)
+library(sjPlot)
+library(MASS)
+library(lmtest)
+
+model_normal_non_transformées <- glm(`I2M2`~`DBO5`+`NH4`+`NO3`+`Ptot`, data= df_global_sans_stations, family = gaussian(link = "identity"))
+summary(model_normal_non_transformées)
+model_simplifié <- MASS::stepAIC(model_normal_non_transformées)
+
+bptest(model_normal_non_transformées, ~fitted(model_normal_non_transformées) + I(fitted(model_normal_non_transformées)^2)) # test de white, variance constante
+
+plot(fitted(model_normal_non_transformées),residuals(model_normal_non_transformées,type="pearson"),
+     xlab="valeurs prédites", ylab="résidus de pearson",
+     main="résidus de pearson vs valeurs prédites")
+
+vif(model_normal_non_transformées)
+
+qqnorm(residuals(model_normal_non_transformées)) #normalité respectée 
+qqline(residuals(model_normal_non_transformées))
+hist(residuals(model_normal_non_transformées), breaks=30,
+     main = "Distribution",
+     xlab="Résidus")
+shapiro.test(residuals(model_normal_non_transformées)) #si pvalue < 0,05 ce n'est pas normal
+
+sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("NH4"), title = "Effets ammonium  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("DBO5"), title = "Effets DBO5  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("NO3"), title = "Effets des nitrates  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("Ptot"), title = "Effets de Ptot  sur l'I2M2")
+
+plot(model_normal_non_transformées)
+```

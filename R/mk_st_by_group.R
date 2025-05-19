@@ -37,7 +37,7 @@ mk_st_by_group <- function(df,
     group_by(!!!vars_group) %>% 
     tally() %>% 
     filter(n > 2) %>%  # MK test requires 3 data mini
-    select(!!!vars_group) %>% 
+    dplyr::select(!!!vars_group) %>% 
     distinct()
   
   df <- kept_groups %>% 

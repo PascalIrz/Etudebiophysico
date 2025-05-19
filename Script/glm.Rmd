@@ -1,0 +1,100 @@
+---
+title: "Modélisation GLM"
+output: html_document
+date: "2025-05-14"
+---
+
+```{r}
+load(file = "../Data/81_donnees_globales_trans.rda")
+library(car)
+library(tidyverse)
+library(ggplot2)
+library(sjPlot)
+library(MASS)
+library(dplyr)
+library(lmtest)
+```
+```{r}
+# On renomme les variables
+df_global <- df_global %>% 
+  rename(I2M2 = `7613`,
+         richesI2M2 = `8054`,
+         ovovivI2M2 = `8055`,
+         polyvolI2M2 = `8056`,
+         ASPT = `8057`,
+         ShannonI2M2 = `8058`,
+         IPS = `1022`,
+         IBD = `5856`,
+         turbidité = `1295`,
+         Temp = `1301`,
+         pH = `1302`,
+         conductiv = `1303`,
+         MES = `1305`,
+         O2dissous = `1311`,
+         SaturO2 = `1312`,
+         DBO5 = `1313`,
+         NH4 = `1335`,
+         NO2 = `1339`,
+         NO3 = `1340`,
+         Ptot = `1350`,
+         PO4 = `1433`,
+         Corga = `1841`)
+
+#On garde seulement les variables numériques
+df_global_sans_stations <- df_global %>% 
+  dplyr::select(`I2M2`:`Corga`) 
+
+
+#On transforme les variables
+
+#Transformation logarithmique
+log_values <- log(df_global_sans_stations)
+
+#Centrées-réduites
+donnees_scale_global <- scale(df_global_sans_stations,center=TRUE,scale=TRUE)
+
+#Données loggées et centrées réduites
+donnees_scale_globa_log <- scale(log_values,center=TRUE,scale=TRUE)
+
+#Transformation en df
+df_donnees_scale_global <- as.data.frame(donnees_scale_global)
+df_donnees_scale_global_log <- as.data.frame(donnees_scale_globa_log)
+
+
+###################################################################################
+#                                           Loi normale - variables non transformées  
+###################################################################################
+
+
+model_normal_non_transformées <- glm(`I2M2`~`DBO5`+`NH4`+`NO3`+`Ptot`, data= df_global_sans_stations, family = gaussian(link = "identity"))
+summary(model_normal_non_transformées)
+model_simplifié <- MASS::stepAIC(model_normal_non_transformées)
+
+bptest(model_normal_non_transformées, ~fitted(model_normal_non_transformées) + I(fitted(model_normal_non_transformées)^2)) # test de white, variance constante
+
+plot(fitted(model_normal_non_transformées),residuals(model_normal_non_transformées,type="pearson"),
+     xlab="valeurs prédites", ylab="résidus de pearson",
+     main="résidus de pearson vs valeurs prédites")
+
+vif(model_normal_non_transformées)
+
+qqnorm(residuals(model_normal_non_transformées)) #normalité respectée 
+qqline(residuals(model_normal_non_transformées))
+hist(residuals(model_normal_non_transformées), breaks=30,
+     main = "Distribution",
+     xlab="Résidus")
+shapiro.test(residuals(model_normal_non_transformées)) #si pvalue < 0,05 ce n'est pas normal
+
+sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("NH4"), title = "Effets ammonium  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("DBO5"), title = "Effets DBO5  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("NO3"), title = "Effets des nitrates  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("Ptot"), title = "Effets de Ptot  sur l'I2M2")
+
+plot(model_normal_non_transformées)
+
+                                    
+```
+
+
+
+

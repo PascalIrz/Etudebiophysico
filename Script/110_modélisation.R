@@ -91,53 +91,39 @@ sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("Ptot")
 
 plot(model_normal_non_transformées)
 
-dist_cook <- cooks.distance(model_normal_non_transformées)
-seuil_cook <- 4 / nrow(df_global_sans_stations)
+#dist_cook <- cooks.distance(model_normal_non_transformées)
+#seuil_cook <- 4 / nrow(df_global_sans_stations)
 
-df_global_sans_stations_cook <- df_global_sans_stations %>% 
+#df_global_sans_stations_cook <- df_global_sans_stations %>% 
   cbind(dist_cook) %>% # ajout de la colonne avec les distances
   filter(dist_cook < seuil_cook) # suppression des observations avec distance > 4/N
 
-model_normal_non_transformées_cook <- glm(`I2M2`~`DBO5`+`O2dissous`+`PO4`+`NH4`+`turbidité`+`Temp`+`pH`+`conductiv`+`MES`+`SaturO2`+`NO2`+`NO3`+`Ptot`+`Corga`, data= df_global_sans_stations_cook, family = gaussian(link = "identity"))
-summary(model_normal_non_transformées_cook)
-model_simplifié_cook <- MASS::stepAIC(model_normal_non_transformées_cook)
+#model_normal_non_transformées_cook <- glm(`I2M2`~`DBO5`+`O2dissous`+`PO4`+`NH4`+`turbidité`+`Temp`+`pH`+`conductiv`+`MES`+`SaturO2`+`NO2`+`NO3`+`Ptot`+`Corga`, data= df_global_sans_stations_cook, family = gaussian(link = "identity"))
+#summary(model_normal_non_transformées_cook)
+#model_simplifié_cook <- MASS::stepAIC(model_normal_non_transformées_cook)
 
-bptest(model_normal_non_transformées_cook, ~fitted(model_normal_non_transformées_cook) + I(fitted(model_normal_non_transformées_cook)^2)) # test de white, variance constante
+#bptest(model_normal_non_transformées_cook, ~fitted(model_normal_non_transformées_cook) + I(fitted(model_normal_non_transformées_cook)^2)) # test de white, variance constante
 
-plot(fitted(model_normal_non_transformées_cook),residuals(model_normal_non_transformées_cook,type="pearson"),
-     xlab="valeurs prédites", ylab="résidus de pearson",
-     main="résidus de pearson vs valeurs prédites")
+#plot(fitted(model_normal_non_transformées_cook),residuals(model_normal_non_transformées_cook,type="pearson"),
+     #xlab="valeurs prédites", ylab="résidus de pearson",
+     #main="résidus de pearson vs valeurs prédites")
 
-vif(model_normal_non_transformées_cook)
+#vif(model_normal_non_transformées_cook)
 
-qqnorm(residuals(model_normal_non_transformées_cook))
-qqline(residuals(model_normal_non_transformées_cook))
-hist(residuals(model_normal_non_transformées_cook), breaks=30,
-     main = "Distribution",
-     xlab="Résidus")
-shapiro.test(residuals(model_normal_non_transformées_cook)) #si pvalue < 0,05 ce n'est pas normal
+#qqnorm(residuals(model_normal_non_transformées_cook))
+#qqline(residuals(model_normal_non_transformées_cook))
+#hist(residuals(model_normal_non_transformées_cook), breaks=30,
+     #main = "Distribution",
+     #xlab="Résidus")
+#shapiro.test(residuals(model_normal_non_transformées_cook)) #si pvalue < 0,05 ce n'est pas normal
 
-plot(model_normal_non_transformées_cook)
+#plot(model_normal_non_transformées_cook)
 
-sjPlot::plot_model(model_normal_non_transformées_cook, type = "est", show.values = TRUE, title = "Effets des paramètres sur l'I2M2")
-sjPlot::plot_model(model_normal_non_transformées_cook, type = "pred",terms= c("O2dissous","NH4"), title = "Effets croisés oxygène-ammonium  sur l'I2M2")
-sjPlot::plot_model(model_normal_non_transformées_cook, type = "pred",terms= c("O2dissous","NO2"), title = "Effets croisés oxygène-nitrites  sur l'I2M2")
-sjPlot::plot_model(model_normal_non_transformées_cook, type = "pred",terms= c("O2dissous","Ptot"), title = "Effets croisés oxygène-Ptot  sur l'I2M2")
-sjPlot::plot_model(model_normal_non_transformées_cook, type = "pred",terms= c("O2dissous","PO4"), title = "Effets croisés oxygène-PO4  sur l'I2M2")
-
-
-
-
-
-
-#################################################################################
-#                                               Loi normale - valeurs loggées 
-#################################################################################
-
-model_normal_log <- glm(`I2M2`~`DBO5`+`O2dissous`+`PO4`+`NH4`+`turbidité`+`Temp`+`pH`+`conductiv`+`MES`+`SaturO2`+`NO2`+`NO3`+`Ptot`+`Corga`, data= log_values, family = gaussian(link = "identity"))
-model_simplifié_log <- MASS::stepAIC(model_normal_log)
-
-bptest(model_normal_log, ~fitted(model_normal_log) + I(fitted(model_normal_log)^2)) #variance non constante
+#sjPlot::plot_model(model_normal_non_transformées_cook, type = "est", show.values = TRUE, title = "Effets des paramètres sur l'I2M2")
+#sjPlot::plot_model(model_normal_non_transformées_cook, type = "pred",terms= c("O2dissous","NH4"), title = "Effets croisés oxygène-ammonium  sur l'I2M2")
+#sjPlot::plot_model(model_normal_non_transformées_cook, type = "pred",terms= c("O2dissous","NO2"), title = "Effets croisés oxygène-nitrites  sur l'I2M2")
+#sjPlot::plot_model(model_normal_non_transformées_cook, type = "pred",terms= c("O2dissous","Ptot"), title = "Effets croisés oxygène-Ptot  sur l'I2M2")
+#sjPlot::plot_model(model_normal_non_transformées_cook, type = "pred",terms= c("O2dissous","PO4"), title = "Effets croisés oxygène-PO4  sur l'I2M2")
 
 
 
@@ -155,21 +141,12 @@ plot(fitted(model_normal_non_transformées),residuals(model_normal_non_transform
      main="résidus de pearson vs valeurs prédites")
 vif(model_normal_cr)
 
-#################################################################################
-#                                               Loi normale - valeurs centrées réduites et log
-#################################################################################
-
-model_normal_cr_log <- glm(`I2M2`~`DBO5`+`O2dissous`+`PO4`+`NH4`+`turbidité`+`Temp`+`pH`+`conductiv`+`MES`+`SaturO2`+`NO2`+`NO3`+`Ptot`+`Corga`, data= df_donnees_scale_global_log, family = gaussian(link = "identity"))
-model_simplifié_cr_log <- MASS::stepAIC(model_normal_cr_log)
-
-bptest(model_normal_cr_log, ~fitted(model_normal_cr_log) + I(fitted(model_normal_cr_log)^2)) #variance non constante
-
 
 ################################################################################
 #                                  ASPT  - non transformées
 ################################################################################
 
-model_normal_non_transformées_aspt <- glm(`ASPT`~`O2dissous`+`NH4`+`NO3`+`Ptot`, data= df_global_sans_stations, family = gaussian(link = "identity"))
+model_normal_non_transformées_aspt <- glm(`ASPT`~`O2dissous`+`NH4`+`NO3`+`Ptot`+`pH`, data= df_global_sans_stations, family = gaussian(link = "identity")) #si on rajoute le pH hypothèses vérifiées, si loi Gamma sans pH hypothèses validées pour cette loi
 summary(model_normal_non_transformées_aspt)
 model_simplifié <- MASS::stepAIC(model_normal_non_transformées_aspt)
 
@@ -188,51 +165,23 @@ hist(residuals(model_normal_non_transformées_aspt), breaks=30,
      xlab="Résidus")
 shapiro.test(residuals(model_normal_non_transformées_aspt)) #si pvalue < 0,05 ce n'est pas normal
 
-sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("NH4"), title = "Effets ammonium  sur l'I2M2")
-sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("DBO5"), title = "Effets DBO5  sur l'I2M2")
-sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("NO3"), title = "Effets des nitrates  sur l'I2M2")
-sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("Ptot"), title = "Effets de Ptot  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées_aspt, type = "pred",terms= ("NH4"), title = "Effets ammonium  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées_aspt, type = "pred",terms= ("O2dissous"), title = "Effets O2 dissous  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées_aspt, type = "pred",terms= ("NO3"), title = "Effets des nitrates  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées_aspt, type = "pred",terms= ("Ptot"), title = "Effets de Ptot  sur l'I2M2")
 
-plot(model_normal_non_transformées)
+plot(model_normal_non_transformées_aspt)
 
-#################################################################################
-#                                               ASPT - test  
-#################################################################################
-
-
-model_normal_inverse_aspt <- glm(`ASPT`~`DBO5`+`NH4`+`NO3`+`Ptot`, data= df_inverse, family = Gamma(link = "identity"))
-model_simplifié_inverse_aspt <- MASS::stepAIC(model_normal_cr_aspt)
-
-bptest(model_normal_inverse_aspt, ~fitted(model_normal_inverse_aspt) + I(fitted(model_normal_inverse_aspt)^2), data=df_inverse) #variance constante
-plot(fitted(model_normal_inverse_aspt),residuals(model_normal_inverse_aspt,type="pearson"),
-     xlab="valeurs prédites", ylab="résidus de pearson",
-     main="résidus de pearson vs valeurs prédites")
-vif(model_normal_inverse_aspt)
-
-qqnorm(residuals(model_normal_inverse_aspt)) #normalité respectée 
-qqline(residuals(model_normal_inverse_aspt))
-hist(residuals(model_normal_inverse_aspt), breaks=30,
-     main = "Distribution",
-     xlab="Résidus")
-
-shapiro.test(residuals(model_normal_inverse_aspt)) #si pvalue < 0,05 ce n'est pas normal
-
-sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("NH4"), title = "Effets ammonium  sur l'I2M2")
-sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("DBO5"), title = "Effets DBO5  sur l'I2M2")
-sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("NO3"), title = "Effets des nitrates  sur l'I2M2")
-sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("Ptot"), title = "Effets de Ptot  sur l'I2M2")
-
-plot(model_normal_inverse_aspt)
 
 #################################################################################
 #                                               Polyvoltinisme - test  
 #################################################################################
 
-model_normal_non_transformées_pol <- glm(`polyvolI2M2`~`O2dissous`+`NH4`+`NO3`+`Ptot`, data= df_inverse, family = gaussian(link = "identity"))
-summary(model_normal_non_transformées_pol)
+model_normal_non_transformées_pol <- glm(`polyvolI2M2`~`O2dissous`+`NH4`+`NO3`+`Ptot`, data=, family = Gamma(link = "identity")) #problème des notes = à 0
+summary(model_normal_non_transformées_pol)summary(model_normal_non_transformées_pol)Gamma() 
 model_simplifié <- MASS::stepAIC(model_normal_non_transformées_pol)
 
-bptest(model_normal_non_transformées_pol, ~fitted(model_normal_non_transformées_pol) + I(fitted(model_normal_non_transformées_pol)^2)) # test de white, variance non constante
+bptest(model_normal_non_transformées_pol, ~fitted(model_normal_non_transformées_pol) + I(fitted(model_normal_non_transformées_pol)^2))
 
 plot(fitted(model_normal_non_transformées_pol),residuals(model_normal_non_transformées_pol,type="pearson"),
      xlab="valeurs prédites", ylab="résidus de pearson",
@@ -254,6 +203,66 @@ sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("Ptot")
 
 plot(model_normal_non_transformées)
 
+#################################################################################
+#                                               Ovoviviparité - test  
+#################################################################################
+
+model_normal_non_transformées_ov <- glm(`ovovivI2M2`~`O2dissous`+`NH4`+`NO3`+`Ptot`, data= df_global_sans_stations, family = gaussian(link = "identity")) 
+summary(model_normal_non_transformées_ov)
+model_simplifié <- MASS::stepAIC(model_normal_non_transformées_ov)
+
+bptest(model_normal_non_transformées_ov, ~fitted(model_normal_non_transformées_ov) + I(fitted(model_normal_non_transformées_ov)^2)) # test de white, variance constante
+
+plot(fitted(model_normal_non_transformées_ov),residuals(model_normal_non_transformées_ov,type="pearson"),
+     xlab="valeurs prédites", ylab="résidus de pearson",
+     main="résidus de pearson vs valeurs prédites")
+
+vif(model_normal_non_transformées_ov)
+
+qqnorm(residuals(model_normal_non_transformées_ov)) #normalité respectée 
+qqline(residuals(model_normal_non_transformées_ov))
+hist(residuals(model_normal_non_transformées_ov), breaks=30,
+     main = "Distribution",
+     xlab="Résidus")
+shapiro.test(residuals(model_normal_non_transformées_ov)) #si pvalue < 0,05 ce n'est pas normal
+
+sjPlot::plot_model(model_normal_non_transformées_ov, type = "pred",terms= ("NH4"), title = "Effets ammonium  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées_ov, type = "pred",terms= ("O2dissous"), title = "Effets DBO5  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées_ov, type = "pred",terms= ("NO3"), title = "Effets des nitrates  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées_ov, type = "pred",terms= ("Ptot"), title = "Effets de Ptot  sur l'I2M2")
+
+plot(model_normal_non_transformées_ov)
+
+
+#################################################################################
+#                                               Richesse taxonomique - test  
+#################################################################################
+
+model_normal_non_transformées_ov <- glm(`richesI2M2`~`O2dissous`+`NH4`+`NO3`+`Ptot`, data= df_global_sans_stations, family = Gamma(link = "identity")) 
+summary(model_normal_non_transformées_ov)
+model_simplifié <- MASS::stepAIC(model_normal_non_transformées_ov)
+
+bptest(model_normal_non_transformées_ov, ~fitted(model_normal_non_transformées_ov) + I(fitted(model_normal_non_transformées_ov)^2)) # test de white, variance constante
+
+plot(fitted(model_normal_non_transformées_ov),residuals(model_normal_non_transformées_ov,type="pearson"),
+     xlab="valeurs prédites", ylab="résidus de pearson",
+     main="résidus de pearson vs valeurs prédites")
+
+vif(model_normal_non_transformées_ov)
+
+qqnorm(residuals(model_normal_non_transformées_ov)) #normalité respectée 
+qqline(residuals(model_normal_non_transformées_ov))
+hist(residuals(model_normal_non_transformées_ov), breaks=30,
+     main = "Distribution",
+     xlab="Résidus")
+shapiro.test(residuals(model_normal_non_transformées_ov)) #si pvalue < 0,05 ce n'est pas normal
+
+sjPlot::plot_model(model_normal_non_transformées_ov, type = "pred",terms= ("NH4"), title = "Effets ammonium  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées_ov, type = "pred",terms= ("O2dissous"), title = "Effets O2dissous sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées_ov, type = "pred",terms= ("NO3"), title = "Effets des nitrates  sur l'I2M2")
+sjPlot::plot_model(model_normal_non_transformées_ov, type = "pred",terms= ("Ptot"), title = "Effets de Ptot  sur l'I2M2")
+
+plot(model_normal_non_transformées_ov)
 
 
 ################################################################################

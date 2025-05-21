@@ -1,0 +1,25 @@
+library(hubeau)
+# library(dplyr)
+# library(ggplot2)
+library(tidyverse)
+library(sf)
+# library(dplyr)
+# library(purrr)
+
+# exemple de traitement-
+Stations <- '04199370'# pour exemple; normalement Stations est une liste de codes station
+Liste_taxo_diat <- recuperer_liste_diat()
+#exploration des données
+Liste_prel <- select(Liste_taxo_diat,code_station_hydrobio,libelle_station_hydrobio,date_prelevement,annee)
+nbtaxonsparstation <- group_by(Liste_prel,code_station_hydrobio,date_prelevement,annee) %>% mutate(nb=n()) %>% unique()
+
+# nb de prel par annee/station 
+# 
+Liste_prel <- 
+  unique(Liste_prel) %>% 
+  group_by(code_station_hydrobio, annee) %>% 
+  mutate(nbprel=n()) %>% select(code_station_hydrobio,annee,nbprel) %>% 
+  unique()
+
+
+

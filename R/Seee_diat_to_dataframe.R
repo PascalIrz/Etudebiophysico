@@ -20,7 +20,8 @@ Seee_diat_to_dataframe<- function(chemin_data){
                          "CODE_TAXON",	"NOM_LATIN_TAXON",
                          "RESULTAT",	"CODE_REMARQUE")
 
-  chemin_data <- paste("C:/Users/ilona.garcia/Documents/RstudioGIT/Etudebiophysico/Data/donnees","/",sep="")
+  #chemin_data <- paste("C:/Users/ilona.garcia/Documents/RstudioGIT/Etudebiophysico/Data/donnees","/",sep="")
+  
 
   Df_entree_seee <- data.frame()
 

@@ -1,3 +1,4 @@
+rm(list = ls())
 library(tidyverse)
 
 load(file = "Data/10_donnees_pretraitees.rda")
@@ -8,50 +9,65 @@ load(file = "Data/10_donnees_pretraitees.rda")
 #################################################################################
 
 #Création de l'histogramme : donnees I2M2 et métriques 
-ggplot(clean_minv, aes(x = resultat_indice)) +
-  geom_histogram(bins = 30, fill = "#0072B2", color = "white", alpha = 0.7) +  # Histogramme avec 30 bins
-  facet_wrap(~ libelle_indice, scales = "free") +  # Un histogramme par métrique
+data <- clean_minv %>%
+  left_join(y = correspond_code_libelle, by = c("code_indice" = "code")) %>% 
+  mutate(libelle_court = as.factor(libelle_court),
+         libelle_court = fct_relevel(libelle_court, "I2M2")) #pour tjs avoir I2M2 en premier
+  
+
+graph <- data %>%
+  ggplot(aes(x = resultat_indice)) +
+  geom_histogram(
+    bins = 30,
+    fill = "#0072B2",
+    color = "white",
+    alpha = 0.7
+  ) +  # Histogramme avec 30 bins
+  facet_wrap( ~ libelle_court, scales = "free") +  # Un histogramme par métrique
   labs(title = "Distribution des valeurs des métriques de l'I2M2",
        x = "Valeur de la métrique",
        y = "Fréquence") +
   theme_minimal()
 
+graph
+
 #On fait un test log 
-ggplot(clean_minv, aes(x = resultat_indice)) +
-  geom_histogram(bins = 30, fill = "#0072B2", color = "white", alpha = 0.7) +
-  facet_wrap(~ libelle_indice, scales = "free") +  # Un histogramme par métrique
-  scale_x_log10() +
-labs(title = "Distribution des valeurs des métriques de l'I2M2",
-     x = "Valeur de la métrique",
-     y = "Fréquence") +
-  theme_minimal()
+graph +
+  scale_x_log10()
 
 # Test de la normalité
 
 
 # Box plot
-ggplot(clean_minv, aes (x=factor(annee), y = resultat_indice)) +
+data %>%
+  ggplot(aes (x = factor(annee), y = resultat_indice)) +
   geom_boxplot() +
-  facet_wrap(~ code_indice, scales = "free_y") +
-  labs(x = "Mois", y= "Valeur", title ="Distribution des métriques par année") +
+  facet_wrap( ~ libelle_court, scales = "free_y") +
+  labs(x = "Année", y = "Valeur", title = "Distribution des métriques par année") +
   theme_bw()
 
 #################################################################################
 #                       IBD                             #
 #################################################################################
+
+data <- clean_ibd %>%
+  left_join(y = correspond_code_libelle, by = c("code_indice" = "code")) %>% 
+  mutate(libelle_court = as.factor(libelle_court),
+         libelle_court = fct_relevel(libelle_court, "IBD")) #pour tjs avoir IBD en premier
+
 #Création de l'histogramme : donnees IBD
-ggplot(clean_ibd, aes(x = resultat_indice)) +
+
+ggplot(data, aes(x = resultat_indice)) +
   geom_histogram(bins = 30, fill = "#0072B2", color = "white", alpha = 0.7) +
-  facet_wrap(~ libelle_indice, scales = "free") +
+  facet_wrap(~ libelle_court, scales = "free") +
   labs(title = "Distribution des valeurs des indices",
        x = "Valeur de l'indice",
        y = "Fréquence") +
   theme_minimal()
 
-
-ggplot(clean_ibd, aes (x=factor(annee), y = resultat_indice)) +
+ggplot(data, aes (x = factor(annee), y = resultat_indice)) +
   geom_boxplot() +
-  facet_wrap(~ code_indice, scales = "free_y") +
+  facet_wrap(~ libelle_court, scales = "free_y") +
   labs(x = "Annee", y= "Valeur", title ="Distribution des indices par années") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -60,11 +76,19 @@ ggplot(clean_ibd, aes (x=factor(annee), y = resultat_indice)) +
 #################################################################################
 #                       Physico-chimie                               #
 #################################################################################
+parametres_physico <- parametres_physico %>% 
+  mutate(resultat_log = log10(resultat))
+
+data <- parametres_physico %>%
+  left_join(y = correspond_code_libelle, by = c("code_parametre" = "code")) %>% 
+  mutate(libelle_court = as.factor(libelle_court),
+         libelle_court = fct_relevel(libelle_court,
+                                     "Temp", "Turbidité", "Cond", "DBO5", "C orga", "MES", "O2", "Sat O2", "pH"))
 
 # Distribution non logarithmique
-ggplot(parametres_physico, aes(x =resultat)) +
-  geom_histogram(bins = 50, fill = "#0072B2", color = "white", alpha = 0.7) +  # Histogramme avec 30 bins
-  facet_wrap(~ libelle_parametre, scales = "free") +
+ggplot(data, aes(x =resultat)) +
+  geom_histogram(bins = 15, fill = "#0072B2", color = "white", alpha = 0.7) +  # Histogramme avec 30 bins
+  facet_wrap(~ libelle_court, scales = "free") +
   labs(title = "Distribution des valeurs",
        x = "",
        y = "Fréquence") +
@@ -72,12 +96,9 @@ ggplot(parametres_physico, aes(x =resultat)) +
 
 # Distribution logarithmique 
 
-parametres_physico <- parametres_physico %>% 
-  mutate(resultat_log = log10(resultat))
-
-ggplot(parametres_physico, aes(x =resultat_log)) +
-  geom_histogram(bins = 50, fill = "#0072B2", color = "white", alpha = 0.7) +  # Histogramme avec 30 bins
-  facet_wrap(~ libelle_parametre, scales = "free") +
+ggplot(data, aes(x =resultat_log)) +
+  geom_histogram(bins = 15, fill = "#0072B2", color = "white", alpha = 0.7) +  # Histogramme avec 30 bins
+  facet_wrap(~ libelle_court, scales = "free") +
   labs(title = "Distribution des valeurs",
        x = "",
        y = "Fréquence") +
@@ -90,7 +111,7 @@ parametres_physico %>%
   filter(libelle_parametre == "Ammonium") %>%
   ggplot(aes(x = resultat_arcsin)) +
   geom_histogram(
-    bins = 100,
+    bins = 15,
     fill = "#0072B2",
     color = "white",
     alpha = 0.7
@@ -117,9 +138,9 @@ parametres_physico_mois <- parametres_physico %>%
   )
 
 
-ggplot(parametres_physico, aes (x=factor(mois), y = resultat)) +
+ggplot(data, aes (x=factor(mois), y = resultat)) +
   geom_boxplot() +
-  facet_wrap(~ code_parametre, scales = "free_y") +
+  facet_wrap(~ libelle_court, scales = "free_y") +
   labs(x = "Mois", y= "Valeur", title ="Distribution des parametres par mois") +
   theme_bw()
 

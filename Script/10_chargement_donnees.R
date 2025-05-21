@@ -43,34 +43,59 @@ if (file.exists("Data/Multi_indice_minv_all.Rdata"))
   load("Data/Multi_indice_minv_all.Rdata")
 } else
 {
-  Multi_indice_minv <- map_df(dep,f_get_minv_departement)%>%
-    mutate(annee=year(date_prelevement)) %>%
-    select("code_station_hydrobio","code_qualification","libelle_qualification","libelle_indice","libelle_station_hydrobio","date_prelevement","code_indice","resultat_indice","latitude","longitude","code_departement","annee") %>% 
-    arrange(code_station_hydrobio,annee)
+  Multi_indice_minv <- map_df(dep, f_get_minv_departement) %>%
+    mutate(annee = year(date_prelevement)) %>%
+    select(
+      "code_station_hydrobio",
+      "code_qualification",
+      "libelle_qualification",
+      "libelle_indice",
+      "libelle_station_hydrobio",
+      "date_prelevement",
+      "code_indice",
+      "resultat_indice",
+      "latitude",
+      "longitude",
+      "code_departement",
+      "annee"
+    ) %>%
+    arrange(code_station_hydrobio, annee)
   
-  save(Multi_indice_minv,file="Data/Multi_indice_minv_all.Rdata")
+  save(Multi_indice_minv, file = "Data/Multi_indice_minv_all.Rdata")
 }
+
 
 ## rajout des résultats de l'année (non qualifiés)
 #on checke avant si on a de la données dans Fichier_SEEE/
-Liste_fichiers <-  list.files("../Fichiers_SEEE//",pattern="*.txt")
-if (length(Liste_fichiers!=0)){
+Liste_fichiers <-  list.files("../Fichiers_SEEE//", pattern = "*.txt")
+if (length(Liste_fichiers != 0)) {
   data_entree <- Seee_to_df("../Fichiers_SEEE/")
-  donnees_metriques_complementaires <- calcule_SEEE_I2M2(data_entree) %>% 
-    rename(code_station_hydrobio=CODE_STATION) %>%
-    rename(code_indice=CODE_PAR) %>% 
-    rename(resultat_indice=RESULTAT) %>% 
-    filter(!is.na(resultat_indice)) %>% select(2,3,4,6) %>% 
-    rename(date_prelevement=DATE) %>% 
-    mutate(annee=str_sub(date_prelevement,start=7,end=10))#le sul moyen que j'ai trouvé pour recupérer l'année !
-  Stations <- select(Multi_indice_minv,code_station_hydrobio,libelle_station_hydrobio,latitude,longitude,code_departement)%>%
+  donnees_metriques_complementaires <-
+    calcule_SEEE_I2M2(data_entree) %>%
+    rename(code_station_hydrobio = CODE_STATION) %>%
+    rename(code_indice = CODE_PAR) %>%
+    rename(resultat_indice = RESULTAT) %>%
+    filter(!is.na(resultat_indice)) %>% select(2, 3, 4, 6) %>%
+    rename(date_prelevement = DATE) %>%
+    mutate(annee = str_sub(date_prelevement, start = 7, end = 10))#le sul moyen que j'ai trouvé pour recupérer l'année !
+  Stations <-
+    select(
+      Multi_indice_minv,
+      code_station_hydrobio,
+      libelle_station_hydrobio,
+      latitude,
+      longitude,
+      code_departement
+    ) %>%
     unique()
   
-  donnees_metriques_complementaires <- left_join(donnees_metriques_complementaires,Stations,by='code_station_hydrobio') %>% 
-    select(1,6,2,3,4,7,8,9,5)
+  donnees_metriques_complementaires <-
+    left_join(donnees_metriques_complementaires, Stations, by = 'code_station_hydrobio') %>%
+    select(1, 6, 2, 3, 4, 7, 8, 9, 5)
   #on amende le DF initial
-  Multi_indice_minv <- rbind(Multi_indice_minv,donnees_metriques_complementaires) %>%   arrange(code_station_hydrobio,annee)
-}else {
+  Multi_indice_minv <-
+    rbind(Multi_indice_minv, donnees_metriques_complementaires) %>%   arrange(code_station_hydrobio, annee)
+} else {
   print ("pas de données complémentaires trouvées dans le dossier Data")
 }
 
@@ -89,8 +114,9 @@ Non_retenu <-
   count(Multi_indice_minv,
         code_station_hydrobio,
         code_indice,
-        libelle_station_hydrobio) %>%  filter(n <= 3) %>% filter(code_indice == 7613) %>% select("code_station_hydrobio", "libelle_station_hydrobio", "n") %>% rename("Nb prélèvements" =
-                                                                                                                                                                        n)
+        libelle_station_hydrobio) %>%
+  filter(n <= 3, code_indice == 7613) %>%
+  select("code_station_hydrobio", "libelle_station_hydrobio", "n") %>% rename("Nb prélèvements" = n)
 datatable(
   Non_retenu,
   class = 'cell-border stripe',
@@ -503,6 +529,65 @@ parametre_trans <- parametres_physico %>%
               values_from = "resultat",
               values_fn = mean)
 
+
+#################################################################################
+#                       Correspondance codes-libelles                                              #
+#################################################################################
+
+correspond_code_libelle_inv <- Multi_indice_minv %>% 
+  select(code = code_indice,
+         libelle = libelle_indice) %>% 
+  distinct() %>% 
+  filter(str_detect(libelle, "I2M2"),
+         !str_detect(libelle, "_CEP")) %>% 
+  mutate(libelle_court = case_when(
+    code == 8057 ~ "ASPT (I2M2)",
+    code == 8058 ~ "Shannon (I2M2)",
+    code == 8056 ~ "Polyvol (I2M2)",
+    code == 8055 ~ "Ovovivi (I2M2)",
+    code == 8054 ~ "Richesse (I2M2)",
+    code == 8050 ~ "N Taxons (I2M2)",
+    code == 7613 ~ "I2M2",
+    TRUE ~ NA))
+
+correspond_code_libelle_pc <- parametres_physico %>% 
+  select(code = code_parametre,
+         libelle = libelle_parametre) %>% 
+  distinct() %>% 
+  mutate(libelle_court = case_when(
+    code == 1339 ~ "NO2-",
+    code == 1311 ~ "O2",
+    code == 1302 ~ "pH",
+    code == 1340 ~ "NO3-",
+    code == 1313 ~ "DBO5",
+    code == 1303 ~ "Cond",
+    code == 1841 ~ "C orga",
+    code == 1433 ~ "PO4",
+    code == 1301 ~ "Temp",
+    code == 1312 ~ "Sat O2",
+    code == 1350 ~ "Pt",
+    code == 1335 ~ "NH4+",
+    code == 1295 ~ "Turbidité",
+    code == 1305 ~ "MES",
+    TRUE ~ NA
+  ))
+
+correspond_code_libelle_ibd <- Indice_ibd %>% 
+  select(code = code_indice,
+         libelle = libelle_indice) %>% 
+  distinct() %>% 
+  filter(!is.na(code)) %>% 
+  mutate(libelle_court = case_when(
+    code == 5856 ~ "IBD",
+    code == 1022 ~ "IPS",
+    TRUE ~ NA))
+  
+
+correspond_code_libelle <- correspond_code_libelle_inv %>% 
+  rbind(correspond_code_libelle_ibd) %>% 
+  rbind(correspond_code_libelle_pc)
+  
+
 #################################################################################
 #                       Sauvegarde                                              #
 #################################################################################
@@ -514,4 +599,5 @@ save(clean_ibd,
      ibd_trans,
      code_pc,
      stations_parametre,
+     correspond_code_libelle,
      file = "Data/10_donnees_pretraitees.rda")

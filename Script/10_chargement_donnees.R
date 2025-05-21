@@ -4,12 +4,8 @@
 
 #----Chargement des librairies----
 library(hubeau)
-# library(dplyr)
-# library(stringr) #pour str_extract
-# library(ggplot2)
 library(tidyverse)
 library(sf)
-# library(purrr)
 library(cowplot)
 library(DT)
 library(httr)#utiliser POST pour calcul i2m2 à partir du SEEE
@@ -17,7 +13,6 @@ library(trend)
 library(ggrepel)
 library(mapview)
 library(lubridate)
-library(httr)
 
 functions <- list.files(path = "R",
                         pattern = ".R$",
@@ -27,12 +22,12 @@ map(.x = functions,
     .f = source)
 
 # source(file="R/Fonctions_unitaires_appel_API.R")
-source(file = "R/mk_st_by_group.R")
-source(file = "R/Mann_kendall_div.R")
+# source(file = "R/mk_st_by_group.R")
+# source(file = "R/Mann_kendall_div.R")
 # source(file = "../Exploitationindicesminv/R/Seee_to_df.R")
 # source(file = "../Exploitationindicesminv/R/Calcule_I2M2_métriques.R")
-source(file ="Script/Seee_diat_to_dataframe.R")
-source(file ="Script/calcule_SEEE_IBD.R")
+# source(file ="Script/Seee_diat_to_dataframe.R")
+# source(file ="Script/calcule_SEEE_IBD.R")
 
 #################################################################################
 #                       import des métriques I2M2                               #
@@ -86,43 +81,65 @@ if (length(Liste_fichiers!=0)){
 #on vire s'il y a peu de données par paramètre (au moins 4 donnees/station/paramètre)
 #on suppose que pour chaque indice/metrique on a le même nb d'analyses
 #on va donc compter pour i2m2 et virer les stations "pauvres" en données
-comptemulti <- count(Multi_indice_minv,code_station_hydrobio,code_indice) %>%  filter(n>5) %>% filter(code_indice==7613) %>%   select("code_station_hydrobio")
-Non_retenu <- count(Multi_indice_minv,code_station_hydrobio,code_indice,libelle_station_hydrobio) %>%  filter(n<=3) %>% filter(code_indice==7613) %>% select("code_station_hydrobio","libelle_station_hydrobio","n") %>% rename("Nb prélèvements"=n)
-datatable(Non_retenu,class = 'cell-border stripe',options =
-            list( iDisplayLength=10,
-                  bLengthChange=TRUE,                       
-                  bFilter=TRUE ,                                   
-                  bInfo=TRUE,
-                  rowid = FALSE,
-                  autoWidth = FALSE,
-                  ordering = TRUE,
-                  scrollX = TRUE,
-                  borders = TRUE,
-                  columnDefs = list(list(className = 'dt-center', targets ="_all"))
-            ),rownames=FALSE#enlever le numero des lignes
+comptemulti <-
+  count(Multi_indice_minv, code_station_hydrobio, code_indice) %>%
+  filter(n > 5) %>% filter(code_indice == 7613) %>%   select("code_station_hydrobio")
+
+Non_retenu <-
+  count(Multi_indice_minv,
+        code_station_hydrobio,
+        code_indice,
+        libelle_station_hydrobio) %>%  filter(n <= 3) %>% filter(code_indice == 7613) %>% select("code_station_hydrobio", "libelle_station_hydrobio", "n") %>% rename("Nb prélèvements" =
+                                                                                                                                                                        n)
+datatable(
+  Non_retenu,
+  class = 'cell-border stripe',
+  options =
+    list(
+      iDisplayLength = 10,
+      bLengthChange = TRUE,
+      bFilter = TRUE ,
+      bInfo = TRUE,
+      rowid = FALSE,
+      autoWidth = FALSE,
+      ordering = TRUE,
+      scrollX = TRUE,
+      borders = TRUE,
+      columnDefs = list(list(
+        className = 'dt-center', targets = "_all"
+      ))
+    ),
+  rownames = FALSE#enlever le numero des lignes
 )
 
 
 #Stations_a_garder <- unique(comptemulti$code_station_hydrobio)
-Multi_indice_minv_s <- filter(Multi_indice_minv,Multi_indice_minv$code_station_hydrobio%in%comptemulti$code_station_hydrobio) %>% arrange(code_station_hydrobio,annee) #normalement la tri est deja fait plus haut mais je me méfie !
+Multi_indice_minv_s <-
+  filter(
+    Multi_indice_minv,
+    Multi_indice_minv$code_station_hydrobio %in% comptemulti$code_station_hydrobio
+  ) %>% arrange(code_station_hydrobio, annee) #normalement la tri est deja fait plus haut mais je me méfie !
 
 #----Obtention du jeu de données sur lequel on va travailler
 
 #On nettoie le jeu de donnée on ne garde seulement que les indices qui nous intéresse
-clean_minv<-filter(Multi_indice_minv_s,code_indice  %in% c('8058','8054','8056','8055','8057','7613'))
-clean_minv<-clean_minv %>%
-  filter(libelle_qualification!="incertaine") #on enlève les valeurs incertaines
+clean_minv <- Multi_indice_minv_s %>% 
+  filter(code_indice  %in% c('8058', '8054', '8056', '8055', '8057', '7613',
+         libelle_qualification != "incertaine") #on enlève les valeurs incertaines
+  )
+
 
 #On enlève les doublons
-clean_minv <- clean_minv %>% 
+clean_minv <- clean_minv %>%
   distinct()
 
 #On compte les prelevement par an et par stations
-compte_prelevement_i2m2 <- clean_minv %>% 
-  group_by(code_station_hydrobio, annee) %>% 
-  summarise(n_prelevement = n(), .groups="drop")
-compte_prelevement_i2m2 %>% 
-  filter(n_prelevement>6)
+compte_prelevement_i2m2 <- clean_minv %>%
+  group_by(code_station_hydrobio, annee) %>%
+  summarise(n_prelevement = n(), .groups = "drop")
+
+compte_prelevement_i2m2 %>%
+  filter(n_prelevement > 6)
 
 mois_repartition <- clean_minv %>%
   mutate(mois = month(as.Date(date_prelevement))) %>%  # transforme en date si besoin
@@ -142,9 +159,26 @@ clean_minv <- clean_minv %>%
 stations_map<- clean_minv %>%
   select(code_station_hydrobio,libelle_station_hydrobio,longitude,latitude) %>%
   distinct()
-mapview(stations_map, xcol="longitude", ycol="latitude", crs=4326, grid= FALSE, layer.name="Stations",cex=4) #stations I2M2
-mapview(stations_map %>% filter(code_station_hydrobio=="04195000"),
-        xcol="longitude", ycol="latitude", crs=4326, grid= FALSE, layer.name="Stations",cex=4)
+
+mapview(
+  stations_map,
+  xcol = "longitude",
+  ycol = "latitude",
+  crs = 4326,
+  grid = FALSE,
+  layer.name = "Stations",
+  cex = 4
+) #stations I2M2
+
+mapview(
+  stations_map %>% filter(code_station_hydrobio == "04195000"),
+  xcol = "longitude",
+  ycol = "latitude",
+  crs = 4326,
+  grid = FALSE,
+  layer.name = "Stations",
+  cex = 4
+)
 
 
 #################################################################################
@@ -165,6 +199,7 @@ if (file.exists("Data/Indice_ibd.Rdata")) {
 
 # On importe le jeu de données complémentaire
 diatcomplement <- Seee_diat_to_dataframe("Data/donnees/")
+
 indicesdiatcomplement <- calcule_SEEE_IBD(diatcomplement) %>% 
   rename(c(code_station_hydrobio = CODE_STATION, date_prelevement = DATE, libelle_indice = LIB_PAR, resultat_indice= RESULTAT, code_indice = CODE_PAR)) %>% 
   mutate(date_prelevement = if_else(
@@ -426,13 +461,14 @@ parametres_physico <- parametres_physico %>%
 
 
 # Df utiles pour la fenêtre glissante
-stations_parametre <- unique(parametres_physico$code_station_hydrobio)
+stations_parametre <-
+  unique(parametres_physico$code_station_hydrobio)
 code_pc <- unique(parametres_physico$code_parametre)
 
-#Nombre total d'analyses par année 
+#Nombre total d'analyses par année
 nb_analyses_par_annee_pc <- parametres_physico %>%
-  group_by(annee)%>%
-  summarise(nb_analyses=n(),.groups="drop")
+  group_by(annee) %>%
+  summarise(nb_analyses = n(), .groups = "drop")
 print(nb_analyses_par_annee_pc)
 
 #nombre d'années par station
@@ -456,8 +492,13 @@ count(
 ) %>% filter(n > 1 & code_parametre %in% code_pc)
 
 parametre_trans <- parametres_physico %>%
-  dplyr::select(code_station_hydrobio,annee,mois,jour,code_parametre,resultat) %>% 
-  distinct() %>% 
+  dplyr::select(code_station_hydrobio,
+                annee,
+                mois,
+                jour,
+                code_parametre,
+                resultat) %>%
+  distinct() %>%
   pivot_wider(names_from = "code_parametre",
               values_from = "resultat",
               values_fn = mean)

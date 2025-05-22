@@ -18,8 +18,8 @@ plot_var_annee <- ggplot(var_par_annee, aes(x = annee, y = var, color = libelle_
   geom_point() +
   geom_line() +
   facet_wrap(~libelle_indice, scales = "free_y") +
-  theme_minimal() + coord_cartesian(ylim=c(0,0.25))
-labs(title = "Variance des indices au fil des années", x = "Année", y = "Variance")
+  theme_minimal() + coord_cartesian(ylim=c(0,0.25)) +
+  labs(title = "Variance des indices au fil des années", x = "Année", y = "Variance")
 
 print(plot_var_annee)
 
@@ -62,14 +62,18 @@ top10_var <- var_par_station_quantiles %>%
 table(top10_var$libelle_indice)  # Nombre de stations retenues par indice
 
 # Visualisation des stations les plus variables par indice
-ggplot(top10_var, aes(x = reorder(libelle_station_hydrobio, -var), y = var, fill = libelle_indice)) +
+top10_var %>% 
+  ggplot(aes(x = tidytext::reorder_within(libelle_station_hydrobio, -var, within = libelle_indice),
+             y = var,
+             fill = libelle_indice)) +
   geom_col() +
-  facet_wrap(~libelle_indice, scales = "free_x") +
+  facet_wrap(~libelle_indice, scales = "free_y") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   labs(title = "Top 10% des stations les plus variables par indice",
        x = "Code Station",
-       y = "Variance")
+       y = "Variance") +
+  coord_flip()
 
 # Compter combien de fois chaque station est sélectionnée dans les top 10%
 stations_counts <- top10_var %>%

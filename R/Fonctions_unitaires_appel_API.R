@@ -31,4 +31,7 @@ f_get_ibd_departement <- function(codedep) {
 f_get_liste_taxo_minv <- function(cdstation){ 
       get_hydrobio_taxons(code_station_hydrobio=cdstation,code_support=13) 
 }
-
+#idem pour diatomées
+f_get_liste_taxo_diat <- function(cdstation){ 
+  get_hydrobio_taxons(code_station_hydrobio=cdstation,code_support=10) 
+}

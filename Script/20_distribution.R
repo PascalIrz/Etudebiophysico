@@ -8,8 +8,24 @@ load(file = "Data/10_donnees_pretraitees.rda")
 #################################################################################
 
 #Création de l'histogramme : donnees I2M2 et métriques 
-ggplot(clean_minv, aes(x = resultat_indice)) +
-  geom_histogram(bins = 30, fill = "#0072B2", color = "white", alpha = 0.7) +  # Histogramme avec 30 bins
+ggplot(clean_minv %>% 
+         mutate(classe_I2M2 = case_when(
+            resultat_indice > 0.665 ~ "Très bon",
+            resultat_indice > 0.433 ~ "Bon",
+            resultat_indice > 0.295 ~ "Moyen",
+            resultat_indice >= 0.148 ~ "Médiocre",
+            resultat_indice < 0.148  ~ "Mauvais" 
+           
+         )), 
+       aes(x = resultat_indice, fill = classe_I2M2)) +
+  geom_histogram(bins = 30, color = "white", alpha = 0.7) + 
+  scale_fill_manual(values = c(
+    "Très bon" = "blue",
+    "Bon"= "lightgreen",
+    "Moyen"="yellow",
+    "Médiocre"="orange",
+    "Mauvais"="red"
+  ))+
   facet_wrap(~ libelle_indice, scales = "free") +  # Un histogramme par métrique
   labs(title = "Distribution des valeurs des métriques de l'I2M2",
        x = "Valeur de la métrique",
@@ -63,7 +79,7 @@ ggplot(clean_ibd, aes (x=factor(annee), y = resultat_indice)) +
 
 # Distribution non logarithmique
 ggplot(parametres_physico, aes(x =resultat)) +
-  geom_histogram(bins = 50, fill = "#0072B2", color = "white", alpha = 0.7) +  # Histogramme avec 30 bins
+  geom_histogram(bins = 30, fill = "#0072B2", color = "white", alpha = 0.7) +  # Histogramme avec 30 bins
   facet_wrap(~ libelle_parametre, scales = "free") +
   labs(title = "Distribution des valeurs",
        x = "",

@@ -24,13 +24,15 @@ map(.x = functions,
 
 if (file.exists("Data/ListeTaxonomique.Rdata"))
 {
+  
   load("Data/ListeTaxonomique.Rdata")
-#} else
-#{
-  #liste_taxo <- map_df(dep,f_get_liste_taxo_minv)%>%
+} else
+{
+  liste_taxo <- map_df(dep,f_get_liste_taxo_minv) %>%
     
-  #save(liste_taxo,file="Data/ListeTaxonomique.Rdata")
+  save(liste_taxo,file="Data/ListeTaxonomique.Rdata")
 }
+
 
 
 #on fait le même tri : sup à 5 années de suivi

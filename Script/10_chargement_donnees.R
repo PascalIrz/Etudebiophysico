@@ -191,6 +191,7 @@ comptemulti_ibd <-
   filter(n > 5) %>% filter(code_indice == 5856) %>%
   select("code_station_hydrobio") 
 
+
 # On transforme le jeu de données 
 clean_ibd <-
   filter(

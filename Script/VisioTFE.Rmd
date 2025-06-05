@@ -1074,7 +1074,7 @@ fviz_contrib(resultat_acp_physico_2,choice="var", axes=3, top = 10)
 
 L'ACP sur les paramètres physico-chimiques met en évidence un axe F1 traduisant le gradient de pression et l'axe F2 le gradient d'oxygénation, résumant une bonne qualité des cours d'eau. 
 
-Les variables les mieux représentées sont les paramètres liés à l'oxygénation du milieu, les nutriments phosphorés et azotés. Les seules variables redondantes sont NO3 et T°.
+Les variables les mieux représentées sont les paramètres liés à l'oxygénation du milieu, les nutriments phosphorés et azotés. La variabilité des nitrates et de la température n'est pas "captée" par F1 et F2. On peut supposé que NO3 varie de manière indépendante des autres variables, ou porte une information non liée aux gradient F1 et F2. 
 
 Suite à l'ACP sur le jeux de données des paramètres physico-chimiques, les projections des stations sur les 5 dimensions de l'ACP sont récupérées. On peut ainsi cartographier le gradient ouest-est de dégradation de la qualité des masses d'eau en bretagne.
 

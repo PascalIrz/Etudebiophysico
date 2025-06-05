@@ -19,14 +19,14 @@ ibd_moy <- clean_ibd %>%
 
 periode_param <- tibble::tibble(
   code_parametre = c("1295", "1302", "1303", "1305","1339","1313", "1350","1841", "1335", "1433","1301", "1312","1311", "1340"),
-  periode = c("annuelle", "annuelle", "annuelle", "annuelle","annuelle", "annuelle","annuelle", "annuelle", "annuelle","annuelle","annuelle", "mars_decembre", "mars_decembre","janvier_mars")
+  periode = c("annuelle", "annuelle", "annuelle", "annuelle","annuelle", "annuelle","annuelle", "annuelle", "annuelle","annuelle","annuelle", "mai_decembre", "mai_decembre","janvier_mars")
 )
 
 mean_physico_periode <- mean_physico %>%
   left_join(periode_param, by = "code_parametre") %>%
   filter(
     (periode == "annuelle") |
-      (periode == "mars_decembre" & mois >= 3 & mois <= 12) |
+      (periode == "mai_decembre" & mois >= 5 & mois <= 12) |
       (periode == "janvier_mars" & mois >= 1 & mois <= 3)
   )
 

@@ -10,7 +10,7 @@ Classes_carayon <- function(Listediat){
     rbind(f_get_liste_taxo_diat('04171010')) 
   test$code_appel_taxon <- as.numeric(test$code_appel_taxon)#pour jointure future
 # fin test, a supprimer ensuite
-#prevoir peut ertre un filtre pour :
+#prevoir peut etre un filtre pour :
   # enlever les taxons < 10
   #enlever les taxons si < 5%
 

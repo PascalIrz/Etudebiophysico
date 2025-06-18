@@ -2,14 +2,13 @@ Classes_carayon <- function(Listediat){
   library(lubridate)# pour utiliser la fct year()
   library(dplyr)# a enlever si appelé par ailleurs
   library(hubeau)#a enlever si appelé par ailleurs
-#necessite library hubeau
+
 #entree : DF contenant les listes taxo :station, date, code taxon, abondance
 
 # pour tester la fct on se cree ici un DF
   test <- f_get_liste_taxo_diat('04171050') %>% 
-    rbind(f_get_liste_taxo_diat('04171010')) %>% 
-    mutate(annee=year(date_prelevement))
-  test$code_appel_taxon <- as.numeric(test$code_appel_taxon)
+    rbind(f_get_liste_taxo_diat('04171010')) 
+  test$code_appel_taxon <- as.numeric(test$code_appel_taxon)#pour jointure future
 # fin test, a supprimer ensuite
 #prevoir peut ertre un filtre pour :
   # enlever les taxons < 10
@@ -26,7 +25,7 @@ Classescarayon <- Listeavecmodalites %>%
   group_by(code_station_hydrobio,date_prelevement,parameter) %>%
   summarise(resultat=sum(resmod/sum(resultat_taxon)))
   
-  
+return(Classescarayon)
 
 }
 

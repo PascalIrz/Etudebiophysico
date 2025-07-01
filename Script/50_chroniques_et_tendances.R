@@ -41,7 +41,7 @@ Tendance_RIC <-filter(Tendances_multi,code_indice==8054)%>%select(code_station_h
 i2m2 <- filter(clean_minv,code_indice==7613)
 i2m2_et_trend <- left_join(i2m2,Tendance_i2m2,by="code_station_hydrobio")
 
-i2m2_et_trend <- i2m2_et_trend %>%
+ric_et_trend <- ric_et_trend %>%
   mutate(
     symbole = case_when(
       trend == "Increase" ~ "\u25B2",      # triangle vers le haut
@@ -51,7 +51,7 @@ i2m2_et_trend <- i2m2_et_trend %>%
     taille = rescale(abs(sens_slope), to = c(3, 8))  # ajuste selon ton besoin
   )
 
-i2m2_et_trend_sf <- st_as_sf(i2m2_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+ric_et_trend_sf <- st_as_sf(ric_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
 
 departement_breton <- departements_metro_geo %>% 
   filter(DEP %in% c("22","29","35","56")) %>% 
@@ -60,16 +60,16 @@ departement_breton <- departements_metro_geo %>%
 # Tracer la carte avec geom_sf
 ggplot() +
   geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
-  geom_sf(data = i2m2_et_trend_sf) +
+  geom_sf(data = ric_et_trend_sf) +
   geom_sf_text(
-    data = i2m2_et_trend_sf,
+    data = ric_et_trend_sf,
     aes(label = symbole, color = couleur, size = taille),
     show.legend = FALSE
   ) +
   scale_color_identity() +
   scale_size_identity() +
   theme_minimal() +
-  labs(title = "Tendance des indices I2M2 par station",
+  labs(title = "Tendance de la richesse par station",
        subtitle = "Taille = pente | Couleur = significativité (p < 0.05)",
        caption = "▲ : tendance croissante, ▼ : décroissante, ● : aucune")
 

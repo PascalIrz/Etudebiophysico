@@ -7,6 +7,7 @@ load(file = "Data/10_donnees_pretraitees.rda")
 load(file = "Data/70_choix_parametre.rda")
 load(file = "Data/80_donnees_globales_trans.rda")
 load(file = "Data/90_acp.rda")
+
 #################################################################################
 #                       I2M2 jeux de données gobal                                               #
 #################################################################################
@@ -24,10 +25,25 @@ corrplot.mixed(cor_matrix,upper="ellipse")
 #                       I2M2 et IBD inter-stations                                              #
 #################################################################################
 
+label_bio <- c("7613" = "I2M2",
+               "8054" = "RichesI2M2",
+               "8055" = "OvovivI2M2",
+               "8056" = "PolyvolI2M2",
+               "8057" = "ASPT",
+               "8058" = "H'",
+               "5856" = "IBD",
+               "1022" = "IPS"
+               
+)
+ 
 i2m2_ibd_matrix <- i2m2_ibd %>% 
   cor(method="spearman")
 corrplot.mixed(i2m2_ibd_matrix,upper="ellipse") 
 
+colnames(i2m2_ibd_matrix) <- label_bio
+rownames(i2m2_ibd_matrix) <- label_bio
+
+corrplot.mixed(i2m2_ibd_matrix, upper = "ellipse", tl.cex = 0.48)
   
 #################################################################################
 #                       Physico jeux de données global                                             #

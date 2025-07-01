@@ -1,7 +1,7 @@
 load(file = "Data/10_donnees_pretraitees.rda")
 library(tidyverse)
-library(dplyr)
 library(readxl)
+library(ggplot2)
 
 # Créer un tableau pour comparer le nombre d'année de données pour chacun des indices
 
@@ -69,8 +69,27 @@ proportion_ibd <- ibd_joint %>%
   )
 
 proportion_reseau <- bind_rows(proportion_i2m2, proportion_ibd) %>% 
-  select(code_indice, reseau, n, proportion)
+  mutate(
+    pourcentage = round(proportion * 100, 1),
+    code_indice = recode(code_indice, "7613" = "I2M2", "5856" = "IBD")
+  ) %>% 
+  select(code_indice, reseau, n, proportion, pourcentage)
 
+proportion_reseau <- proportion_reseau %>% 
+  mutate(
+    reseau = factor(reseau, levels = c("RRP", "RCS", "RCO", "RD", "NA"))
+  )
 
-#Carte pour visualiser quelles stations "tirent" les résultats richesse taxo
+ggplot(proportion_reseau, aes(x = code_indice, y = reseau, fill = pourcentage)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = paste0(pourcentage, "%")), color = "black", size = 4) +
+  scale_fill_gradient(low = "white", "high" = "darkgreen") +
+  labs(
+    title = "Pourcentage de stations par réseau et par indice",
+    x = "Indice",
+    y = "Réseau",
+    fill = "Pourcentage"
+  ) +
+  scale_y_discrete(limits = rev) +
+  theme_minimal()
 

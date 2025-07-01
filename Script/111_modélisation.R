@@ -1,4 +1,5 @@
 load(file = "Data/80_donnees_globales_trans.rda")
+load(file = "Data/10_donnees_pretraitees.rda")
 library(car)
 library(MASS)
 library(tidyverse)
@@ -31,11 +32,20 @@ df_global <- df_global %>%
          PO4 = `1433`,
          Corga = `1841`)
 
+stations_long1 <- clean_minv %>% 
+  dplyr::select(code_station_hydrobio,longitude) %>% 
+  distinct(code_station_hydrobio, longitude)
+
+df_global_longitude <- df_global %>% 
+  left_join(stations_long1, by = "code_station_hydrobio")
+
 #On garde seulement les variables numériques
 df_global_sans_stations <- df_global %>% 
   dplyr::select(I2M2:Corga) 
 
-
+df_global_sans_stations_longitude <- df_global_longitude %>% 
+  dplyr::select(I2M2:longitude) 
+  
 #On transforme les variables
 
 #Transformation logarithmique
@@ -67,34 +77,34 @@ model_normal_non_transformées <- glm(I2M2 ~
                                        O2dissous +
                                        NH4 +
                                        NO3 +
-                                       Ptot,
+                                       Ptot +
                                      data = df_global_sans_stations,
                                      family = gaussian(link = "identity"))
 summary(model_normal_non_transformées)
 model_simplifié <- MASS::stepAIC(model_normal_non_transformées)
 summary(model_simplifié)
-acf(residuals(model_simplifié, type = "pearson"))
-bptest(model_simplifié, ~fitted(model_normal_non_transformées) + I(fitted(model_normal_non_transformées)^2)) # test de white, variance constante
+#acf(residuals(model_simplifié, type = "pearson"))
+bptest(model_normal_non_transformées, ~fitted(model_normal_non_transformées) + I(fitted(model_normal_non_transformées)^2)) # test de white, variance constante
 
 plot(fitted(model_normal_non_transformées),residuals(model_normal_non_transformées,type="pearson"),
      xlab="valeurs prédites", ylab="résidus de pearson",
      main="résidus de pearson vs valeurs prédites")
 
-vif(model_simplifié)
+vif(model_normal_non_transformées)
 
 qqnorm(residuals(model_simplifié)) #normalité respectée 
 qqline(residuals(model_simplifié))
 hist(residuals(model_simplifié), breaks=30,
      main = "Distribution",
      xlab="Résidus")
-shapiro.test(residuals(model_simplifié)) #si pvalue < 0,05 ce n'est pas normal
+shapiro.test(residuals(model_normal_non_transformées)) #si pvalue < 0,05 ce n'est pas normal
 
 sjPlot::plot_model(model_simplifié, type = "pred",terms= ("NH4"), title = "Effets ammonium  sur l'I2M2")
 #sjPlot::plot_model(model_normal_non_transformées, type = "pred",terms= ("DBO5"), title = "Effets DBO5  sur l'I2M2")
 sjPlot::plot_model(model_simplifié, type = "pred",terms= ("NO3"), title = "Effets des nitrates  sur l'I2M2")
 sjPlot::plot_model(model_simplifié, type = "pred",terms= ("pH"), title = "Effets de Ptot  sur l'I2M2")
 
-plot(model_simplifié)
+plot(model_normal_non_transformées)
 
 #dist_cook <- cooks.distance(model_normal_non_transformées)
 #seuil_cook <- 4 / nrow(df_global_sans_stations)

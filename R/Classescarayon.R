@@ -5,15 +5,21 @@ Classes_carayon <- function(Listediat){
 
 #entree : DF contenant les listes taxo :station, date, code taxon, abondance
 
-# pour tester la fct on se cree ici un DF
-  #test <- f_get_liste_taxo_diat('04171050') %>% 
-   # rbind(f_get_liste_taxo_diat('04171010')) 
-  #test$code_appel_taxon <- as.numeric(test$code_appel_taxon)#pour jointure future
-# fin test, a supprimer ensuite
-#prevoir peut etre un filtre pour :
-  # enlever les taxons < 10
-  #enlever les taxons si < 5%
+############# test avec le DF d'Ilona (a supprimer)
+  # load('../Data/df_abondance_rel_diat.RData')
+  # Listediat <- df1_ligne1
+  ############################################
+  
   Listediat$code_appel_taxon <- as.numeric(Listediat$code_appel_taxon)#pour jointure future
+  #calcul abondance totale
+  # abondancetotale <- Listediat %>% select(1,3,6) %>% 
+  #   group_by(code_station_hydrobio,date_prelevement) %>% 
+  #   summarise(abondance_ttale=sum(resultat_taxon))
+  # test2 <- left_join(test,abondancetotale,by="code_station_hydrobio") %>% 
+  #   mutate(abondancerelative=resultat_taxon*100/abondance_ttale) %>% 
+  #   filter(abondancerelative>5) %>% unique(code_station_hydrobio,date_prelevement,code_appel_taxon)
+  # Listediat <- select(test2,1:7)
+  
   
 Tablecorrespondance <- readxl::read_xlsx(('Data/Correspondancetaxdiat.xlsx'))
 Carayontaxons <- readxl::read_xlsx(('data/carayonmodalites.xlsx')) %>% 
@@ -23,9 +29,9 @@ Listeavecmodalites <-  left_join(Listediat,Carayontaxons,by=c("code_appel_taxon"
   filter(!is.na(Class))
 ################ calcul des classes par prel
 Classescarayon <- Listeavecmodalites %>% 
-  mutate(resmod=resultat_taxon*Class) %>% 
-  group_by(code_station_hydrobio,date_prelevement,parameter) %>%
-  summarise(resultat=sum(resmod/sum(resultat_taxon)))
+  mutate(resmod=total_abondance*Class) %>% 
+  group_by(code_station_hydrobio,annee,parameter) %>%
+  summarise(resultat=sum(resmod/sum(total_abondance)))
   
 return(Classescarayon)
 

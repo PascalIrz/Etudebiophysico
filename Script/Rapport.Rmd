@@ -440,7 +440,7 @@ SPATIALE
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 13, fig.height=10, fig.align = 'center', fig.cap= " Fig.5 : Evolutions des notes I2M2 de chaque stations au cours du temps, autrice : Ilona Garcia" }
 
-remotes::install_github("MaelTheuliere/COGiter")
+#remotes::install_github("MaelTheuliere/COGiter")
 library(COGiter)
 load(file = "../Data/10_donnees_pretraitees.rda")
 load(file = "../Data/50_chroniques_et_tendance.rda")
@@ -498,7 +498,7 @@ ggplot() +
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 13, fig.height=10, fig.align = 'center', fig.cap= " Fig.6 : Evolutions des notes IBD de chaque stations au cours du temps, autrice : Ilona Garcia"}
 
-remotes::install_github("MaelTheuliere/COGiter")
+#remotes::install_github("MaelTheuliere/COGiter")
 library(COGiter)
 load(file = "../Data/10_donnees_pretraitees.rda")
 load(file = "../Data/50_chroniques_et_tendance.rda")
@@ -1739,7 +1739,7 @@ library(DT)
 res_large <- res %>% 
   pivot_wider(names_from = variable,
               values_from = coef)
-data.table(res_large)
+datatable(res_large)
 ```
 
 Tous les indices et métriques réagissent à l'augmentation de l'ammonium

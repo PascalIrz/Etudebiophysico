@@ -33,5 +33,17 @@ f_get_liste_taxo_minv <- function(cdstation){
 }
 #idem pour diatomées
 f_get_liste_taxo_diat <- function(cdstation){ 
+<<<<<<< HEAD
   get_hydrobio_taxons(code_station_hydrobio=cdstation,code_support=10) 
+=======
+  get_hydrobio_taxons(code_station_hydrobio=cdstation,code_support=10) %>% 
+    select(code_station_hydrobio,
+           libelle_station_hydrobio,
+           date_prelevement,
+           code_appel_taxon,
+           libelle_appel_taxon,
+           resultat_taxon,
+           code_qualification
+           )
+>>>>>>> 13c8b35e997aa090ceaeb8e620516e5e03629d21
 }

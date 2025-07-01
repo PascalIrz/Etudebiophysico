@@ -268,7 +268,7 @@ library(sf)
 library(dplyr)
 library(ggspatial)
 library(ggplot2)
-remotes::install_github("MaelTheuliere/COGiter")
+#remotes::install_github("MaelTheuliere/COGiter")
 library(COGiter)
 
 p90 <- parametres_physico %>% 

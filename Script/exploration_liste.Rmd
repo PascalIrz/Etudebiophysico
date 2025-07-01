@@ -1,0 +1,800 @@
+---
+title: "Exploration liste taxonomique"
+output: html_document
+date: "2025-06-18"
+---
+
+Liste taxonomique macro-invertébrés :
+
+-   272 taxons différents
+-   29 groupes taxonomiques différents
+
+Voici ce qui a été fait :
+
+-   abondance de chaque taxons (pour chaque station et année)
+
+-   abondance relative de chaque taxon (pour chaque station et année)
+
+-   abondance totale (pour chaque station et année)
+
+-   abondance totale moyenne
+
+-   richesse spécifique (pour chaque station et année)
+
+-   richesse moyenne
+
+-   contribution relative des ordres à la richesse (pour chaque station et année)
+
+-   contribution moyenne par ordre
+
+-   cartes des tendances (abondance totale, richesse taxonomique, abondances relatives EPT, Diptères, Gammares, Chironomes)
+
+## 1) Abondance
+
+Elle peut augmenter ou diminuer en cas de perturbation.
+
+L'abondance varie entre 2500 et 7000 individus pour la plupart des stations. Une dizaine de stations oscillent entre 2500 et 20000 individus. Peut-être qu'il serait intéressant de les cartographier à l'avenir.
+
+(ce n'était pas lisible en mettant les noms des stations désolée).
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=20, fig.height=8, fig.align='center', fig.cap= "Fig.1 : Evolution de l'abondance totale par station"}
+
+library(ggplot2)
+library(tidyverse)
+
+load(file="../Data/liste_taxon_ajout.Rdata")
+
+abondance_par_station_annee <- liste_taxon_ajout %>% 
+  group_by(code_station_hydrobio, annee, code_appel_taxon, GroupTaxo, longitude, latitude) %>% 
+  summarise(abondance = n(), .groups = "drop")
+
+
+#On calcule l'abondance relative 
+
+abondance_relative <- abondance_par_station_annee %>% 
+  group_by(code_station_hydrobio, annee) %>% 
+  mutate(total_abondance = sum(abondance, na.rm = TRUE),
+  abondance_rel = abondance / total_abondance) %>% 
+  ungroup()
+
+abondance_relative <- abondance_relative %>% 
+  mutate(pourcentage = 100 * abondance / total_abondance)
+
+ggplot(abondance_relative, aes(x = annee, y = total_abondance, color =code_station_hydrobio, group = code_station_hydrobio)) + geom_line() + geom_point() +
+  labs(title = "Evolution de l'abondance totale par station",
+       x = "Année",
+       y = "abondance",
+       color = "station") +
+  scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
+  theme_minimal()
+
+
+```
+
+```{r,  echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.2 : Evolution annuelle de l'abondance totale moyenne"}
+
+abondance_relative %>%
+  distinct(code_station_hydrobio, annee, total_abondance) %>%
+  group_by(annee) %>%
+  summarise(abondance_moy = mean(total_abondance, na.rm = TRUE)) %>%
+  ggplot(aes(x = annee, y = abondance_moy)) +
+  geom_line(color = "blue") +
+  geom_point(color = "blue") +
+  labs(
+    title = "Evolution annuelle de l'abondance totale moyenne",
+    x = "Année", y = "Abondance totale moyenne"
+  ) +
+  scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
+  theme_minimal()
+```
+
+L'abondance totale a chuté drastiquement en 2020. D'après le graphique précédent, cela pourrait s'expliquer par le fait que moins de stations ont contribué à une augmentation de l'abondance moyenne à partir de cette année-là.
+
+Idée de ce qu'il y a pu se passer ? (régime hydrologique, pollution ?)
+
+Questionnement : est-ce qu'il s'agit d'un taxon en particulier ? Un groupe ? Baisse générale ?
+
+### 1.1) Evolution de l'abondance des EPT
+
+Une fois le pourcentage d'EPT par station et par année calculé via l'abondance, nous en déterminons la valeur moyenne et traçons l'évolution.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.3 : Evolution annuelle du % EPT moyen"}
+
+ept_par_station_annee <- abondance_relative %>%
+  filter(GroupTaxo %in% c("Ephemeroptera", "Plecoptera", "Trichoptera")) %>%
+  group_by(code_station_hydrobio, annee) %>%
+  summarise(abondance_EPT = sum(abondance, na.rm = TRUE), .groups = "drop")
+
+abondance_EPT <- abondance_relative %>%
+  left_join(ept_par_station_annee, by = c("code_station_hydrobio", "annee")) %>%
+  mutate(pourcentage_EPT = 100 * abondance_EPT / total_abondance)
+
+abondance_EPT %>%
+  distinct(code_station_hydrobio, annee, pourcentage_EPT) %>%
+  group_by(annee) %>%
+  summarise(pourcentage_EPT_moy = mean(pourcentage_EPT, na.rm = TRUE)) %>%
+  ggplot(aes(x = annee, y = pourcentage_EPT_moy)) +
+  geom_line(color = "#D55E00") +
+  geom_point(color = "#D55E00") +
+  labs(
+    title = "Évolution annuelle du % EPT moyen",
+    x = "Année", y = "Pourcentage EPT moyen"
+  ) +
+  scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
+  theme_minimal()
+
+```
+
+Le pourcentage moyen d'individus EPT varie peu au cours du temps, se situant entre 10 % et 11,7 % du peuplement total. Des augmentations et des baisses sont observées, mais elles restent de faible ampleur.
+
+### 1.2) Evolution de l'abondance des Diptères
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.4 : Evolution annuelle du % Diptères moyen" }
+
+dipt_par_station_annee <- abondance_relative %>%
+  filter(GroupTaxo == "Diptera") %>%
+  group_by(code_station_hydrobio, annee) %>%
+  summarise(abondance_dipt = sum(abondance, na.rm = TRUE), .groups = "drop")
+
+abondance_dipt <- abondance_relative %>%
+  left_join(dipt_par_station_annee, by = c("code_station_hydrobio", "annee")) %>%
+  mutate(pourcentage_dipt = 100 * abondance_dipt / total_abondance)
+
+abondance_dipt %>%
+  distinct(code_station_hydrobio, annee, pourcentage_dipt) %>%
+  group_by(annee) %>%
+  summarise(pourcentage_dipt_moy = mean(pourcentage_dipt, na.rm = TRUE)) %>%
+  ggplot(aes(x = annee, y = pourcentage_dipt_moy)) +
+  geom_line(color = "#D55E00") +
+  geom_point(color = "#D55E00") +
+  labs(
+    title = "Évolution annuelle du % Diptères moyen",
+    x = "Année", y = "Pourcentage Diptère moyen"
+  ) +
+  scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
+  theme_minimal()
+
+
+```
+
+De même, le pourcentage de Diptères varie faiblement. On constate tout de même que le pourcentage est très élevé contrairement aux EPT (mais ceci peut être biaisé par le fait que les Diptères prennent en compte 150 000 taxons, contrairement aux EPT qui comptabilisent à eux 3 environ 16000 taxons).
+
+### 1.3) Evolution de l'abondance des Gammares
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.5 : Evolution annuelle du % Gammares moyen"}
+gam_par_station_annee <- abondance_relative %>%
+  filter(code_appel_taxon %in% c("892","888","887") %>%
+  group_by(code_station_hydrobio, annee) %>%
+  summarise(abondance_gam = sum(abondance, na.rm = TRUE), .groups = "drop")
+
+abondance_gam <- abondance_relative %>%
+  left_join(gam_par_station_annee, by = c("code_station_hydrobio", "annee")) %>%
+  mutate(pourcentage_gam = 100 * abondance_gam / total_abondance)
+
+abondance_gam %>%
+  distinct(code_station_hydrobio, annee, pourcentage_gam) %>%
+  group_by(annee) %>%
+  summarise(pourcentage_gam_moy = mean(pourcentage_gam, na.rm = TRUE)) %>%
+  ggplot(aes(x = annee, y = pourcentage_gam_moy)) +
+  geom_line(color = "#D55E00") +
+  geom_point(color = "#D55E00") +
+  labs(
+    title = "Évolution annuelle du % Gammare moyen",
+    x = "Année", y = "Pourcentage Gammare moyen"
+  ) +
+  scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
+  theme_minimal()
+```
+
+Les Gammares varient peu dans le temps à l'échelle régionale, et représentent un faible pourcentage de la communauté.
+
+### 1.4) Evolution de l'abondance des Chironomes
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.6 : Evolution annuelle du % Chironomes moyen" }
+chiro_par_station_annee <- abondance_relative %>%
+  filter(code_appel_taxon == "807") %>%
+  group_by(code_station_hydrobio, annee) %>%
+  summarise(abondance_chiro = sum(abondance, na.rm = TRUE), .groups = "drop")
+
+abondance_chiro <- abondance_relative %>%
+  left_join(chiro_par_station_annee, by = c("code_station_hydrobio", "annee")) %>%
+  mutate(pourcentage_chiro = 100 * abondance_chiro / total_abondance)
+
+abondance_chiro %>%
+  distinct(code_station_hydrobio, annee, pourcentage_chiro) %>%
+  group_by(annee) %>%
+  summarise(pourcentage_chiro_moy = mean(pourcentage_chiro, na.rm = TRUE)) %>%
+  ggplot(aes(x = annee, y = pourcentage_chiro_moy)) +
+  geom_line(color = "#D55E00") +
+  geom_point(color = "#D55E00") +
+  labs(
+    title = "Évolution annuelle du % Chironomes moyen",
+    x = "Année", y = "Pourcentage Chironomes moyen"
+  ) +
+  scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
+  theme_minimal()
+```
+
+Leur proportion moyenne annuelle n'est pas stable et représentent une part importante de la communauté.
+
+### 1.5) Rapport EPT/Chironomes + EPT
+
+Le rapport devrait diminuer à mesure que les perturbations augmentent (plus de Chironomes et moins d'EPT).
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.7 : Evolution annuelle du rapport EPT/Chironomes" }
+ratio_ept_chiro <- abondance_relative %>%
+  mutate(groupe = case_when(
+    GroupTaxo %in% c("Ephemeroptera", "Plecoptera", "Trichoptera") ~ "EPT",
+    code_appel_taxon == "807" ~ "Chironomidae" ,
+    TRUE ~ "autre"
+  )) %>%
+  filter(groupe %in% c("EPT", "Chironomidae")) %>%
+  group_by(code_station_hydrobio, annee, groupe) %>%
+  summarise(abondance = sum(abondance, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(names_from = groupe, values_from = abondance, values_fill = 0) %>%
+  mutate(indice_EPT_chiro = (EPT / (EPT + Chironomidae)) * 100)
+
+ratio_ept_chiro %>%
+  distinct(code_station_hydrobio, annee, indice_EPT_chiro) %>%
+  group_by(annee) %>%
+  summarise(moyenne_rapport = mean(indice_EPT_chiro, na.rm = TRUE)) %>%
+  ggplot(aes(x = annee, y = moyenne_rapport)) +
+  geom_line(color = "#D55E00") +
+  geom_point(color = "#D55E00") +
+  labs(title = "Évolution annuelle du rapport EPT/Chironomes",
+       x = "Année", y = "Rapport EPT/chironome moyen") +
+  scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
+  theme_minimal()
+
+```
+
+Or, ici une diminution générale est constatée depuis 2018.
+
+## 2) Richesse taxonomique
+
+Cela indique s'il y a un changement au niveau de la structure de la communauté (remplacement de taxons sensibles par des taxons tolérantes par exemple).
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=20, fig.height=7, fig.align='center', fig.cap= "Fig.8 : Evolution de la richesse par station"}
+
+richesse_taxo <- liste_taxon_ajout %>% 
+  group_by(code_station_hydrobio, annee, longitude, latitude) %>%
+  summarise(nb_taxons = n_distinct(code_appel_taxon), .groups = "drop")
+
+ggplot(richesse_taxo, aes(x = annee, y = nb_taxons, color = code_station_hydrobio,
+                          group = code_station_hydrobio)) + geom_line() + geom_point() +
+  labs(title = "Evolution de la richesse par station",
+       x = "Année",
+       y = "richesse",
+       color = "station") +
+  scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
+  theme_minimal()
+
+
+```
+
+Globalement la richesse taxonomique varie entre 20 et 80 taxons différents. (pour les même raison que le premier graphique, je n'ai pas pu mettre les noms)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.9 : Evolution annuelle de la richesse taxonomique moyenne"}
+
+richesse_moyenne_annuelle <- richesse_taxo %>% 
+  group_by(annee) %>% 
+  summarise(richesse_moyenne = mean(nb_taxons, na.rm = TRUE),
+            .groups = "drop")
+ggplot(richesse_moyenne_annuelle, aes(x = annee, y = richesse_moyenne)) +
+  geom_line(color = "blue" ) +
+  geom_point(color = "blue") +
+  labs(title = "Evolution annuelle de la richesse taxonomique moyenne") +
+  scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
+  theme_minimal()
+
+```
+
+Globalement, la richesse taxonomique moyenne a diminué depuis 2013 (55 à 47 taxons). On peut supposer une diminution du nombre de taxons peuplant certaines stations au cours du temps (compétition face aux taxons tolérants telles que les chironomes et autres diptères ?).
+
+Il est intéressant de connaître les ordres contribuant le plus à la richesse (en gardant en tête l'ordre de grandeur du nombre de taxons compris dans chaque ordre).
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.10 : Contribution des différents ordres à la richesse taxonomique" }
+
+richesse_taxo_ordre <- liste_taxon_ajout %>% 
+  group_by(code_station_hydrobio, annee, GroupTaxo) %>% 
+  summarise(richesse_ordre = n_distinct(code_appel_taxon), .groups = "drop") %>% 
+  ungroup()
+
+# Contribution relative des ordres à la richesse 
+ contribution_ordre <- richesse_taxo_ordre %>% 
+   left_join(richesse_taxo, by = c("code_station_hydrobio", "annee")) %>% 
+   mutate(pourcentage = 100 * richesse_ordre /nb_taxons)
+ 
+# Contribution moyenne par ordre
+
+ordre_contribution_moyenne <- contribution_ordre %>% 
+  group_by(GroupTaxo) %>% 
+  summarise(contribution_moyenne = mean(pourcentage, na.rm = TRUE),
+            nombre_occurences = n()) %>% 
+  arrange(desc(contribution_moyenne))
+
+# Graphique contribution moyenne des ordres
+
+ggplot(ordre_contribution_moyenne, aes(x = reorder(GroupTaxo, -contribution_moyenne), y = contribution_moyenne)) +
+  geom_col(fill = "darkgreen") +
+  labs(title = "Contribution moyenne des ordres à la richesse",
+       x = "Ordre", y = "Contribution moyenne (%)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+Les Trichoptères constituent le groupe le plus contributif à la richesse, suivis par les Coléoptères et les Diptères. Ces derniers groupes se caractérisent par un grand nombre de taxons, contrairement aux Trichoptères. Les Éphéméroptères contribuent également à cette richesse.
+
+## 3) Analyse spatiale des tendances temporeles des différents indicateurs
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.11 : Evolution de l'abondance des Trichoptères en Bretagne"}
+load("../Data/liste_taxon_ajout.Rdata")
+load("../Data/df_taxo.rda")
+source(file = "../R/mk_st_by_group.R")
+source(file = "../R/Mann_kendall_div.R")
+
+#Librairies
+library(tidyverse)
+library(trend)
+library(sf)
+library(mapview)
+library(scales)
+library(ggplot2)
+library(COGiter)
+library(cowplot)
+library(DT)
+library(httr)#utiliser POST pour calcul i2m2 à partir du SEEE
+library(trend)
+library(ggrepel)
+library(mapview)
+library(lubridate)
+library(httr)
+library(ggspatial)
+
+# On charge les fonctions utiles
+functions <- list.files(path = "R",
+                        pattern = ".R$",
+                        full.names = TRUE)
+
+map(.x = functions,
+    .f = source)
+
+
+Tendances_tax_groupe <-mk_st_by_group(abondance_relative,abondance_rel,GroupTaxo,GroupTaxo, code_station_hydrobio)
+Tendances_tax <- mk_st_by_group(abondance_relative,abondance_rel,code_appel_taxon,code_appel_taxon, code_station_hydrobio)
+Tendances_ept_eph <- filter(Tendances_tax_groupe, GroupTaxo == "Ephemeroptera") %>% dplyr::select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendances_ept_ple <- filter(Tendances_tax_groupe, GroupTaxo == "Plecoptera") %>% dplyr::select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendances_ept_tri <- filter(Tendances_tax_groupe, GroupTaxo == "Trichoptera") %>% dplyr::select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_dipt <- filter(Tendances_tax_groupe, GroupTaxo == "Diptera") %>% dplyr::select(code_station_hydrobio, trend, sens_slope, mk_pvalue)
+Tendance_chiro <- filter(Tendances_tax, code_appel_taxon == "807") %>% dplyr::select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_gammare <- filter(Tendances_tax, code_appel_taxon %in% c("892","888","887")) %>% dplyr::select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_richesse <-mk_st_by_group(richesse_taxo,nb_taxons, nb_taxons, code_station_hydrobio)
+Tendance_abondance_tot <- mk_st_by_group(abondance_relative, total_abondance, total_abondance, code_station_hydrobio)
+
+ept <- abondance_relative %>% 
+  filter(GroupTaxo == "Trichoptera")
+
+ept_et_trend <- left_join(ept,Tendances_ept_tri,by="code_station_hydrobio")
+
+ept_et_trend_sf <- st_as_sf(ept_et_trend, coords = c("longitude", "latitude"), crs = 4326)
+
+departement_breton <- departements_metro_geo %>% 
+  filter(DEP %in% c("22","29","35","56")) %>% 
+  st_transform(crs = 4326)
+
+ept_et_trend_sf <- ept_et_trend_sf %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      # triangle vers le haut
+      trend == "Decrease" ~ "\u25BC",    # triangle vers le bas
+                          
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    
+   taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+  )
+  )
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = ept_et_trend_sf) +
+  geom_sf_text(
+    data = ept_et_trend_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : augmentation, ▼ : baisse, ● : aucun changement")
+
+
+
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.12 : Evolution de l'abondance des Ephémeroptera en Bretagne" }
+
+ept_eph <- abondance_relative %>% 
+  filter(GroupTaxo == "Ephemeroptera")
+
+ept_et_trend_eph <- left_join(ept_eph,Tendances_ept_eph,by="code_station_hydrobio")
+
+ept_et_trend_eph_sf <- st_as_sf(ept_et_trend_eph, coords = c("longitude", "latitude"), crs = 4326 )
+
+ept_et_trend_eph_sf <- ept_et_trend_eph_sf %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      # triangle vers le haut
+      trend == "Decrease" ~ "\u25BC",    # triangle vers le bas
+                          
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    
+   taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+  )
+  )
+
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = ept_et_trend_eph_sf) +
+  geom_sf_text(
+    data = ept_et_trend_eph_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : augmentation, ▼ : baisse, ● : aucun changement")
+
+
+
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.13 : Evolution de l'abondance des Plecoptera en Bretagne" }
+
+ept_ple <- abondance_relative %>% 
+  filter(GroupTaxo == "Plecoptera")
+ept_et_trend_ple <- left_join(ept_ple,Tendances_ept_ple,by="code_station_hydrobio")
+ept_et_trend_ple_sf <- st_as_sf(ept_et_trend_ple, coords = c("longitude", "latitude"), crs = 4326 )
+
+
+ept_et_trend_ple_sf <- ept_et_trend_ple_sf %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      # triangle vers le haut
+      trend == "Decrease" ~ "\u25BC",    # triangle vers le bas
+                          
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    
+   taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+  )
+  )
+
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = ept_et_trend_ple_sf) +
+  geom_sf_text(
+    data = ept_et_trend_ple_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : augmentation, ▼ : baisse, ● : aucun changement")
+
+
+
+
+
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.14 : Evolution de l'abondance des Diptera en Bretagne" }
+dipt <- abondance_relative %>% 
+  filter(GroupTaxo == "Diptera")
+dipt_et_trend <- left_join(ept,Tendance_dipt,by="code_station_hydrobio")
+dipt_et_trend_sf <- st_as_sf(dipt_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+
+dipt_et_trend_sf <- dipt_et_trend_sf %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      # triangle vers le haut
+      trend == "Decrease" ~ "\u25BC",    # triangle vers le bas
+                          
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    
+   taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+  )
+  )
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = dipt_et_trend_sf) +
+  geom_sf_text(
+    data = dipt_et_trend_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : augmentation, ▼ : baisse, ● : aucun changement")
+
+
+
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.15 : Evolution de l'abondance des Chironomes en Bretagne"  }
+chiro <- abondance_relative %>% 
+  filter(code_appel_taxon == "807")
+chiro_et_trend <- left_join(chiro, Tendance_chiro, by = "code_station_hydrobio")
+chiro_et_trend_sf <- st_as_sf(chiro_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+
+chiro_et_trend_sf <- chiro_et_trend_sf %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      # triangle vers le haut
+      trend == "Decrease" ~ "\u25BC",    # triangle vers le bas
+                          
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    
+   taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+  )
+  )
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = chiro_et_trend_sf) +
+  geom_sf_text(
+    data = chiro_et_trend_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : augmentation, ▼ : baisse, ● : aucun changement")
+
+
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.16 : Evolution de l'abondance des Gammares en Bretagne" }
+
+gam <- abondance_relative %>% 
+  filter(code_appel_taxon %in% c("892","888","887"))
+gam_et_trend <- left_join(gam,Tendance_gammare, by = "code_station_hydrobio")
+gam_et_trend_sf <- st_as_sf(gam_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+
+gam_et_trend_sf <- gam_et_trend_sf %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      # triangle vers le haut
+      trend == "Decrease" ~ "\u25BC",    # triangle vers le bas
+                          
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    
+   taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+  )
+  )
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = gam_et_trend_sf) +
+  geom_sf_text(
+    data = gam_et_trend_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : augmentation, ▼ : baisse, ● : aucun changement")
+
+
+
+```
+
+De manière générale, les groupes et taxons étudiés présentent une faible variabilité temporelle. Cela n'indique pas s'ils sont présents en faible nombre ou pas dans les stations.
+
+Les changements majeurs observés concernent principalement les Chironomes, qui montrent plutôt une tendance à l'augmentation.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.17 : Evolution de la richesse taxonomique en Bretagne"}
+
+richesse_et_trend <- left_join(richesse_taxo, Tendance_richesse, by="code_station_hydrobio")
+
+richesse_sf <- st_as_sf(richesse_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+
+richesse_sf <- richesse_sf %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      # triangle vers le haut
+      trend == "Decrease" ~ "\u25BC",    # triangle vers le bas
+                          
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    
+   taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+  )
+  )
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = richesse_sf) +
+  geom_sf_text(
+    data = richesse_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : augmentation, ▼ : baisse, ● : aucun changement")
+
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Fig.18 : Evolution de l'abondance totale en Bretagne"}
+
+abondance_et_trend <- left_join(abondance_relative, Tendance_abondance_tot, by="code_station_hydrobio")
+
+abondance_sf <- st_as_sf(abondance_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+
+abondance_sf <- abondance_sf %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      # triangle vers le haut
+      trend == "Decrease" ~ "\u25BC",    # triangle vers le bas
+                          
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    
+   taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+  )
+  )
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = abondance_sf) +
+  geom_sf_text(
+    data = abondance_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : augmentation, ▼ : baisse, ● : aucun changement")
+
+
+```
+
+L'abondance totale suit un gradient inverse à celui de la qualité. Contrairement à l'abondance, la richesse taxonomique, quant à elle, diminue sur un nombre plus restreint de stations, mais de manière plus étendue sur le territoire.
+
+Dans la partie est de la région, la richesse taxonomique ne montre aucune tendance significative. Cependant, on observe de fortes augmentations de l'abondance totale. Cette divergence suggère que la structure globale de la communauté (le nombre de taxons présentes) reste relativement stable, mais que certains taxons connaissent une importante augmentation de leur nombre d'individus. (taxons polyvoltins ?). Cela pourrait indiquer une dominance de certain taxons particulièrement adaptées ou tolérantes aux conditions locales, sans pour autant entraîner une perte ou un gain de taxons (ou alors remplacement). De plus, l'état des cours d'eau étant relativement stable, cela aide à l'établissement des taxons.
+
+Dans les prochains jours, je vais comparer les tendances "taxo" avec les tendances "indices et métriques".
+
+Vous trouverez ci-dessous les stations présentant une tendance significative en termes de richesse et d'abondance.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Tab.1 : Récapitulatif des stations où l'abondance totale augmente" }
+
+abondance_sf_inc <- abondance_sf %>% 
+  filter(trend == "Increase")
+abondance_sf_dec <- ept_et_trend_sf %>% 
+  filter(trend == "Decrease")
+richesse_sf_inc <- richesse_sf %>% 
+  filter(trend == "Increase")
+richesse_sf_dec <- richesse_sf %>% 
+  filter(trend == "Decrease")
+
+datatable(abondance_sf_inc)
+
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Tab.2 : Récapitulatif des stations où l'abondance totale baisse"}
+datatable(abondance_sf_dec)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Tab.3 : Récapitulatif des stations où la richesse augmente" }
+datatable(richesse_sf_inc)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=5, fig.height=5, fig.align='center', fig.cap= "Tab.4 : Récapitulatif des stations où la richesse baisse"}
+datatable(richesse_sf_dec)
+```
+
+## Comparaison avec les cartes d'indices et métriques
+
+Au niveau de la station Rau de Penerf à SURZUR, la note d'I2M2 baisse ainsi que la métrique de richesse taxonomique (et la richesse taxonomique calculée à partir des listes taxonomiques), l'abondance totale. La station est notée comme "Bonne" vis à vis de l'I2M2.
+
+Au niveau de la station Loisance à Saint-Ouen-La-Rouerie, notée "Très bonne" (la note a augmenté), la métrique d'ASPT augmente ainsi que la richesse taxonomique (liste taxo) et l'abondance totale.
+
+La valière à erbree, connaît une baisse de sa note I2M2 et une baisse des Diptères. (classée Moyen).
+
+L'elorn à plouedern (Bon état mais diminution de la note), a également sa métrique de polyvoltinisme qui baisse et de l'abondance totale.
+
+Sur la station classée TB, une diminution de la richesse ainsi que de l'abondance totale est observée.
+
+trieu à plouec du trieu = diminution ovoviviparité + diminution abondance tot (moyen).
+
+Leguer à ploubezgue = baisse richesse taxo + abondance tot
+
+Semnon à eance (Mauvais + pas de tendance I2M2)= abondance augmente et richesse aussi

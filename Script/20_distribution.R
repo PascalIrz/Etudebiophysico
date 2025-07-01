@@ -46,10 +46,18 @@ labs(title = "Distribution des valeurs des métriques de l'I2M2",
 
 
 # Box plot
+
+station_annee <- clean_minv %>% 
+  group_by(annee) %>% 
+  summarise(n = n_distinct(code_station_hydrobio))
+
 ggplot(clean_minv, aes (x=factor(annee), y = resultat_indice)) +
   geom_boxplot() +
+  geom_text(data = station_annee,
+            aes(x = as.factor(annee), y=0, label = paste0("n=",n)),
+            vjust = 0.5, size = 3, color = "blue") +
   facet_wrap(~ code_indice, scales = "free_y") +
-  labs(x = "Mois", y= "Valeur", title ="Distribution des métriques par année") +
+  labs(x = "Année", y= "Valeur", title ="Distribution des métriques par année") +
   theme_bw()
 
 #################################################################################
@@ -139,3 +147,13 @@ ggplot(parametres_physico, aes (x=factor(mois), y = resultat)) +
   labs(x = "Mois", y= "Valeur", title ="Distribution des parametres par mois") +
   theme_bw()
 
+
+donnees_freq <- parametres_physico %>% 
+  mutate(
+    annee = year(date_prelevement),
+    mois = month(date_prelevement)
+  ) %>% 
+  group_by(code_station_hydrobio, annee, code_parametre) %>% 
+  summarise (nb_mesures = n(), .groups = "drop")
+
+  

@@ -11,6 +11,37 @@ editor_options:
 
 # Présentation de la structure
 
+## a) Présentation générale
+
+L'Office Français de la Biodiversité (OFB) est un établissement public
+français créé le 1er janvier 2020. L'Office National de la Chasse et de
+la Faune Sauvage (ONCFS), créé en 2000, s'est uni à l'Agence Française
+de la Biodiversité, créé en 2017. L'OFB met en oeuvre des actions visant
+à la protection et la à restauration de la biodiversité terrestre et
+marine.
+
+Les agents s'engagent dans la lutte contre les cinq causes majeures de
+la dégradation de la biodiversité : la destruction et la fragmentation
+des milieux naturels, les pollutions, la surexploitation des ressources,
+l'introduction d'espèces exotiques envahissantes et les conséquences du
+changement climatique (IPBES,2019). Les services de l'OFB s'articulent
+également autour des missions complémentaires suivantes : la police de
+l'environnement; la connaissance/recherche et l'expertise sur les
+espèces, leurs milieux et leurs usages; l'appui à la mise en oeuvre des
+politiques publique; la gestion et l'appui aux gestionnaires d'espaces
+naturels et pour terminer l'appui aux acteurs et à la mobilisation de la
+société.
+
+## b) OFB Bretagne
+
+La Direction Régionale Bretagne de l'OFB regroupe 130 agents répartis
+sur toute la région. Trois services sont établis dans ses locaux :
+"Appui aux acteurs et mobilisation des territoires", "Police" et
+"Connaissance". Le présent stage se déroule dans le service
+Connaissance, sous la tutelle d'Yves-Marie (chef adjoint du service
+connaissance) , Thibault Vigneron (chef du service connaissance) et
+Pascal Irz (ingénieur connaissance).
+
 # Introduction
 
 # Contexte général
@@ -35,13 +66,13 @@ A cela s’ajoute la pollution chimique, issue de rejets d’origines
 multiples. Elles peuvent être diffuses ou ponctuelles. En Bretagne,
 seulement 51% des cours d’eau sont en bon état chimique, en ne prenant
 en compte que les 53 substances prioritaires non ubiquistes. D’après les
-dernières données, 59% des masses d’eau sont concernés par les
+données de 2022 de l'OEB, 59% des masses d’eau sont concernés par les
 pollutions diffuses, dont les pesticides, phosphore et nitrates
 respectivement 57%, 15% et 12% (chiffres clés de l’eau en Bretagne,
 2023).
 
-ntre Nitrates et autres formes de l’azote, PTOT Micro-polluants ? Parler
-du changement climatique ?
+**[Parler des interactions entre Nitrates et autres formes de l’azote,
+PTOT ? ] [Micro-polluants ?] [Parler du changement climatique ?]**
 
 L’état d’un milieu aquatique peut s’appréhender sous différents angles,
 notamment écologique et biologique. C’est dans cette optique qu’a été
@@ -50,25 +81,26 @@ européen et le conseil des ministres, intégrant la notion de
 bio-indication dans la méthodologie d’évaluation de l’état des milieux
 aquatiques. La DCE vise à prévenir et réduire la pollution des eaux, à
 promouvoir leur utilisation durable et améliorer l'état des écosystèmes
-aquatiques. Elle constitue un cadre destiné à harmoniser la gestion et
-la protection des eaux européennes. Les états membres sont dans
-l’obligation d’évaluer la qualité écologique de leurs masses d’eau et de
-restaurer ou maintenir leur bon état écologique d’ici 2027. Les éléments
-de qualité biologiques (EQB) retenues sont : les poissons, les
-macrophytes, les macro-invertébrés et les diatomées. Cette évaluation de
-l’état d’un milieu est permise grâce à une classifications qui
-distingues les cours d’eau de références, définis comme ceux présentant
-les caractéristiques attendues en l’absence de pression humaines
-(concept de « conditions de référence » ; Bailey et al. 1998 et les
-cours d’eau altérés. La notion d’écart à un état de référence est
-intégrée dans le calcul des indices biologiques, et par conséquent dans
-l’évaluation de l’état écologique des masses d’eau, ils seront alors
-traduits en ratios de qualités biologiques. Les stations sont classées
-de la manière suivante : réseau de référence pérenne (RRP), réseau de
-contrôle de surveillance (RCS), réseau de contrôle opération (RCO). En
-Bretagne, les trois-quarts des masses d’eau sont déclassés en raison de
-leur mauvaise qualité biologique. Les diatomées sont le deuxième groupe
-de bio-indicateur déclassant en Bretagne, suivi par les
+aquatiques. Elle constitue également un cadre visant à gérer et protéger
+les eaux européennes. Les états membres sont dans l’obligation d’évaluer
+la qualité écologique de leurs masses d’eau et de restaurer ou maintenir
+leur bon état écologique d’ici 2027. Les éléments de qualité biologiques
+(EQB) retenues sont : les poissons, les macrophytes, les
+macro-invertébrés et les diatomées. Cette évaluation de l’état d’un
+milieu est permise grâce à une classifications qui distingues les cours
+d’eau de références, définis comme ceux présentant les caractéristiques
+attendues en l’absence de pression humaines (concept de « conditions de
+référence » ; Bailey et al. 1998 et les cours d’eau altérés). La notion
+d’écart à un état de référence est intégrée dans le calcul des indices
+biologiques, et par conséquent dans l’évaluation de l’état écologique
+des masses d’eau, ils seront alors traduits en ratios de qualités
+biologiques. Les stations sont classées de la manière suivante : réseau
+de référence pérenne (RRP), réseau de contrôle de surveillance (RCS),
+réseau de contrôle opération (RCO).
+
+En Bretagne, les trois-quarts des masses d’eau sont déclassés en raison
+de leur mauvaise qualité biologique. Les diatomées sont le deuxième
+groupe de bio-indicateur déclassant en Bretagne, suivi par les
 macroinvertébrés. Parmi les masses d’eau bretonnes, 55% d’entre elles
 sont classées comme médiocres par rapport aux paramètres
 physico-chimique soutenant l’état-écologique.
@@ -79,11 +111,12 @@ bioindication-outils-d-evaluation_0.pdf Allan, 2004; Bader and Baccini,
 
 ## Les éléments de qualité biologique étudiés
 
-La bioévaluation mène à la détermination de l'état d'un milieux par le
-biais d'un indicateur biologique. Ce dernier désigne les espèces
-biologiques ou animales qui constituent un indice précoce de
-modifications biotiques ou abiotiques de l'environnement dues à des
-activités humaines (<https://eau-grandsudouest.fr/glossaire/b>).
+La bioévaluation permet la détermination de l'état d'un milieux, en
+s'appuyant sur des indicateurs biologiques. Ces indicateurs
+correspondent à des espèces biologiques ou animales, dont la présence,
+l'abondance ou l'état de santé reflète des modifications biotiques ou
+abiotiques de l'environnement dues à des activités humaines
+(<https://eau-grandsudouest.fr/glossaire/b>).
 
 ### L’Indice invertébrés multi-métriques
 
@@ -95,7 +128,7 @@ stades des macroinvertébrés et les derniers stades des micro-invertébrés
 certains sont holobiotiques et d'autres amphibiotiques. Ils regroupent
 une grande variété de genres et espèces, dont la plupart sont
 indicatrices telles que : les ephéméroptères, plécoptères et
-trichoptères.
+trichoptères (EPT).
 
 Les macroinvertébrés jouent un rôle essentiel dans les écosystèmes
 aquatiques en contribuant notamment à la transformation de la matière
@@ -121,13 +154,14 @@ sur la base de la taille du cours d'eau correspondant et de leur
 hydro-écorégion. L'indice est conçu pour identifier les tronçons de
 cours d'eau dégradés en lien avec 17 catégories de pressions
 anthropiques. Deux catégories de pressions sont prises en considération
-: la qualité de l’eau et la dégradation de l’habitat. L’I2M2 prend en
-compte les caractéristiques taxonomiques et les traits biologiques des
-communautés de macroinvertébrés benthiques, avec une détermination des
-individus jusqu’au genre (et non plus seulement à la famille, ce qui
-était le cas avec l’IBGN). De plus, il intègre les abondances des genres
-recensés. L’échantillonnage est réalisé selon la norme NF T 90-333 dans
-l’AFNOR, 2016.
+: pressions liées à la dégradation de la qualité de l’eau et celles
+liées à la dégradation de l’habitat. L’I2M2 prend en compte les
+caractéristiques taxonomiques et les traits biologiques des communautés
+de macroinvertébrés benthiques, avec une détermination des individus
+jusqu’au genre (et non plus seulement à la famille, ce qui était le cas
+avec l’IBGN). De plus, il intègre les abondances des genres recensés.
+L’échantillonnage est réalisé selon la norme NF T 90-333 dans l’AFNOR,
+2016.
 
 Les métriques retenues pour la construction de l’indice sont les
 suivantes :
@@ -142,10 +176,43 @@ suivantes :
 
 -   Abondance relative de taxons ovovivipares
 
-A noter que les deux premières métriques traduisent davantage une
-qualité de l'habitat et les autres une qualité des masses d'eau.
+A noter que les deux premières métriques reflètent davantage une qualité
+de l'habitat, tandis que les suivantes sont plus représentatives de la
+qualité physico-chimique des masses d'eau. [mettre source]
 
 ### L’Indice biologique diatomées
+
+Les diatomées sont des algues brunes unicellulaires microscopiques,
+mesurant 5µm à 500µm. Elles appartiennent à l'embranchement des
+Chromophytes. Elles sont constituées d'un frustule siliceux et de
+matière organique végétale. Parmi les critères qui en font de bon
+bio-indicateurs : cycle de vie rapide (efficace pour les impacts qui ont
+lieu sur une courte durée), caractère cosmopolite, grande diversité,
+sensibilité variable à la pollution, échantillonage aisé, conservation
+en laboratoire facile.
+
+Leur croissance est directement influencée par la température,
+l'intensité lumineuse, les caractéristiques hydrauliques et
+physico-chimiques. Les paramètres physico-chimiques influençant les
+diatomées sont : le pH, les nutriments (azotés et phosphorés), la
+présence de matière organique et une faible oxygénation en eaux. D'après
+l'étude (conductiv/ph), elles sont également sensibles à la
+conductivité. A mesure que la conductvité augmente, les espèces
+tolérantes à la conductivité élevée remplacent celles qui sont moins
+tolérantes.
+
+L'IBD correspond à une valeur calculée à partir d'une analyse de la
+flore diatomique benthique d'un cours d'eau de France métropolitaine,
+selon la norme NF T90-354, avril 2016 (SANDRE). Il évalue plus
+particulièrement le niveau de pollution organique (saprobie) et
+trophique (nutriments azotés et phosphorés). Il prend en compte
+l'abondance de 209 taxons appariés, leur sensibilité à la pollution et
+leur faculté à s'adapter à différents milieux. A noter que l'indice de
+polluo-sensibilité spécifique, prend en compte la totalité des espèces
+présentes dans les inventaires et se base sur l'abondance relative ainsi
+que leur sensibilité à la pollution.
+
+<https://acces.ens-lyon.fr/acces/thematiques/biodiversite/dossiers-thematiques/biosurveillance-et-bioindicateurs/les-diatomees-bio-indicatrices-de-la-qualite-des-cours-d2019eau>
 
 # Contexte de l’étude
 
@@ -159,15 +226,14 @@ moindre. En ce qui concerne la géologie, c’est un massif ancien, drainé
 par un réseau hydrographique d’environ 30 000 kilomètres (IBG, 2017). Au
 sens de la DCE, l’état des cours d’eau est très contrasté sur la
 Bretagne entre le département du Finistère (61% en bon état) et
-l’Ille-et-Vilaine (2% en bon état). A l’ouest de la Bretagne, la pente
-et la diversité morphologique des cours d’eau améliore nettement leur
-résilience. Le déficit pluviométrique en Ille-et-Vilaine induit un
-écoulement, une capacité de dilution et d’autoépuration plus faible. De
-plus, ce dernier est fortement urbanisé, ce qui implique un usage de
-l’eau d’autant plus important. Les pressions majoritaires responsables
-du non atteinte du bon état écologique de l’eau en Bretagne sont : la
-dégradation de la morphologie des cours d’eau et l’intensification de
-l’agriculture laitière au sud de Rennes.
+l’Ille-et-Vilaine (2% en bon état). A l'ouest de la Bretagne, la forte
+pente et la diversité morphologique des cours d'eau renforcent leur
+capacité de résilience. A l'inverse, en Ille-et-Vilaine, le déficit
+pluviométrique limite les débits, réduisant ainsi la capacité de
+dilution et d'autoépuration. Les principales pressions expliquant la non
+atteinte au bon état écologique des cours d'eeau en Bretagne sont la
+dégradation de la morphologie des cours d'eau, ainsi que
+l'intensification de l'agriculture laitière au sud de Rennes.
 
 [![Carte de l'état écologique des masses d'eau de type "cours d'eau" en
 Bretagne,
@@ -179,12 +245,17 @@ Malgré les améliorations, la concentration en phosphore reste élevée
 dans la majorité des cours d’eau bretons. Celle-ci est de 0,31 mg.L
 (percentile 90), émis notamment par les activités agricoles, le
 phosphore est largement transféré dans les cours d’eau pendant la
-période hivernale, où les pluies sont plus intenses. Le phosphore en
-provenance d’industrie ou autre activité urbaine, est relargué toute
-l’année, ce qui exerce une pression continue sur les cours d’eau. Cet
-apport devient prédominant en période sèche. Un léger gradient de
+période hivernale, où les pluies sont plus intenses. Le phosphore
+provenant d’industrie ou autre activité urbaine, est rejeté toute
+l’année, devenant alors une pollution diffuse continue. Cet apport
+devient d'autant plus majeur en période sèche. Un léger gradient de
 concentration, et donc de qualité, au regard des espèces phosphorées,
 s'exerce en Bretagne.
+
+Plusieurs études ont montré la pertinence du phosphore total pour
+l'étude réponses biologiques des macro-invertébrés et autres indicateurs
+biologiques, notamment au niveau des sites les plus pollués.
+(<https://www.sciencedirect.com/science/article/pii/S0048969723066214?via%3Dihub>)
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 10, fig.height=5, fig.align = 'center', fig.cap= " Fig.2 : Gradient de concentration en phosphore total en Bretagne, autrice : Ilona Garcia "}
 
@@ -195,7 +266,6 @@ load(file ="../Data/40_statistiques_descriptives.rda")
 
 library(sf)
 library(dplyr)
-library(mapview)
 library(ggspatial)
 library(ggplot2)
 #remotes::install_github("MaelTheuliere/COGiter")
@@ -266,16 +336,17 @@ ggplot() +
 ```
 
 La pollution azotée, notamment les nitrates, stagne à un niveau très
-élevé depuis 6 ans, c’est-à-dire 32,1 mg.L (percentile 90) pour les
-bassins bretons. Elle a tout de même diminué de 17% depuis 1995 à
-l’échelle régional. La mesure de la concentration en nitrates est
-complétée d’une mesure débitmétrique car plus les débits sont importants
-plus les quantités en azote nitrique sortant du bassin versant sont
-élevées. Les formes de l’azote les plus toxiques sont les moins
-oxygénées et peuvent être le produit du cycle de l’azote, elles feront
-donc parties des espèces chimiques étudiées.
+élevé depuis 6 ans, c’est-à-dire 32,1 mg.L (percentile 90). La mesure de
+la concentration en nitrates est complétée d’une mesure débitmétrique
+car plus les débits sont importants plus les quantités en azote nitrique
+sortant du bassin versant sont élevées. Les formes de l’azote les plus
+toxiques sont l'ammonium (de part sa transformation aisée en ammoniac)
+et les nitrites, produites notamment par le biais de réactions
+acido-basique et oxydo-réductrices dans le cycle de l'azote, elles
+feront donc parties des espèces chimiques étudiées
+(<https://www.sciencedirect.com/science/article/abs/pii/S1382668918302540>).
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 10, fig.height=5, fig.align = 'center', fig.cap= " Fig.2 : Gradient de concentration en nitrates en Bretagne, autrice : Ilona Garcia"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 10, fig.height=5, fig.align = 'center', fig.cap= " Fig.3 : Gradient de concentration en nitrates en Bretagne, autrice : Ilona Garcia"}
 
 load(file = "../Data/10_donnees_pretraitees.rda")
 load(file = "../Data/80_donnees_globales_trans.rda")
@@ -284,7 +355,6 @@ load(file ="../Data/40_statistiques_descriptives.rda")
 
 library(sf)
 library(dplyr)
-library(mapview)
 library(ggspatial)
 library(ggplot2)
 remotes::install_github("MaelTheuliere/COGiter")
@@ -350,7 +420,7 @@ ggplot() +
 
 ```
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 10, fig.height=5, fig.align = 'center', fig.cap= " Fig.2 : Gradient de concentration en azote ammoniacal en Bretagne, autrice : Ilona Garcia"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 10, fig.height=5, fig.align = 'center', fig.cap= " Fig.4 : Gradient de concentration en azote ammoniacal en Bretagne, autrice : Ilona Garcia"}
 
 load(file = "../Data/10_donnees_pretraitees.rda")
 load(file = "../Data/80_donnees_globales_trans.rda")
@@ -359,7 +429,6 @@ load(file ="../Data/40_statistiques_descriptives.rda")
 
 library(sf)
 library(dplyr)
-library(mapview)
 library(ggspatial)
 library(ggplot2)
 remotes::install_github("MaelTheuliere/COGiter")
@@ -435,10 +504,10 @@ manière similaire au gradient de qualité des cours d'eau bretons.
 
 La région étant fragmentée pour les différentes raisons énnoncées
 précédemment, il est intéressant d'étudier l'évolution des notes I2M2 et
-IBD au sein des différentes stations. DIRE QU'ON VEUT FAIRE UNE ETUDE
-SPATIALE
+IBD au sein des différentes stations. [ANNONCER QU'ON VEUT FAIRE UNE
+ETUDE SPATIALE ICI?]
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 13, fig.height=10, fig.align = 'center', fig.cap= " Fig.5 : Evolutions des notes I2M2 de chaque stations au cours du temps, autrice : Ilona Garcia" }
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 8, fig.height=6, fig.align = 'center', fig.cap= " Fig.5 : Evolutions des notes I2M2 de chaque stations au cours du temps, autrice : Ilona Garcia" }
 
 #remotes::install_github("MaelTheuliere/COGiter")
 library(COGiter)
@@ -554,8 +623,7 @@ ggplot() +
 En 2023, 43% des stations présentent un état "Moyen" selon l'indice
 diatomées, contre 15% pour les macroinvertébrés, confirmant ainsi les
 tendances de déclassement précédemment mises en évidence en Bretagne. La
-majorité de ces stations se trouvent à l'est de la région , d'où
-l'intérêt d'avoir une approche spatiale lors de l'étude.
+majorité de ces stations se trouvent à l'est de la région.
 
 # Objectif de l’étude
 
@@ -565,16 +633,20 @@ paramètres physico-chimiques retenues afin d’identifier des patterns
 écologiques généraux des cours d’eau bretons. En considérant les
 pressions constituants la construction de l’indice I2M2 et de les
 données bibliographiques retenues concernants les communautés
-diatomiques et macroinvertébrés, les éléments physico-chimiques retenues
-sont les suivants :
+diatomiques et macroinvertébrés, les éléments physico-chimiques
+selectionnés sont les suivants :
 
 -   Les matières azotées (nitrates, nitrites, ammonium)
 -   Les matières organiques et oxydables (carbone organique)
 -   Les matières phosphorées (phosphore total et othophosphates)
 -   Les matières en suspension
 -   L’acidification (pH)
+    (<https://www.frontiersin.org/journals/water/articles/10.3389/frwa.2021.662765/full>)
+    –\> MI
 -   Conductivité
--   Température
+    (<https://www.frontiersin.org/journals/water/articles/10.3389/frwa.2021.662765/full>)
+    –\> MI
+-   Température –\> Rhone
 
 L’étude se porte premièrement sur l'étude des indices biologiques I2M2
 et IBD et deuxièmement sur les groupes taxonomiques.
@@ -592,7 +664,7 @@ reproductibilité des scripts entre les utilisateurs.
 
 ### Prétraitement des indices biologiques
 
-Après chargement des données complètes "macro-invertébrés", seules les
+Après chargement des données complètes "macroinvertébrés", seules les
 observations associées à l'I2M2 et ses métriques sont conservées.
 L'exploration porte sur la période 2015-2023, en raison du transfert non
 automatisé des données entre les portails SEEE et Hub’eau. Les données
@@ -615,12 +687,13 @@ cause des conditions hydrologiques. Ces valeurs manquantes ne peuvent
 pas être reconstituées et posent problème pour l'analyse. Afin de
 limiter le nombre de valeurs manquantes, seules les stations présentant
 au moins cinq années de données, non nécessairement consécutives, ont
-été retenues pour l'analyse. En effet, des valeurs manquantes peuvent
-être présentes en raison de la fréquence de prélèvement qui n'est pas la
-même selon le réseau ou d'une impossibilité de réalisation du
-prélèvement à cause des conditions hydrologiques. Au terme de cela, 112
-stations constituent le jeu de données "macroinvertébré" et 233 stations
-pour les diatomées.
+été retenues pour l'analyse. Au terme de cela, 112 stations constituent
+le jeu de données "macroinvertébrés" et 233 stations pour les diatomées.
+Parmi les stations "macroinvertébrés", 57% des stations appartiennent au
+réseau RCS, 16% RRP, 18% RCO, 6% RD, 2% non identifié. Dans le jeu de
+données relatif aux diatomées, 29% des stations font parti du réseau
+RCS, 19% au réseau RD, 16 % au réseau RCO, 7% au réseau RRP et 28% non
+identifié [PRECISER QUE CELA EN FAIT UNE LIMITE A NOTRE ETUDE ICI?].
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 13, fig.height=10, fig.align = 'center', fig.cap= " Fig.7 : Chroniques des données I2M2, autrice : Ilona Garcia" }
 
@@ -686,7 +759,7 @@ mesurées. Après analyse des différentes fractions relevées pour chaque
 paramètre (via un graphique similaire à celui de la Fig.7), seule la
 fraction majoritaire a été conservée afin d'assurer l'homogénéité des
 mesures. A l'issue de ces étapes de prétraitement, 232 stations ont été
-retenues.
+retenues, correspondant aux stations I2M2 et IBD.
 
 ## Analyses
 
@@ -721,21 +794,20 @@ aléatoires, donc d'avoir une vision synthétique de la direction des
 interannuelle. [biblio qui dit que les évolutions sont lentes]. Si la
 Bretagne ne connait aucune évolution majeure de l'état des cours d'eau
 vis-à-vis des indices biologiques étudiés, alors l'aggrégation des
-valeurs sera possible. Il s'avère que les résultats confirme cette
-suppostion.
+valeurs en une statistique de tendance centrale sera possible.
 
 La significativité de la tendance est obtenue grâce au test paramétrique
 de Mann-Kendall (Mann, 1945, Kendall, 1975), efficace pour traiter les
-tendances non linéaires, et ne nécessite pas de distributions normales.
+tendances non linéaires, et robuste aux distributions non normales.
 
 ### Réalisation d'une "fenêtre glissante"
 
 Les prélèvements physico-chimiques sont réalisés tout au long de
-l'année, parfois plusieurs fois par mois. Le facteur temporel étant
-négligé dans notre analyse, les résultats seront agrégés. Cette méthode
-permet de choisir la période temporelle sur laquelle calculer une
-moyenne pour chacun des paramètres. Les critères sur lesquels se base
-cette sélection sont :
+l'année, parfois plusieurs fois par mois. La variabilité inter-annuelle
+étant négligé dans l'analyse, les résultats sont agrégés à l'issue de
+cette étape. En effet, cette méthode permet de choisir la période
+temporelle sur laquelle calculer une moyenne inter-annuelle pour chacun
+des paramètres. Les critères sur lesquels se base cette sélection sont :
 
 -   coefficient de corrélation
 
@@ -745,12 +817,12 @@ cette sélection sont :
 
     Les étapes sont les suivantes :
 
--   réalisation d'un dataframe (df), avec toutes les combinaisons de
+-   création d'un dataframe (df), avec toutes les combinaisons de
     mois-début et mois-fin pour chaque paramètre (soit 78 combinaisons
     possibles).
 
--   df avec les colonnes suivantes : *code_station_hydrobio,
-    code_paramètre, annee, mois.*
+-   réalisation d'un df avec les colonnes suivantes :
+    *code_station_hydrobio, code_paramètre, annee, mois.*
 
 -   calcule des moyennes mensuelles intra paramètres physico-chimiques
     au niveau de chaque station.
@@ -795,20 +867,26 @@ réalisation des analyses suivantes.
 
 ### Analyses bivariées
 
-Une première analyse permet d'évaluer le lien bivarié entre les indices
-et les métriques, les paramètres physico-chimiques deux à deux et pour
-terminer entre les indices et les variables environnementales. Une
-matrice des corrélation est réalisée, calculant les corrélations entre
-les indices et métriques puis entre paramètres physico-chimqiues, grâce
-au test de corrélation de Spearman. Ce test est robuse en cas de non
-normalité des distributions des variables et de relations non linéaires
-entre elles. Dans un second temps, une autre représentation est choisie
-pour étudier plus facilement l'indépendance des variables entre elles,
-utile pour la réalisation du modèle.
+Dans cette démarche exploratoire, on cherche à en savoir davantage sur
+les relations entre les différentes variables. Les analyses bivariées
+sont une aide à l'interpretation de l'ACP, qui guide la selection des
+variables explicatives afin d'éviter notamment la multicolinéarité lors
+de la modélisation.
+
+Les analyses bivariées permettent d'évaluer le lien bivarié entre les
+indices et les métriques et par la suite les paramètres
+physico-chimiques deux à deux. Cela permet d'identifier les variables
+plus ou moins indépendantes.
+
+Des matrices des corrélation sont réalisées, calculant les corrélations
+entre les indices et métriques puis entre paramètres physico-chimqiues,
+grâce au test de corrélation de Spearman. Ce test est robuse en cas de
+non normalité des distributions des variables et de relations non
+linéaires entre elles.
 
 ### Analyses multivariées
 
-L'analyse des composantes principales est une méthode statistique
+L'analyse des composantes principales (ACP) est une méthode statistique
 appartenant à la famille des analyses multivariées, c'est-à-dire
 permettant de synthétiser les relations entre plusieurs variables
 différentes. En effet, celle-ci résume l'information en quelques axes
@@ -854,14 +932,13 @@ de lien "identité". Ceci implique la validation de certaines hypothèses
 Le jeu de données utilisé regroupe les indices biologiques, les
 métriques et les paramètres physico-chimiques, consolidés à l’échelle
 des stations. Afin de supprimer la dimension temporelle, une moyenne a
-été calculée pour chaque variable sur l’ensemble de la période d’étude.
-Ainsi, chaque station est représentée par une seule valeur moyenne par
-paramètre, indice ou métrique, permettant une analyse synthétique
-inter-stations. Le choix de la moyenne comme statistique est justifié
-par une volonté d'étudier des patterns généraux à l'échelle de chaque
-station.
+été calculée pour chaque variable. Ainsi, chaque station est représentée
+par une seule valeur moyenne par paramètre, indice ou métrique,
+permettant une analyse inter-stations. Le choix de la moyenne comme
+statistique est justifié par une volonté d'étudier des patterns généraux
+à l'échelle de chaque station.
 
-Pour chaque modèle, la fonction stepAIC sera appliqué pour retenir
+Pour chaque modèle, la fonction stepAIC sera appliqué afin de retenir
 seulement le modèle simplifié avec le critère d'information Aikaike le
 plus élevé.
 
@@ -920,14 +997,16 @@ ggplot(clean_minv_distrib, aes(x = resultat_indice, fill = classe_I2M2)) +
 ```
 
 Les couleurs associées aux classes d'états de l'I2M2 sont appliquées à
-chaque métrique pour faciliter la lecture. D'après les résultats, la
-majorité des notes tendent vers le "Bon" et "Très Bon" état selon la
-DCE. La plupart des métriques suivent une distribution simlaire à celle
-de l'I2M2, légèrement symétrique, à l'exception de la richesse
-taxonomique qui suit une distribution normale. Les métriques
-d'ovoviviparité et de polyvoltinisme prennent de multiple fois une
-valeur nulle, ce qui témoigne d'une mauvaise qualité des masses d'eau à
-ces stations (qui se trouvent en majorité en Ille-et-Vilaine).
+chaque métrique pour faciliter la lecture.
+
+D'après les résultats, la majorité des notes tendent vers le "Bon" et
+"Très Bon" état selon la DCE. La plupart des métriques suivent une
+distribution simlaire à celle de l'I2M2, légèrement symétrique, à
+l'exception de la richesse taxonomique qui suit une distribution
+normale. Les métriques d'ovoviviparité et de polyvoltinisme prennent de
+multiple fois une valeur nulle, ce qui témoigne d'une mauvaise qualité
+des masses d'eau au niveau de ces stations (qui se trouvent en majorité
+en Ille-et-Vilaine).
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 5, fig.align = 'center', fig.cap= " Fig.9 : Distribution de l'IBD et de l'IPS, autrice : Ilona Garcia" }
 
@@ -968,7 +1047,7 @@ En revanche, les notes d'indices relatifs aux diatomées classés comme
 notes d'I2M2. Cela illustre les conditions trophiques des milieux, qui
 ne sont pas favorables au bon état écologique général.
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 7, fig.height= 5, fig.align = 'center', fig.cap= " Fig.9 : Distribution inter-annuelle de l'indice I2M2 et ses métriques, autrice : Ilona Garcia"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 7, fig.height= 5, fig.align = 'center', fig.cap= " Fig.10 : Distribution inter-annuelle de l'indice I2M2 et ses métriques, autrice : Ilona Garcia"}
 ggplot(clean_minv, aes (x=factor(annee), y = resultat_indice)) +
   geom_boxplot() +
   facet_wrap(~ libelle_indice, scales = "free_y") +
@@ -980,19 +1059,19 @@ ggplot(clean_minv, aes (x=factor(annee), y = resultat_indice)) +
 
 Comme on peut l'observer, les notes sont relativement stables au cours
 du temps, ce qui soutient l'hypothèse de faire une analyse
-inter-stations seulement, en aggrégeant les valeurs. Le même
-comportement est observé pour les indices IBD et IPS.
+inter-stations, en aggrégeant les valeurs. Le même comportement est
+observé pour les indices IBD et IPS.
 
-### Paramètres physico-chimiques
+### b) Paramètres physico-chimiques
 
 [PARLER DES DITRIBUTIONS DES VARIABLES ?]
 
 L'effet saisonnier est intéressant à étudier, notamment dans l'objectif
 d'aggréger les valeurs en une statistique de tendance centrale telle
-qu'une moyenne pour réprésenter des phénomènes généraux au à l'échelle
-des stations.
+qu'une moyenne pour réprésenter des phénomènes généraux à l'échelle des
+stations.
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 10, fig.height= 5, fig.align = 'center', fig.cap= " Fig.9 : Distribution des variables environnementales au cours de l'année, autrice : Ilona Garcia"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 10, fig.height= 5, fig.align = 'center', fig.cap= " Fig.11 : Distribution des variables environnementales au cours de l'année, autrice : Ilona Garcia"}
 
 parametres_physico_mois <- parametres_physico %>% 
   group_by(libelle_parametre,mois) %>% 
@@ -1026,7 +1105,7 @@ Bretagne, et donc faire une aggrégation de manière similaire aux
 paramètres physico-chimiques, les tendances à l'échelle de chaque
 station sont étudiées.
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 5, fig.align = 'center', fig.cap= " Fig.9 : Carte des tendances des indices I2M2 et IBD en Bretagne : Ilona Garcia"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 5, fig.align = 'center', fig.cap= " Fig.12 : Carte des tendances des indices I2M2 et IBD en Bretagne : Ilona Garcia"}
 library(tidyverse)
 library(trend)
 library(sf)
@@ -1100,7 +1179,7 @@ ggplot() +
 
 ```
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 5, fig.align = 'center', fig.cap= " Fig.9 : Carte des tendances des indices I2M2 et IBD en Bretagne : Ilona Garcia" }
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 5, fig.align = 'center', fig.cap= " Fig.13 : Carte des tendances des indices I2M2 et IBD en Bretagne : Ilona Garcia" }
 
 library(tidyverse)
 library(trend)
@@ -1171,9 +1250,10 @@ ggplot() +
 ```
 
 Peu de stations présentent des tendances significatives, suggérant une
-variabilité temporelle limitée. Peu de tendances significatives sont
-constatées pour les métriques de l'indice I2M2, notamment la richesse
-taxonomique qui est la seule métrique qui ne croît dans aucune station.
+variabilité temporelle limitée. Un nombre faible de tendances
+significatives est constaté pour les métriques de l'I2M2, notamment la
+richesse taxonomique qui est la seule métrique qui ne croît dans aucune
+station.
 
 La variabilté temporelle sera donc négligée lors de l'étude, permettant
 d'aborder une analyse inter-stations.
@@ -1283,7 +1363,7 @@ indices_moy_par_sta_ibd <- clean_ibd %>%
   
 ```
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8, fig.cap= "Fig.11 = Fenêtre glissante des corrélations entre les paramètres physico-chimiques et l'indice I2M2 et ses métriques, autrice : Ilona Garcia"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8, fig.cap= "Fig.14 = Fenêtre glissante des corrélations entre les paramètres physico-chimiques et l'indice I2M2 et ses métriques, autrice : Ilona Garcia"}
 
 #Ajouter les noms
 cor_i2m2_label <- cor_i2m2 %>%
@@ -1373,26 +1453,24 @@ précipitations hivernales, entraînant un transfert important de nitrates
 issus des pratiques agricoles vers les cours d’eau. Les variables
 physico-chimiques ont ainsi été agrégées en calculant leur moyenne sur
 ces périodes spécifiques, afin de refléter au mieux les conditions
-environnementales et donc pressions étudiées.
+environnementales et donc les pressions étudiées.
 
 ## Selection des variables pour la modélisation
 
-Dans cette démarche exploratoire, on cherche à en savoir davantage sur
-les relations entre les différentes variables. Les analyses bivariées
-sont une aide à l'interpretation de l'ACP, qui guide la selection des
-variables explicatives afin d'éviter notamment la multicolinéarité.
-
-En analysant la structure interne des variables biologiques, les
-métriques qui réagissent davantage à la dégradation qualité de l'habitat
-sont les moins corrélées à l'I2M2. De plus, elles contribuent très peu à
-la construction de l'axe F1, dont les variables les plus contributives
-sont l'I2M2, le polyvoltinisme, l'ASPT et l'ovoviviparité. Elles sont
-donc peu représentée dans cet axe. D'après [SOURCE], à l'échelle
-européenne c'était la diversité de Shannon et la richesse taxonomique
-qui étaient les métriques les plus contributives de la note de l'I2M2.
+En analysant la structure interne des variables biologiques par le biais
+de la matrice de corrélations, les métriques qui réagissent davantage à
+la dégradation qualité de l'habitat sont les moins corrélées à l'I2M2.
+De plus, elles contribuent très peu à la construction de l'axe F1, dont
+les variables les plus contributives sont l'I2M2, le polyvoltinisme,
+l'ASPT et l'ovoviviparité. Elles sont donc peu représentée dans cet axe
+et donnent des informations convergentes, puisque la diversité de
+Shannon est très liée à la varitété. Les métriques contributives de
+l'axe F1 sont très covariantes, révélant les scores très dépendant les
+un des autres.
 
 D'après les résultats, l'I2M2 et l'IBD sont légèrement corrélés et donc
-ne sont pas entièrement indépendants.
+ne sont pas entièrement indépendants. Cela peut indiquer des réponses
+biologiques à des pressions similaires.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE,results= 'hide', message=FALSE, warning=FALSE, fig.show='hide' }
 library(FactoMineR)
@@ -1457,7 +1535,7 @@ fviz_pca_var(resultat_acp_bio,
 
 ```
 
-```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=5, fig.cap= "Fig.11 = Analyse des composantes principales des indices biologiques, autrice : Ilona Garcia" }
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=5, fig.cap= "Fig.15 = Analyse des composantes principales des indices biologiques, autrice : Ilona Garcia" }
 
 fviz_pca_var(resultat_acp_bio,
              col.var="cos2",
@@ -1548,7 +1626,7 @@ fviz_pca_var(resultat_acp_physico_2,
 
 ```
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=5, fig.cap= "Fig.13 = Analyse des composantes principales des paramètres physico-chimiques, autrice : Ilona Garcia"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=5, fig.cap= "Fig.16 = Analyse des composantes principales des paramètres physico-chimiques, autrice : Ilona Garcia"}
 
 fviz_pca_var(resultat_acp_physico_2,
              col.var="cos2",
@@ -1657,18 +1735,18 @@ La p-value étant supérieure à 0,05 dans les deux cas, les hypothèses
 d'homoscédasticité et normalité sont validées.
 
 Par conséquent, on peut valider le modèle et tracer les graphiques
-associés.
+associés.#
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=5, fig.cap= "Fig.14 = Graphiques illustrants le modèle , autrice : Ilona Garcia" }
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=5, fig.cap= "Fig.17 = Graphiques illustrants le modèle , autrice : Ilona Garcia" }
 plot(model_simplifié)
 
-sjPlot::plot_model(model_simplifié, type = "pred",terms= ("NH4"), title = "Effets ammonium  sur l'I2M2")
-sjPlot::plot_model(model_simplifié, type = "pred",terms= ("O2dissous"), title = "Effets de l'oxygène dissous  sur l'I2M2")
-sjPlot::plot_model(model_simplifié, type = "pred",terms= ("NO3"), title = "Effets des nitrates sur l'I2M2")
-sjPlot::plot_model(model_simplifié, type = "pred",terms= ("Ptot"), title = "Effets du phosphore total sur l'I2M2")
+#sjPlot::plot_model(model_simplifié, type = "pred",terms= ("NH4"), title = "Effets ammonium  sur l'I2M2")
+#sjPlot::plot_model(model_simplifié, type = "pred",terms= ("O2dissous"), title = "Effets de l'oxygène dissous  sur l'I2M2")
+#sjPlot::plot_model(model_simplifié, type = "pred",terms= ("NO3"), title = "Effets des nitrates sur l'I2M2")
+#sjPlot::plot_model(model_simplifié, type = "pred",terms= ("Ptot"), title = "Effets du phosphore total sur l'I2M2")
 ```
 
-### Tableau récapitulatif 
+### Tableau récapitulatif
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 
@@ -1742,4 +1820,37 @@ res_large <- res %>%
 datatable(res_large)
 ```
 
-Tous les indices et métriques réagissent à l'augmentation de l'ammonium
+D'après les résultats, les indices et métriques liés à l'I2M2, à
+l'exception de la diversité de Shannon et la richesse taxonomique, sont
+sensibles à l'augmentation de la teneur en oxygène dissous dans l'eau,
+démontrant l'importance de cet élement pour maintenir un cours d'eau en
+bon état vis à vis des macro-invertébrés.
+
+Tous les indices et métriques réagissent à l'augmentation de la
+concentration en ammonium, à l'exception de la richesse taxonomique,
+démontrant l'effet toxique pour les macroinvertébrés et diatomées
+sensibles à ce genre de pollution impliquant une baisse de la note de
+l'indice. En effet, à partir d'un certain seuil, cet élement peut
+modifier la diversité et l'abondance des macro-invertébrés dans les
+cours d'eau, ajouté d'une augmentation de la présence de taxons
+tolérants tels que *Gammarus pulex*. Certaines diatomées ont également
+un seuil, 100M, à partir duquel est observée une diminution de la
+croissance ([soucre]. Les nitrates présents de manière continue en
+Bretagne, moins toxiques que l'ammonium, ont un poids relativement
+faible sur les réponses biologiques.
+
+En remplçant l'ammonium par les nitrites en tant que variable
+explicative du modèle, les effets se révèlent être significatifs sur les
+indices et métriques, tout autant que l'ammonium.
+
+Il est intéressant de noter que le phosphore total est le seul élement
+suscitant une réponse de la richesse taxonomique, qui diminue lorsque ce
+dernier augmente. **[SOURCE]**
+
+D'après l'article *Multi-decadal improvements in the ecological quality
+of European rivers are not consistently reflected in biodiversity
+metrics[NOM]* , à l'échelle des pays de l'Europe, c'était l'indice de
+Shannon et la richesse taxonomique qui montrait la relation la plus
+forte aux changements de la qualité de l'eau. Ceci peut expliquer le
+manque de réaction vis à vis de ces métriques tout au long des
+différentes analyses.

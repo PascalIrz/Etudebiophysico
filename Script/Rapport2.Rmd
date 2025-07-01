@@ -1,0 +1,1350 @@
+---
+title: "Rapport2"
+output: word_document
+date: "2025-06-12"
+---
+
+# Présentation de la structure
+
+## 1) Présentation générale
+
+L'Office Français de la Biodiversité (OFB) est un établissement public français créé le 1er janvier 2020. L'Office National de la Chasse et de la Faune Sauvage (ONCFS), créé en 2000, s'est uni à l'Agence Française de la Biodiversité (AFB), créé en 2017. L'OFB met en oeuvre des actions visant à la protection et la à restauration de la biodiversité terrestre et marine.
+
+Les agents s'engagent dans la lutte contre les cinq causes majeures de la dégradation de la biodiversité : la destruction et la fragmentation des milieux naturels, les pollutions, la surexploitation des ressources, l'introduction d'espèces exotiques envahissantes et les conséquences du changement climatique (IPBES,2019). Les services de l'OFB s'articulent également autour des missions complémentaires suivantes : la police de l'environnement; la connaissance/recherche et l'expertise sur les espèces, leurs milieux et leurs usages; l'appui à la mise en oeuvre des politiques publique; la gestion et l'appui aux gestionnaires d'espaces naturels et pour terminer l'appui aux acteurs et à la mobilisation de la société.
+
+## 2) OFB Bretagne
+
+La Direction Régionale Bretagne de l'OFB regroupe 130 agents répartis sur toute la région. Trois services sont établis dans ses locaux : "Appui aux acteurs et mobilisation des territoires", "Police" et "Connaissance". Le présent stage se déroule dans le service Connaissance, sous la tutelle d'Yves-Marie (chef adjoint du service connaissance) , Thibault Vigneron (chef du service connaissance) et Pascal Irz (ingénieur connaissance). J'étais également en lien avec les hydrobiologistes du laboratoire.
+
+# Introduction
+
+-   contexte
+
+-   appui biblio –\> hypothèses
+
+-   problématique
+
+-   démarche
+
+-   L'analyse s'affine au cours de l'étude, en commençant par l'étude des indices et métriques pour terminer par les groupes taxonomiques.
+
+-   objectifs (plan)
+
+# Contexte général
+
+## 1) Les pressions exercées sur les milieux aquatiques
+
+Les cours d'eau subissent toutes les pressions anthropiques s'exerçant sur leur bassin versant, qui entraînent de nombreuses dégradations sur les milieux aquatiques (qualité d’eau, hydromorphologie), influant sur les peuplements biologiques (Marzin et al., 2012). Ces milieux sont notamment soumis à des modifications morphologiques profondes telles que la chenalisation (Wasson, 1995), l’artificialisation des berges, l’altération des régimes hydrologiques naturels, et le drainage des terres ainsi que des zones humides. A cela s'ajoute les pollutions chimiques ponctuelles ou diffuses, ces dernières sont intensifiées par les activités agricoles (Eau France). Ces altérations peuvent avoir des conséquences significatives sur l’habitat et le fonctionnement global de l’écosystème (Reyjol et al., 2012).
+
+## 2) Les organismes aquatiques comme bio-indicateurs
+
+De nombreuses espèces vivent dans les cours d'eau, ceux-ci intègrent la plupart des perturbations et pollutions, ce qui en font de bon indicateurs de dégradation du milieux (Markert et al., 2013). En fonction de leurs traits d’histoire de vie et de leurs préférences écologiques, les organismes sont adaptés à des conditions biotiques et abiotiques spécifiques selon leur habitat, correspondant à une certaine amplitude de variation (Suding et al. 2004). Cela a donné lieu à la notion de bio-indication, intégrée dans la legislation européenne.
+
+Suding, K.N., Gross, K.L. & Houseman, G.R. (2004) Alternative states and positive feedbacks in restoration ecology, Trends in Ecology and Evolution, 19, 1, 46-53.
+
+## 3) Intégration de la biologie dans l'évalution de l'état des cours d'eau
+
+L’état d’un milieu aquatique peut s’appréhender sous différents angles, notamment écologique et biologique. C’est dans cette optique qu’a été instaurée en 2000 la Directive Cadre sur l’Eau (DCE) par le Conseil européen et le conseil des ministres, intégrant la notion de bio-indication dans la méthodologie d’évaluation de l’état des milieux aquatiques (Directive 2000/60/CE ). La DCE vise à prévenir et réduire la pollution des eaux, à promouvoir leur utilisation durable et améliorer l’état des écosystèmes aquatiques. Elle constitue également un cadre visant à gérer et protéger les eaux européennes. Les états membres sont dans l’obligation d’évaluer la qualité écologique de leurs masses d’eau et de restaurer ou maintenir leur bon état écologique d’ici 2027, après plusieurs dérogations.
+
+Les éléments de qualité biologiques (EQB) retenues pour le suivi et l’évaluation de ces masses d’eau sont : les poissons, les macrophytes, les macro-invertébrés et les diatomées. Cette évaluation de l’état d’un milieu est permise grâce à une classifications qui distingue les cours d’eau de références, définis comme ceux présentant les caractéristiques attendues en l’absence de pression humaines (concept de « conditions de référence » ; Bailey et al., 1998). La notion d’écart à un état de référence est intégrée dans le calcul des indices biologiques, et par conséquent dans l’évaluation de l’état écologique des masses d’eau, ils seront alors traduits en ratios de qualités biologiques. Dans le cadre du programme de surveillance DCE, différents réseaux de mesures sont mis en place. Le réseau de contrôle de surveillance (RCS), mis en oeuvre depuis janvier 2007, vise à évaluer l'état général des eaux représentatives du fonctionnement global de la masse d'eau du bassin hydrographique auquel elle appartient, ayant comme année de référence 2007. Les stations qui constituent ce réseau ont pour vocation d'être pérennes. Le réseau de référence pérenne (RRP) a également été mis en place, qui conforte la connaissance en matière de conditions de référence. Pour terminer, le réseau de contrôle opération (RCO) dont le rôle est : suivre l'état écologique des stations ayant eu des dérogations d'objectif de bon état; d'assurer l'amélioration des eaux suite aux actions mises en place dans le cadre d'un programme de mesures et le cas échéant préciser l'origine de la dégradation.
+
+BAILEY, R.C., KENNEDY, M.G., DERVISH, M.Z., TAYLOR, R.M., 1998, Biological assessment of freshwater ecosystems using a reference condition approach: comparing predicted and actual benthic invertebrate communities in Yukon streams, Freshwater Biology, n° 39, p. 765-77
+
+# Contexte breton
+
+## 1) Description de la zone d'étude
+
+La Bretagne est une région située au nord-ouest de la France. Son climat est marqué par un gradient ouest-est. Les précipitations y sont relativement abondantes à l’ouest, sous l’influence du climat océanique contrairement à l’est du territoire, où la pluviométrie y est deux fois moindre (Météo France, 2012). En ce qui concerne la géologie, c’est un massif ancien, drainé par un réseau hydrographique d’environ 30 000 kilomètres (IBG, 2017).
+
+## 2) Les pressions majeures en Bretagne
+
+### 2.2) Qualité physico-chimique
+
+Au sens de la DCE, l’état des cours d’eau est très contrasté sur la Bretagne entre le département du Finistère (61% en bon état) et l’Ille-et-Vilaine (2% en bon état) (OEB, 2023). A l’ouest de la Bretagne, les débits soutenus (HydroPortail/DREAL Bretagne), la pente et la diversité morphologique des cours d’eau renforcent leur capacité de résilience et l’hétérogéneité de leur habitat (Jan, 2013; Bossis, 2014). A l’inverse, en Ille-et-Vilaine, le déficit pluviométrique limitant les débits ainsi que la capacité de dilution et d’autoépuration des cours d'eau n'est pas favorable au maintien du bon état écologique en cas de perturbation. De plus, la plupart des cours d'eau ont subit des modifications importantes de leur morphologie (Agence de l'eau Loire-Bretagne).
+
+La Bretagne fait partie des régions françaises où l'activité agricole est la plus élevée (INSEE, s.d), cela s'observe au regard des chiffres clés concernant l'état des cours d'eau de la péninsule. En effet, seulement 51% des cours d’eau sont en bon état chimique, en ne prenant en compte que les 53 substances prioritaires non ubiquistes. D’après les données de 2022 de l’OEB, 59% des masses d’eau sont concernés par les pollutions diffuses, dont les pesticides, phosphore et nitrates respectivement 57%, 15% et 12% (OEB, 2023). Les nutriments tels que les nitrates et le phosphore sont étudiés pour l'évaluation de l'état écologique des cours d'eau, selon les exigences de la DCE. En effet, la concentration en phosphore reste élevée dans la majorité de ceux-ci. Cette dernière est de 0,31 mg.L (percentile 90), émis notamment par les activités agricoles, le phosphore est largement transféré dans les cours d’eau pendant la période hivernale, où les pluies plus intenses drainent les polluants des surfaces cultivées (OEB, 2023). Le phosphore provenant d’industrie ou autre activité urbaine, est rejeté toute l’année, devenant alors une pollution diffuse continue. La concentration devient plus importante dans le milieu en période estivale car la dilution est réduite (OEB, 2023). L’analyse des chroniques au regard des nitrates (Gascuel-Odoux et al., 2010, Roussel et al., 2012) montre une augmentation progressive des flux et concentrations en nitrate dans les cours d'eau jusqu'en 1990, suivie par une phase de stabilisation, voire une amélioration depuis quelques années dans certains cas. D'après les données de 2022, la concentration en nitrates dans les cours d'eau était de 32,1 mg.L (percentile 90) (OEB, 2023).
+
+### 2.3) Qualité biologique
+
+Selon la DCE, les trois-quarts des masses d’eau déclassées le sont en raison de leur mauvaise qualité biologique. Les diatomées sont le deuxième groupe de bioindicateurs déclassant en Bretagne, suivi par les macroinvertébrés. Parmi les masses d’eau bretonnes, 55% d’entre elles sont classées comme médiocres par rapport aux paramètres physico-chimique soutenant l’état-écologique.
+
+# Matériels et méthodes
+
+## 1) Données
+
+### 1.1) Les éléments de qualité biologiques étudiés
+
+La surveillance biologique est essentielle à la caractérisation de l'état d'un milieu (James R. Karr et al, 2001). Une métrique de bioindication est un indicateur quantitatif dérivé des assemblages biologiques, caractérisant leur structure ou leur fonctionnement, dont la variation est statistiquement et écologiquement corrélée à l’intensité des pressions anthropiques affectant les écosystèmes aquatiques (Reyjol et al., 2012).
+
+#### 1.1.1) Les macroinvertébrés
+
+Selon la définition de Cummins (1975), les macroinvertébrés sont des organismes dont la taille atteint au moins 3 à 5 mm au dernier stade de leur développement. Ils sont présents dans tous les écosystèmes aquatiques, certains sont holobiotiques et d’autres amphibiotiques, impliquant des différences dans leur cycle de vie (Allan et Castillo, 2007 ; Merritt et Cummins, 1996). Ils jouent un rôle essentiel dans les écosystèmes aquatiques en contribuant notamment à la transformation de la matière organique (accélération du cycle des nutriments) (Vannote R. L. , Minshall G. , Cummins K. ,Sedell  J. , Gushing Colbert E., 1980), en servant de nourriture pour les poissons. Les macroinvertébrés dérivent de l'amont vers l'aval en permanence, il s'agit du phénomène de drift (Needham, 1928).
+
+Les différences physico-chimiques (par exemple entre l'amont et l'avail d'un site) sont caractérisées par un changement de groupe fonctionnels trophique selon la théorie du River Continuum (Vannote et al, 1980). Lorsque les cours d'eau subissent des perturbations liées à la qualité de l'eau, il est fréquent d'observer une diminution de l'abondance et de la diversité chez les taxons sensibles, comme les Ephéméroptères, Plécoptères et Trichoptères (groupe EPT). Il est important de noter que la sensibilité à la pollution varie au sein d'un même groupe taxonomique. Certains taxons EPT, comme certaines espèces de Baetidae (Éphéméroptères), peuvent présenter une tolérance relative à des degrés modérés de perturbation environnementale, contrairement à d'autres groupes EPT plus sténoèces (US EPA, s.d. ; Waikato Regional Council, s.d.). Inversement, la prolifération de collecteurs-récolteurs tels que les Chironomidae devient plus importante (Clements, Cherry & Cairns, 1988, 1990 ; Casper, 1994 ; Clements, 1994 ; Kiffney & Clements, 1994 ; arlisle & Clements, 2003 in Woodcock & Huring, 2007).
+
+C'est en raison de leurs cycles de vie, de leurs caractéristiques physiologiques, de leur mobilité et de leur sensibilité intrinsèque à la pollution que les macro-invertébrés sont des organismes clés pour l'élaboration d'indices de bioévaluation (Marzin et al., 2012 ; Alric et al., 2021). Parmi les éléments de qualité biologique (EQB), les indicateurs basés sur les macroinvertébrés sont les plus sensibles aux dégradations globales des cours d’eau et réagissent à des niveaux de pressions faibles (Marzin et al., 2013).
+
+(<https://pastel.hal.science/pastel-00879788>).
+
+#### 1.1.2) L'indice Invertébrés Multimétrique
+
+L’indice I2M2, Indice Invertébrés MultiMétriques (Mondy et al., 2012) permet d’évaluer la qualité écologique sur la base d’un écart à une référence, résultat en EQR (*Ecological quality ratio*). Cela implique donc d’établir des peuplements de référence par type de cours d’eau, en plus d'un réseau de référence. Ceux-ci sont sélectionnés sur la base de la taille du cours d’eau correspondant et de leur hydro-écorégion. L’indice est conçu pour identifier les tronçons de cours d’eau dégradés en lien avec 17 catégories de pressions anthropiques. Deux catégories de pressions sont prises en considération : pressions liées à la dégradation de la qualité de l’eau et celles liées à la dégradation de l’habitat. L’I2M2 prend en compte les caractéristiques taxonomiques et les traits biologiques des communautés de macroinvertébrés benthiques (Mondy & Usseglio-Polatera, 2013), avec une détermination des individus jusqu’au genre (et non plus seulement à la famille, ce qui était le cas avec l’IBGN). De plus, il intègre les abondances des genres recensés. L’échantillonnage est réalisé selon la norme NF T 90-333 (AFNOR, 2016), puis le tri et l’identification des taxons, suivant la norme NF T90-388 (AFNOR, 2020).
+
+Les métriques retenues pour la construction de l’indice sont les suivantes :
+
+-   Indice de diversité de Shannon
+
+-   Richesse taxonomique
+
+-   Score ASPT (Average Score Per Taxon)
+
+-   Abondance relative de taxons polyvoltinistes
+
+-   Abondance relative de taxons ovovivipares
+
+A noter que les deux premières métriques reflètent davantage une qualité de l'habitat, tandis que les suivantes sont plus représentatives de la qualité physico-chimique des masses d'eau ((Mondy & Usseglio-Polatera, 2013).
+
+#### 1.1.3) Les diatomées
+
+Les diatomées sont des algues brunes unicellulaires microscopiques, mesurant 5µm à 500µm (Naim, 2025). Elles appartiennent à l'embranchement des Chromophytes. Elles sont constituées d'un frustule siliceux et de matière organique végétale. Parmi les critères qui en font de bon bio-indicateurs : cycle de vie rapide (efficace pour les impacts qui ont lieu sur une courte durée), caractère cosmopolite, grande diversité, sensibilité variable à la pollution, échantillonage aisé, conservation en laboratoire facile.
+
+Leur croissance est directement influencée par la température, l'intensité lumineuse, les caractéristiques hydrauliques et physico-chimiques. Les paramètres physico-chimiques influençant les diatomées sont : le pH, la trophie du milieu (nutriments azotés et phosphorés), la saprobie et une faible oxygénation en eaux (DREAL, 2020). Les diatomées sont également sensibles à la conductivité (Bere et al., 2009). A mesure que la conductvité augmente, les espèces tolérantes à la conductivité élevée remplacent celles qui sont moins tolérantes (Bere et al., 2009).
+
+#### 1.1.4) L'indice biologique diatomique (IBD)
+
+L'IBD correspond à une valeur calculée à partir d'une analyse de la flore diatomique benthique d'un cours d'eau de France métropolitaine, selon la norme NF T90-354, avril 2016 (SANDRE). Il est utilisé pour évaluer le niveau de dégradation de la qualité physico-chimique générale des cours d'eau (et plus particulièrement au regard de la trophie et la saprobie du milieu) (Reyjol et al., 2012). Il prend en compte l'abondance de 209 taxons appariés, leur sensibilité à la pollution et leur faculté à s'adapter à différents milieux (DREAL, 2020). A noter que l'indice de polluo-sensibilité spécifique, prend en compte la totalité des espèces présentes dans les inventaires et se base sur l'abondance relative ainsi que leur sensibilité à la pollution.
+
+<https://acces.ens-lyon.fr/acces/thematiques/biodiversite/dossiers-thematiques/biosurveillance-et-bioindicateurs/les-diatomees-bio-indicatrices-de-la-qualite-des-cours-d2019eau>
+
+### 1.2) Les paramètres physico-chimiques étudiés
+
+Compte tenu des pressions environnementales spécifiques au territoire breton affectant la qualité des masses d'eau, et au vu de leurs impacts négatifs avérés sur les communautés biologiques (Markert et al., 2023), une sélection de paramètres physico-chimiques a été opérée pour cette étude. Ces variables sont essentielles pour caractériser les conditions du milieu et comprendre la réponse des bio-indicateurs.
+
+Les paramètres retenus incluent :
+
+-   **Les nutriments azotés et phosphorés** : cette catégorie englobe les nitrates, les nitrites, l'ammonium, les orthophosphates et pour terminer le phosphore total. Une concentration excessive de ces nutriments est un moteur clé de l'eutrophisation, phénomène susceptible d'engendrer une anoxie du milieu par la dégradation de la matière organique. De plus, certains de ces composés, comme l'ammonium sous sa forme non ionisée ou les nitrites après nitrification bactérienne, peuvent s'avérer toxiques au-delà de certains seuils (Shulz et al., 2001 ; Zang et al, 2023). Il est donc plausible d'anticiper une modification de la structure des communautés, se traduisant par le remplacement des espèces sensibles par des taxons plus tolérants à ce genre de pollution, tels que certains chironomes et oligochètes chez les macro-invertébrés.
+
+-   **Les paramètres liés au bilan de l'oxygène** : ils comprennent l'oxygène dissous, le taux de saturation en O2, la demande biochimique en oxygène sur cinq jours et le carbone organique. Ces indicateurs sont cruciaux pour évaluer la capacité du milieu à maintenir la vie aquatique et à assimiler la charge organique. De plus, l'oxygène est un élément indispensable aux macroinvertébrés.
+
+-   **Les matières en suspension et la turbidité** : ces paramètres sont intrinsèquement liés, la turbidité étant directement influencée par la concentration en MES (J. I. Jones et al., 2011). Une charge élevée en MES peut induire un stress physique sur les organismes, entraîner une dégradation de l'habitat par abrasion ou colmatage du substrat, et réduire la pénétration de la lumière. Le colmatage des lits de cours d'eau par les sédiments fins réduit l'abondance des macro-invertébrés, avec des diminutions initiales pouvant atteindre 95 % (Newcombe & McDonald, 1991, *in* Gayraud et al., 2002). Quand les sédiments recouvrent 1/3 à 2/3 des substrats grossiers, l'habitat interstitiel diminue, entraînant une baisse des Éphéméroptères, Plécoptères et Trichoptères (EPT), qui sont les espèces caractéristiques de ces milieux (Gayraud et al., 2002). Parallèlement, les taxons fouisseurs comme les oligochètes et chironomes augmentent. Au-delà de 2/3 de recouvrement, il ne s'agit plus d'une réduction mais d'une substitution d'habitat (Lenat et al., 1981), ce qui amplifie ces changements faunistiques (Gayraud et al., 2002).
+
+-   **Le pH (acidification) et la conductivit**é : Le pH est un indicateur de l'acidité ou de l'alcalinité du milieu, paramètre fondamental qui affecte directement la biodisponibilité de nombreux polluants et la physiologie des organismes. La conductivité, quant à elle, renseigne sur la concentration totale en ions dissous dans l'eau, pouvant signaler des apports en sels ou d'autres contaminants (Allan et Castillo, 2007).
+
+-   **La température** : Dans un contexte de changement climatique, la température de l'eau est un facteur déterminant. Elle influence directement le métabolisme et les traits de vie des organismes aquatiques (Daufresne et al., 2003), et des fluctuations thermiques peuvent induire un stress physiologique significatif, modulant ainsi la vulnérabilité des espèces à d'autres pressions.
+
+<https://onlinelibrary.wiley.com/doi/full/10.1002/rra.1516>
+
+### 1.3) Origine des données
+
+Les données sont extraites à partir d’Hub’eau, service proposé par Eau France. Des API sont mis à disposition, ce qui favorise l’utilisation des données pour leur traitement sur le logiciel R. Cela permet la reproductibilité des scripts entre les utilisateurs.
+
+### 1.4) Prétraitement et qualité des données
+
+Le prétraitement consiste en la succession de plusieurs étapes : selection des données, rennommage des variables pour l'uniformisation entre les jeux de données, contrôle des doublons. Cette étape est suivie par des statistiques descriptives, ayant pour but de décrire le jeu de données. Celles-ci permettent de repérer puis supprimer les valeurs aberrantes **(annexe formule)**. La visualisation de la qualité du jeu de données est essentielle pour la suite de l'étude, ceci passe par le contrôle du nombre de valeur manquantes au sein de chaque station de prélèvement.
+
+## 2) Analyses
+
+Pour investiguer la réponse biologique des communautés de macro-invertébrés et diatomées aux pressions physico-chimiques, une approche exploratoire rigoureuse est menée. Les méthodes statistiques choisies visent à explorer les caractéristiques des données, identifier les relations entre variables et synthétiser l'information complexe. Ces choix méthodologiques contribuent à une meilleure compréhension des interactions écologiques et environnementales.
+
+#### 2.1) Analyse univariée
+
+Cette phase exploratoire est cruciale pour comprendre la distribution de chaque variable, détecter d'éventuelles valeurs aberrantes et évaluer la normalité des données. Des statistiques descriptives seront calculées pour chaque variable. Cette analyse préliminaire permet d'identifier les transformations nécessaires avant d'appliquer des méthodes statistiques plus complexes, assurant ainsi la validité des tests suivants.
+
+#### **2.2) Analyse bivariée**
+
+Des matrices corrélations de Spearman sera construite afin d'identifier et de quantifier les liens entre les variables. Ce choix se justifie par sa robustesse aux distributions non normales et sa capacité à détecter des relations monotones non linéaires, caractéristiques fréquentes des données environnementales. Une représentation graphique de ces corrélations, incluant leur significativité, sera également réalisée, notamment par l'utilisation de la fonction ggpairs.
+
+Elles permettent d'identifier les variables plus ou moins indépendantes et sont une aide à l'interpretation de l'analyse des composantes principales (ACP), qui guide la selection des variables explicatives. En effet, la multicolinéarité doit être évitée lors de la modélisation.
+
+#### 2.3) Analyse multivariée
+
+L'analyse en composante principale est une méthode statistique permettant de synthétiser les relations entre plusieurs variables différentes. La réduction de dimensionnalité transforme l'ensemble de variables corrélées en un nouvel ensemble de variables non corrélées, appelées composantes principales. Ces composantes capturent la majeure partie de la variance totale des données et permettent de visualiser les patterns de variation ainsi que les relations d'interdépendance entre les paramètres. En projetant les sites d'échantillonnage et les variables dans un espace à dimensions réduites, l'ACP facilitera l'identification des gradients environnementaux et des groupes de paramètres co-variant, offrant ainsi une synthèse visuelle et quantitative des pressions environnementales.
+
+#### 2.4) Modélisation GLM (Generalized linear model)
+
+Elle permet d'analyser la relation entre une variable dépendante et un ensemble de prédicteurs, y compris lorsque la distribution de la variable s'écarte de la normalité. Elle sera appliquée pour chaque indice ou métrique biologique, chacun servant de variable dépendante. Les variables explicatives seront constituées des paramètres physico-chimiques préalablement sélectionnés sur la base des analyses statistiques exploratoires (corrélations, ACP) et de considérations écologiques. L'objectif principal de cette modélisation est d'identifier les variables physico-chimiques ayant l'influence la plus significative sur les différents indices et métriques biologiques, et de quantifier le poids de cette influence, afin de mieux comprendre les facteurs environnementaux structurant les communautés.
+
+Ayant posé comme hypothèse, l'absence de variabilité temporelle, ceci sera également étudiée.
+
+# Résultats
+
+## 1) Indices et métriques
+
+L’analyse des données I2M2 a été restreinte à la période 2015-2023, en raison de l’absence de transfert automatisé entre les portails SEEE et Hub’Eau après 2023. Concernant l’Indice Biologique Diatomées (IBD), les données couvrent une période plus large, de 2005 à 2023. Toutefois, les années 2005 à 2007 ont été exclues de l’analyse en raison d’un nombre insuffisant de données, lié à la mise en place progressive des réseaux de contrôle opérationnel à partir de 2007. Les campagnes d’échantillonnage étant réalisées annuellement en période d’étiage, lorsque deux prélèvements ont été effectués au cours d’une même année sur une station, seul le plus tardif a été retenu. Des valeurs manquantes subsistent en raison de la variabilité des fréquences de prélèvement selon les réseaux, ou de contraintes hydrologiques ayant empêché certaines campagnes. Ces valeurs ne pouvant être reconstituées, seules les stations disposant d’au moins cinq années de données (non nécessairement consécutives) ont été retenues. Ainsi, le jeu de données macroinvertébrés comprend 112 stations et celui des diatomées 233 stations.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 5, fig.cap= " Fig.7 : Réseaux des stations étudiées"  }
+
+load(file = "../Data/10_donnees_pretraitees.rda")
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+
+station_reseau <- read_excel("C:/Users/ilona.garcia/Documents/RstudioGIT/Etudebiophysico/Data/reseau_stations.xlsx")
+
+minv_joint <- clean_minv %>% 
+  left_join(station_reseau, by = "code_station_hydrobio")
+ibd_joint <- clean_ibd %>% 
+  left_join(station_reseau, by = "code_station_hydrobio")
+
+proportion_i2m2 <- minv_joint %>% 
+  distinct(code_station_hydrobio,reseau) %>% 
+  count(reseau) %>% 
+  mutate(
+    proportion = n/sum(n),
+    code_indice = "7613"
+  )
+
+proportion_ibd <- ibd_joint %>% 
+  distinct(code_station_hydrobio,reseau) %>% 
+  count(reseau) %>% 
+  mutate(
+    proportion = n/sum(n),
+    code_indice = "5856"
+  )
+
+proportion_reseau <- bind_rows(proportion_i2m2, proportion_ibd) %>% 
+  mutate(
+    pourcentage = round(proportion * 100, 1),
+    code_indice = recode(code_indice, "7613" = "I2M2", "5856" = "IBD")
+  ) %>% 
+  select(code_indice, reseau, n, proportion, pourcentage)
+
+proportion_reseau <- proportion_reseau %>% 
+  mutate(
+    reseau = factor(reseau, levels = c("RRP", "RCS", "RCO", "RD", "NA"))
+  )
+
+ggplot(proportion_reseau, aes(x = code_indice, y = reseau, fill = pourcentage)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = paste0(pourcentage, "%")), color = "black", size = 4) +
+  scale_fill_gradient(low = "white", "high" = "darkgreen") +
+  labs(
+    title = "Pourcentage de stations par réseau et par indice",
+    x = "Indice",
+    y = "Réseau",
+    fill = "Pourcentage"
+  ) +
+  scale_y_discrete(limits = rev) +
+  theme_minimal()
+```
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.width= 13, fig.height=8, fig.cap= " Fig.7 : Chroniques des prélèvements de macroinvertébrés pour le suivi DCE"}
+library(ggplot2)
+library(dplyr)
+load(file = "../Data/10_donnees_pretraitees.rda")
+
+#Préparation des données : présence/absence
+data_presence <- clean_minv %>%
+  filter(libelle_indice == "Indice Invertébrés Multimétrique (I2M2)") %>%
+  group_by(code_station_hydrobio, annee) %>%
+  summarise(presence = ifelse(n() > 0, 1, 0), .groups = "drop")
+
+#On joint les libellés des stations au dataframe
+data_presence_complet <- data_presence %>%
+  left_join(
+    clean_minv %>%
+      select(code_station_hydrobio, libelle_station_hydrobio) %>%
+      distinct(),
+    by = "code_station_hydrobio"
+  )
+
+#Création du graphique
+ggplot(data_presence_complet,
+       aes(
+         x = as.factor(annee),
+         y = factor(libelle_station_hydrobio),
+         fill = as.factor(presence)
+       )) +
+  geom_tile(
+    color = "white",
+    size = 0.3,
+    height = 0.9,
+    width = 0.9
+  ) +
+  scale_fill_manual(values = c("0" = "#e0e0e0", "1" = "darkgreen"),
+                    guide = "none"
+                    ) +
+  labs(
+    x = "Année",
+    y = "Station",
+    fill = "Prélèvement"
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    plot.title = element_blank(),
+    plot.subtitle = element_blank(),
+    legend.position = "none",
+    axis.text.x = element_text(angle = 45, hjust =1),
+    panel.grid = element_blank()
+  ) +
+  scale_y_discrete(guide = guide_axis(n.dodge = 2)) +
+scale_x_discrete(expand = c(0, 0))
+```
+
+### a) Analyses univariées
+
+Le calcul d'une statistique de tendance centrale telle que la médiane, témoigne d'une stabilité globale des indices et métriques au cours du temps, suggérant une variabilité inter-annuelle modérée. Il est est de même pour l'IBD et l'IPS (annexe). La richesse taxonomique se distingue par une plus grande variabilité, avec des médianes fluctuantes et davantage de valeurs aberrantes basses sur plusieurs années.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 10, fig.height= 5, fig.cap= " Fig.10 : Distribution inter-annuelle de l'indice I2M2 et ses métriques, autrice : Ilona Garcia"}
+
+ggplot(clean_minv, aes (x=factor(annee), y = resultat_indice)) +
+  geom_boxplot() +
+  facet_wrap(~ libelle_indice, scales = "free_y") +
+  labs(x = "Année", y= "Valeur", title ="Distribution des métriques par année") +
+  theme_bw()
+
+```
+
+Les classes de couleurs associées à la note de l'I2M2 sont également appliquées aux métriques, pour faciliter la comparaison. D'après l'étude des distributions, la majorité des notes I2M2 comptabilisées en Bretagne depuis 2015 tendent vers le "Bon" et "Très Bon" état selon la DCE. Les métriques ASPT et Indice de Shannon suivent une tendance similaire avec une prédominance des classes supérieures. Néanmoins, pour les métriques Ovoviviparité, Polyvoltinisme et Richesse Taxonomique, une proportion non négligeable de stations se classe dans les catégories "Moyen" ou "Médiocre" (s'écartant de l'état de référence). Cela peut indiquer une abondance importante de taxons polyvoltins et ovovivipares, entraînant une diminution de la richesse si ceux-ci sont en compétition avec les taxons sensibles.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 8, fig.height= 5, fig.align='center', fig.cap= " Fig.8 : Distribution de l'I2M2 et ses métriques, faisant apparaître les limites de classe de l'I2M2"}
+
+library(tidyverse)
+load(file = "../Data/10_donnees_pretraitees.rda")
+
+
+clean_minv_distrib <- clean_minv %>% 
+         mutate(classe_I2M2 = case_when(
+            resultat_indice > 0.665 ~ "Très bon",
+            resultat_indice > 0.433 ~ "Bon",
+            resultat_indice > 0.295 ~ "Moyen",
+            resultat_indice >= 0.148 ~ "Médiocre",
+            resultat_indice < 0.148  ~ "Mauvais" 
+           
+         ))
+clean_minv_distrib$classe_I2M2 <- factor(clean_minv_distrib$classe_I2M2, levels = c("Très bon", "Bon", "Moyen", "Médiocre", "Mauvais"))
+
+
+
+ggplot(clean_minv_distrib, aes(x = resultat_indice, fill = classe_I2M2)) +
+  geom_histogram(bins = 10, color = "white", alpha = 0.7) + 
+  scale_fill_manual(values = c(
+    "Très bon" = "blue",
+    "Bon"= "lightgreen",
+    "Moyen"="yellow",
+    "Médiocre"="orange",
+    "Mauvais"="red"
+  ))+
+  facet_wrap(~ libelle_indice,labeller = label_wrap_gen(width = 20), scales = "free") +  # Un histogramme par métrique
+  labs(title = "Distribution des valeurs des métriques de l'I2M2",
+       x = "Valeur de la métrique",
+       y = "Fréquence") +
+  theme_minimal()
+
+
+```
+
+Néanmoins, les proportions de stations classées "Moyen" et "Médiocre" sont nettement plus élevées pour les indices de diatomées (IBD, IPS) que pour l'I2M2. Cette divergence est significative car l'IBD, sensible aux conditions trophiques, indique potentiellement que celles-ci sélectionnent des communautés de diatomées tolérantes, limitant ainsi l'atteinte d'un bon état écologique. Cela nuance l'état globalement "Bon" perçu par les macro-invertébrés.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 3, fig.align='center', fig.cap= " Fig.9 : Distribution de l'IBD et de l'IPS, faisant apparaitre les limites de classe de l'IBD"}
+library(tidyverse)
+load(file = "../Data/10_donnees_pretraitees.rda")
+
+
+clean_ibd_distrib <- clean_ibd %>% 
+         mutate(classe_ibd = case_when(
+            resultat_indice > 16.4 ~ "Très bon",
+                                resultat_indice > 13.8 ~ "Bon",
+                                resultat_indice > 10 ~ "Moyen",
+                                resultat_indice > 5.9 ~ "Médiocre",
+                                TRUE                    ~ "Mauvais"
+           
+         ))
+clean_ibd_distrib$classe_ibd <- factor(clean_ibd_distrib$classe_ibd, levels = c("Très bon", "Bon", "Moyen", "Médiocre", "Mauvais"))
+
+ggplot(clean_ibd_distrib, aes(x = resultat_indice, fill = classe_ibd)) +
+  geom_histogram(bins = 10, color = "white", alpha = 0.7) + 
+  scale_fill_manual(values = c(
+    "Très bon" = "blue",
+    "Bon"= "lightgreen",
+    "Moyen"="yellow",
+    "Médiocre"="orange",
+    "Mauvais"="red"
+  ))+
+  facet_wrap(~ libelle_indice,labeller = label_wrap_gen(width = 20), scales = "free") +  # Un histogramme par métrique
+  labs(title = "Distribution des valeurs des indices IBD et IPS",
+       x = "Valeur de la métrique",
+       y = "Fréquence") +
+  theme_minimal()
+
+```
+
+### b. Analyses spatiales des tendances temporelles
+
+Cette étape permet d'identifier les stations où les indices et métriques évoluent de manière significatives et les stations où la tendance est nulle ou non aléatoire. La significativité de la tendance est obtenue grâce au test paramétrique de Mann-Kendall (Mann, 1945, Kendall, 1975), efficace pour traiter les tendances non linéaires, et robuste aux distributions non normales.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 5, fig.align='center', fig.cap= " Fig.12 : Carte des tendances temporelles de l'indice I2M2 en Bretagne : Ilona Garcia"}
+
+library(tidyverse)
+library(trend)
+library(sf)
+library(ggplot2)
+library(scales)
+remotes::install_github("MaelTheuliere/COGiter")
+library(COGiter)
+library(ggspatial)
+
+functions <- list.files(path = "R",
+                        pattern = ".R$",
+                        full.names = TRUE)
+
+map(.x = functions,
+    .f = source)
+
+load(file = "../Data/10_donnees_pretraitees.rda")
+source(file = "../R/mk_st_by_group.R")
+source(file = "../R/Mann_kendall_div.R")
+
+
+Tendances_multi <-mk_st_by_group(clean_minv,resultat_indice,code_indice,code_indice,code_station_hydrobio)
+Tendance_i2m2 <- filter(Tendances_multi, code_indice==7613) %>% dplyr::select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_ASPT <-filter(Tendances_multi,code_indice==8057)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_OVI <-filter(Tendances_multi,code_indice==8055)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_POL <-filter(Tendances_multi,code_indice==8056)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_SHA <-filter(Tendances_multi,code_indice==8058)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_RIC <-filter(Tendances_multi,code_indice==8054)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+
+i2m2 <- filter(clean_minv,code_indice==7613)
+i2m2_et_trend <- left_join(i2m2,Tendance_i2m2,by="code_station_hydrobio")
+
+
+i2m2_et_trend <- i2m2_et_trend %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      
+      trend == "Decrease" ~ "\u25BC"
+                             
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+    
+  )
+  )
+
+i2m2_et_trend_sf <- st_as_sf(i2m2_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+
+
+departement_breton <- departements_metro_geo %>% 
+  filter(DEP %in% c("22","29","35","56")) %>% 
+  st_transform(crs = 4326)
+
+resultats <- list()
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = i2m2_et_trend_sf) +
+  geom_sf_text(
+    data = i2m2_et_trend_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : Amélioration, ▼ : Dégradation, ● : Aucun changement")
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 5, fig.align='center', fig.cap= " Fig.13 : Carte des tendances de l'indice IBD en Bretagne : Ilona Garcia" }
+
+Tendances_donneesdiat<-mk_st_by_group(clean_ibd,resultat_indice,code_indice,code_indice,code_station_hydrobio)
+Tendance_ibd <- filter(Tendances_donneesdiat, code_indice==5856) %>% select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_ips <-filter(Tendances_donneesdiat,code_indice==1022)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+
+ibd <- filter(clean_ibd,code_indice==5856)
+ibd_et_trend <- left_join(ibd,Tendance_ibd,by="code_station_hydrobio")
+
+ibd_et_trend <- ibd_et_trend %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      # triangle vers le haut
+      trend == "Decrease" ~ "\u25BC",    # triangle vers le bas
+                          
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    
+   taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+  )
+  )
+
+ibd_et_trend_sf <- st_as_sf(ibd_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+
+
+departement_breton <- departements_metro_geo %>% 
+  filter(DEP %in% c("22","29","35","56")) %>% 
+  st_transform(crs = 4326)
+
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = ibd_et_trend_sf) +
+  geom_sf_text(
+    data = ibd_et_trend_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : amélioration, ▼ : dégradation, ● : aucun changement")
+
+```
+
+Les résultats indiquant une absence d'évolution significative majeure de l'état des cours d'eau bretons via les indices biologiques (métriques en annexe) conduisent à négliger la variabilité temporelle dans l'étude, par l'agrégation des valeurs en une statistique de tendance centrale.
+
+### c) Mise en évidence du gradient de qualité au regard de la biologie
+
+Bien que les habitats au sein des stations soient supposés stables temporellement sur la période d'étude, il est crucial de considérer leur hétérogénéité spatiale marquée à l'échelle du territoire breton, liée aux occupations du sol et pressions différentes, comme détaillé dans le contexte de cette étude. Dans cette perspective d'exploration des données et de caractérisation spatiale des écosystèmes, il est pertinent d'examiner la qualité biologique des stations au regard de l'I2M2 et de l'IBD.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 10, fig.height=8, fig.align = 'center', fig.cap= " Fig.5 : Evolutions des notes I2M2 de chaque stations au cours du temps, autrice : Ilona Garcia"}
+
+remotes::install_github("MaelTheuliere/COGiter")
+library(COGiter)
+load(file = "../Data/10_donnees_pretraitees.rda")
+load(file = "../Data/50_chroniques_et_tendance.rda")
+
+
+#On crée les couleurs par classe
+couleursi2m2<-c(
+  "Très bon" = "darkgreen",
+  "Bon" = "lightgreen",
+   "Moyen" = "yellow",
+  "Médiocre"="orange",
+  "Mauvais" = "red"
+  
+)
+
+#On va regarder l'évolution de la classe d'i2m2 au cours du temps 
+i2m2test <- i2m2 %>%
+  mutate(classe_etat= case_when(... = 
+                                resultat_indice > 0.665 ~ "Très bon",
+                                resultat_indice > 0.443 ~ "Bon",
+                                resultat_indice > 0.295 ~ "Moyen",
+                                resultat_indice > 0.148 ~ "Médiocre",
+                                TRUE                    ~ "Mauvais"
+
+  ))
+
+i2m2test<- i2m2test %>%
+  mutate(classe_etat=factor(classe_etat,levels=c("Très bon","Bon","Moyen","Médiocre","Mauvais")))
+
+
+#On teste avec facet_wrap
+
+i2m2_sf<-st_as_sf(i2m2test, coords=c("longitude","latitude"),crs=4326)
+
+departement_breton <- departements_metro_geo %>% 
+  filter(DEP %in% c("22","29","35","56")) %>% 
+  st_transform(crs = 4326)
+
+
+ggplot() + 
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = i2m2_sf, aes(color = classe_etat), size = 2) +
+  scale_color_manual(values = couleursi2m2) +
+   annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
+  facet_wrap(~ as.factor(annee)) +
+  labs(title = "Évolution des classes d'état I2M2 par année",
+       color = "Classe d'état") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+```
+
+Globalement, une prédominance des classes "Très bon" et "Bon" est observée sur l'ensemble du territoire et pour toutes les années. Cela confirme les observations précédentes sur la tendance générale de l'I2M2 vers un bon état écologique. Cependant, les cartes révèlent une persistance de zones de qualité "Moyenne" ou "Médiocre". Ces zones sont particulièrement notables dans la partie est de la Bretagne, et de manière plus dispersée dans le sud-est et ponctuellement sur le littoral nord. Cela suggèrent l'existence de pressions environnementales localisées et stables dans le temps affectant l'état des communautés de macro-invertébrés dans ces secteurs.
+
+### d) Influence des métriques sur l'I2M2
+
+La variabilité temporelle étant négligée, les analyses inter-stations se sont basées sur un jeu de données agrégées (statistique de tendance centrale) afin de révéler des tendances générales.
+
+Parmi les métriques biologiques, les analyses bivariées et multivariées montrent que la diversité de Shannon et la richesse taxonomique sont les moins corrélées à l'I2M2. Cela suggère que l'I2M2, en tant qu'indice, ne reflète que marginalement les aspects de diversité taxonomique et de richesse spécifique du peuplement d'invertébrés.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,results= 'hide', message=FALSE, warning=FALSE, fig.show='hide'}
+library(tidyverse)
+library(ggplot2)
+library(corrplot)
+library(GGally)
+
+load(file = "../Data/10_donnees_pretraitees.rda")
+load(file = "../Data/70_choix_parametre.rda")
+load(file = "../Data/80_donnees_globales_trans.rda")
+load(file = "../Data/90_acp.rda")
+
+
+label_bio <- c("7613" = "I2M2",
+               "8054" = "RichesI2M2",
+               "8055" = "OvovivI2M2",
+               "8056" = "PolyvolI2M2",
+               "8057" = "ASPT",
+               "8058" = "H'",
+               "5856" = "IBD",
+               "1022" = "IPS"
+               
+)
+ 
+i2m2_ibd_matrix <- i2m2_ibd %>% 
+  cor(method="spearman")
+corrplot.mixed(i2m2_ibd_matrix,upper="ellipse") 
+
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=5, fig.height=5, fig.cap= "Fig.15 = Matrice de corrélation, autrice : Ilona Garcia" }
+
+colnames(i2m2_ibd_matrix) <- label_bio
+rownames(i2m2_ibd_matrix) <- label_bio
+
+corrplot.mixed(i2m2_ibd_matrix, upper = "ellipse", tl.cex = 0.48)
+```
+
+De plus, elles contribuent très peu à la construction de l'axe F1 de l'analyse des composantes multiples (ACP) dans lequel elles sont d'ailleurs peu représentées. Les variables les plus contributives et les mieux représentées sont l'I2M2, le polyvoltinisme, l'ASPT et l'ovoviviparité, excessivement colinéaires.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,results= 'hide', message=FALSE, warning=FALSE, fig.show='hide'}
+library(FactoMineR)
+library(devtools)
+library(factoextra)
+library(dplyr)
+library(tidyverse)
+
+load(file = "../Data/10_donnees_pretraitees.rda")
+load(file = "../Data/70_choix_parametre.rda")
+load(file = "../Data/80_donnees_globales_trans.rda")
+
+i2m2_ibd <- i2m2_wide %>% 
+  left_join(ibd_wide, by = "code_station_hydrobio") %>% 
+  dplyr::select(`7613`:`5856`)
+
+donnees_centrees_reduites_bio <- scale(i2m2_ibd,center=TRUE,scale=TRUE)
+
+resultat_acp_bio<- PCA(donnees_centrees_reduites_bio, graph=TRUE)
+#print(resultat_acp_bio)
+valeurspropres_bio<- resultat_acp_bio$eig
+#valeurspropres_bio
+
+label_bio <- c("7613" = "I2M2",
+               "8054" = "RichesI2M2",
+               "8055" = "OvovivI2M2",
+               "8056" = "PolyvolI2M2",
+               "8057" = "ASPT",
+               "8058" = "H'",
+               "5856" = "IBD",
+               "1022" = "IPS"
+  
+)
+
+old_names_bio <- rownames(resultat_acp_bio$var$coord)
+new_names_bio <- old_names_bio
+new_names_bio[old_names_bio %in% names(label_bio)] <- label_bio[old_names_bio[old_names_bio %in% names(label_bio)]]
+
+
+#barplot(valeurspropres_bio[,2],names.arg=1:nrow(valeurspropres_bio),
+        #main="Pourcentage de la variance expliquée par chaque composante",
+        #xlab="Composantes principales",
+        #ylab="Pourcentage de variance expliquée",
+        #col="steelblue")
+#Add connected line segments to the plot
+#lines(x=1:nrow(valeurspropres_bio),valeurspropres_bio[,2],
+      #type="b", pch=19, col="red")
+
+resultat_acp_bio$var$coord <- `rownames<-`(resultat_acp_bio$var$coord, new_names_bio)
+resultat_acp_bio$var$contrib <- `rownames<-`(resultat_acp_bio$var$contrib, new_names_bio)
+resultat_acp_bio$var$cos2 <- `rownames<-`(resultat_acp_bio$var$cos2, new_names_bio)
+resultat_acp_bio$var$cor <- `rownames<-`(resultat_acp_bio$var$cor, new_names_bio)
+
+fviz_pca_var(resultat_acp_bio,
+             col.var="cos2",
+             gradient.cols=c("#8fd175", "#60BD68","#2d543d"),
+             repel=TRUE,
+             title="Cercle de Corrélation des Variables")
+#fviz_contrib(resultat_acp_bio,choice="var", axes=1, top = 10)
+#fviz_contrib(resultat_acp_bio,choice="var", axes=2, top = 10)
+#fviz_contrib(resultat_acp_bio,choice="var", axes=3, top = 10)
+
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=5, fig.height=5, fig.cap= "Fig.15 = Analyse des composantes principales des indices biologiques, autrice : Ilona Garcia" }
+
+fviz_pca_var(resultat_acp_bio,
+             col.var="cos2",
+             gradient.cols=c("#8fd175", "#60BD68","#2d543d"),
+             repel=TRUE,
+             title="Cercle de Corrélation des Variables")
+
+```
+
+## 2) Qualité physico-chimique
+
+L'importation des données physico-chimiques de 2015 à 2024 a été réalisée via Hub'eau. Un protocole de prétraitement, analogue à celui des données biologiques, a été mis en œuvre. Celui-ci incluait un filtre spécifique à la fraction de l'eau sur laquelle les concentrations sont mesurées. Une analyse graphique par paramètre (similaire à la Fig. 7) a permis de sélectionner uniquement la fraction majoritaire pour assurer l'homogénéité. Au final, 232 stations (les stations de l'I2M2 ajoutées à celles de l'IBD) ont été conservées après ces étapes de prétraitement.
+
+### 2.1) Gradient de qualité physico-chimique
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=7, fig.height=5, fig.cap= "Fig.15 = Analyse des composantes principales des indices biologiques, autrice : Ilona Garcia"}
+load(file = "../Data/10_donnees_pretraitees.rda")
+load(file = "../Data/80_donnees_globales_trans.rda")
+load(file = "../Data/90_acp.rda")
+load(file ="../Data/40_statistiques_descriptives.rda")
+
+library(sf)
+library(dplyr)
+library(mapview)
+library(ggspatial)
+
+functions <- list.files(path = "R",
+                        pattern = ".R$",
+                        full.names = TRUE)
+
+map(.x = functions,
+    .f = source)
+
+p90 <- parametres_physico %>% 
+  group_by(code_station_hydrobio,code_parametre) %>% 
+  summarise(P90 = quantile(resultat, probs = 0.9, na.rm = TRUE))
+
+p10 <- parametres_physico %>% 
+  group_by(code_station_hydrobio,code_parametre) %>% 
+  summarise(P10 = quantile(resultat, probs = 0.1, na.rm = TRUE))
+
+classe_nitt <- c(
+  "Très bon" = "darkgreen",
+  "Bon" = "lightgreen",
+  "Hors classement"="red"
+)
+
+nitrates_carte <- p90 %>%
+  filter(code_parametre == "1340") %>%
+  arrange(code_station_hydrobio) %>% 
+  mutate(classe_nitrates= case_when(... = 
+                                      P90 <= 10 ~ "Très bon",
+                                    P90 <= 50 ~ "Bon",
+                                    P90 > 50 ~ "Hors classement"
+                                   
+                                    
+  ))
+
+
+nitrates_carte <- nitrates_carte %>%
+  mutate(classe_nitrates=factor(classe_nitrates,levels=c("Très bon","Bon","Hors classement")))
+
+gradient_nitrates <- nitrates_carte %>% 
+  left_join(clean_ibd %>% 
+              dplyr::select(code_station_hydrobio, longitude, latitude) %>% 
+              distinct(),
+            by = "code_station_hydrobio"
+  ) 
+
+
+nitrates_sf<-st_as_sf(gradient_nitrates, coords=c("longitude","latitude"),crs=4326)
+
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = nitrates_sf, aes(color = classe_nitrates), size = 2) +
+  scale_color_manual(values = classe_nitt) +
+  annotation_north_arrow(location = "br", which_north = "true",
+                         style = north_arrow_fancy_orienteering,
+                         height = unit(1, "cm"), width = unit(1, "cm")) +
+  annotation_scale(location = "br", width_hint = 0.3) +
+  coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
+  labs(title = "Gradient des concentrations en nitrates sur le territoire breton",
+       color = "Classe d'état") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+#PTOT 
+
+classe_ptotal <- c(
+  "Très bon" = "darkgreen",
+  "Bon" = "lightgreen",
+  "Moyen" = "yellow",
+  "Médiocre" = "orange",
+  "Mauvais"="red"
+)
+
+ptot_carte <- p90 %>%
+  filter(code_parametre == "1350") %>%
+  arrange(code_station_hydrobio) %>% 
+  mutate(classe_ptot= case_when(... = 
+                                      P90 <= 0.05 ~ "Très bon",
+                                    P90 <= 0.2 ~ "Bon",
+                                    P90 <= 0.5 ~ "Moyen",
+                                    P90 <= 1 ~ "Médiocre",
+                                    P90 > 1 ~ "Mauvais"
+                                    
+                                    
+  ))
+
+
+ptot_carte <- ptot_carte %>%
+  mutate(classe_ptot =factor(classe_ptot,levels=c("Très bon","Bon","Moyen","Médiocre","Mauvais")))
+
+gradient_ptot <- ptot_carte %>% 
+  left_join(clean_ibd %>% 
+              dplyr::select(code_station_hydrobio, longitude, latitude) %>% 
+              distinct(),
+            by = "code_station_hydrobio"
+  ) 
+
+ptot_sf<-st_as_sf(gradient_ptot, coords=c("longitude","latitude"),crs=4326)
+
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = ptot_sf, aes(color = classe_ptot), size = 2) +
+  scale_color_manual(values = classe_ptotal) +
+  annotation_north_arrow(location = "br", which_north = "true",
+                         style = north_arrow_fancy_orienteering,
+                         height = unit(1, "cm"), width = unit(1, "cm")) +
+  annotation_scale(location = "br", width_hint = 0.3) +
+  coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
+  labs(title = "Gradient des concentrations en phosphore total sur le territoire breton",
+       color = "Classe d'état") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+```
+
+### 2.2) Sélection des periodes temporelles
+
+Les prélèvements physico-chimiques sont réalisés tout au long de l'année, parfois plusieurs fois par mois. La variabilité inter-annuelle étant négligée, une période temporelle est d'abord sélectionnée pour chaque paramètre, ce qui permet ensuite le calcul d'une moyenne inter-annuelle. Les critères de sélection de cette période sont :
+
+-   le coefficient de corrélation
+
+-   la durée de la période où la correlation est significative
+
+-   la cohérence écologique
+
+    Les étapes de la construction du graphique "fenêtre glissante" (biblio) sont les suivantes :
+
+-   création d'un dataframe (df), avec toutes les combinaisons de mois-début et mois-fin pour chaque paramètre (soit 78 combinaisons possibles).
+
+-   réalisation d'un df avec les colonnes suivantes : *code_station_hydrobio, code_paramètre, annee, mois.*
+
+-   calcule des moyennes mensuelles intra paramètres physico-chimiques au niveau de chaque station.
+
+-   la fonction *calculer_indicateur* calcule la moyenne d'un paramètre sur une période donnée en regroupant les données par station et paramètre.
+
+-   les résultats sont obtenus pour chaque combinaison de mois à l'aide de *map2_df*, en appliquant la fonction *calculer_indicateur* sur les données.
+
+-   les moyennes des indices biologiques sont ensuite calculées par station et indice (supression du facteur temporel).
+
+-   les corrélations entre les paramètres physico-chimiques et les indices biologiques sont calculées à l'aide du test de Spearman.
+
+-   les résultats des corrélations sont visualisés avec un graphique utilisant *ggplot2*, en affichant les corrélations significatives avec un point gris.
+
+-   un graphique final est créé pour représenter les corrélations en fonction des mois de début et de fin, en utilisant un gradient de couleurs pour indiquer la force de la corrélation (on appelle ce genre de graphique fenêtre glissante).
+
+    ```{r, echo=FALSE,results= 'hide', message=FALSE, warning=FALSE, fig.show='hide'}
+    source (file = "../R/calculer_indicateur.R")
+
+    #Constitution des combinaisons de mois : avoir toutes les combinaisons possibles
+    #entre le mois de début et le mois de fin
+    combin_mois <- expand.grid(1:12, 1:12) %>%
+      set_names("mois_debut", "mois_fin") %>%
+      filter(mois_debut <= mois_fin)
+
+    #Vérification
+    combin_mois %>%
+      mutate(remp = 1) %>%
+      pivot_wider(names_from = mois_fin,
+                  values_from = remp)
+
+    #Assemblage du jeu de données 
+
+    window_data <- expand.grid(stations_parametre,
+                               code_pc,
+                               2015:2024,
+                               1:12) %>%
+      set_names("code_station_hydrobio", "code_parametre", "annee", "mois")
+
+    mean_physico <- parametres_physico %>% 
+      group_by(code_station_hydrobio,
+             code_parametre,
+             annee,
+             mois) %>% 
+      summarise(para_moy = mean(resultat, na.rm = TRUE))
+
+
+    donnees_jointure <- window_data %>% 
+      left_join(y = mean_physico)
+
+
+    glimpse(window_data)
+
+
+    # test pour toutes les combinaisons de mois de début (.x) et de fin (.y)
+
+    resultat2 <- map2_df(
+      .df = donnees_jointure,
+      .f = calculer_indicateur,
+      .var_mois = mois,
+      .var_valeur = para_moy,
+      .x = combin_mois$mois_debut,
+      .y = combin_mois$mois_fin,
+      code_station_hydrobio,
+      code_parametre
+    )
+
+    indices_moy_par_sta <- clean_minv %>% 
+      group_by(code_station_hydrobio,
+               code_indice) %>% 
+      summarise(indice_moy = mean(resultat_indice, na.rm = TRUE),
+                .groups = "drop")
+
+    resultat_i2m2 <- resultat2 %>%
+      rename(para_moy = moy) %>% 
+      left_join(y = indices_moy_par_sta)
+                
+    cor_i2m2 <- resultat_i2m2 %>% 
+      drop_na() %>% 
+      group_by(code_parametre,
+               code_indice,
+               debut,
+               fin) %>% 
+      summarise(correlation = cor.test(para_moy,
+                                  indice_moy,
+                                  method = "spearman")$estimate,
+                p_value = cor.test(para_moy,indice_moy, method="spearman")$p.value,
+                .groups = "drop"
+                )
+
+    cor_i2m2 %>% 
+      ggplot(aes(x = debut,
+                 y = fin,
+                 fill = correlation,
+                 col = correlation)) +
+      geom_point(size = 3) +
+      scale_fill_distiller(palette = "Spectral", direction = 1) +
+      scale_color_distiller(palette = "Spectral", direction = 1) +
+      scale_x_continuous(breaks = 1:12) +
+      scale_y_continuous(breaks = 1:12) +
+      facet_grid(code_indice~code_parametre) +
+      theme_bw() +
+      theme(panel.grid.minor = element_blank()) +
+      labs(x = "Mois de début",
+           y = "Mois de fin")
+
+    indices_moy_par_sta_ibd <- clean_ibd %>% 
+      group_by(code_station_hydrobio,
+               code_indice) %>% 
+      summarise(indice_moy = mean(resultat_indice, na.rm = TRUE),
+                .groups = "drop")
+
+    ```
+
+    ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8, fig.cap= "Fig.14 = Fenêtre glissante des corrélations entre les paramètres physico-chimiques et l'indice I2M2 et ses métriques, autrice : Ilona Garcia"}
+
+    #Ajouter les noms
+    cor_i2m2_label <- cor_i2m2 %>%
+      mutate(
+        nom_parametre = case_when(
+          code_parametre == "1301" ~ "T°",
+          code_parametre == "1302" ~ "pH",
+          code_parametre == "1303" ~ "Conductiv",
+          code_parametre == "1305" ~ "MES",
+          code_parametre == "1311" ~ "O2 dissous",
+          code_parametre == "1312" ~ "Satur.O2",
+          code_parametre == "1313" ~ "DBO5",
+          code_parametre == "1335" ~ "NH4+",
+          code_parametre == "1339" ~ "NO2-",
+          code_parametre == "1340" ~ "NO3-",
+          code_parametre == "1350" ~ "P total",
+          code_parametre == "1433" ~ "PO4-",
+          code_parametre == "1295" ~ "Turbidité",
+          code_parametre == "1841" ~ "C organique",
+          TRUE ~ code_parametre
+        ),
+        nom_indice = case_when(
+          code_indice == "7613" ~ "I2M2",
+          code_indice == "8054" ~ "RichesI2M2",
+          code_indice == "8055" ~ "OvovivI2M2",
+          code_indice == "8056" ~ "PolyvolI2M2",
+          code_indice == "8057" ~ "ASPT",
+          code_indice == "8058" ~ "H'",
+          TRUE ~ code_indice
+        ),
+        nom_parametre = factor(nom_parametre, levels= c("NH4+","NO2-","NO3-","P total","PO4-","C organique","O2 dissous","Satur.O2","DBO5","MES","Turbidité","Conductiv","pH","T°")),
+        nom_indice = factor(nom_indice, levels= c("I2M2","H'","RichesI2M2","OvovivI2M2","PolyvolI2M2","ASPT"))
+      )
+
+
+    #Création du graphique
+    cor_i2m2_label %>% 
+    ggplot(aes(x = debut, 
+               y = fin, 
+               fill = correlation, 
+               col = correlation)) +
+      geom_point(size = 3) +
+      geom_point(data = cor_i2m2_label %>% filter(p_value < 0.01),
+                 aes(x = debut, y = fin),
+                 fill = NA, color = "grey", size = 0.5) +
+      scale_fill_distiller(palette = "Spectral", direction = 1) +
+      scale_color_distiller(palette = "Spectral", direction = 1) +
+      scale_x_continuous(breaks = seq(1, 12, by = 2)) +
+      scale_y_continuous(breaks = seq(1, 12, by = 2)) +
+        
+      facet_grid(nom_indice ~ nom_parametre) +
+        
+
+      theme_bw() +
+      theme(
+        panel.grid.major = element_blank(),  # suppression du quadrillage principal
+        panel.grid.minor = element_blank(),
+        legend.position = "bottom",
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      ) +
+        
+
+      labs(
+        x = "Mois de début",
+        y = "Mois de fin",
+        fill = "Corrélation",
+        color = "Corrélation"
+      )
+
+
+    ```
+
+D'après le graphique ci-dessus, trois periodes peuvent être distinguées (les résultats sont les même pour l'IBD et l'IPS) :
+
+-   Nitrates : janvier à mars
+
+-   Oxygène dissous et taux de saturation en oxygène : mai à décembre
+
+-   Autres : annuelle
+
+Les périodes présentant les corrélations significatives les plus fortes avec les indices biologiques ont été retenues pour l'analyse. La métrique de richesse taxonomique n'a pas été considérée dans ce choix. La période de janvier à mars a notamment été sélectionnée pour les nitrates, car elle correspond à la phase de lessivage des sols liée aux précipitations hivernales, entraînant un transfert important de nitrates issus des pratiques agricoles vers les cours d'eau. Les variables physico-chimiques ont ainsi été moyennées sur ces périodes spécifiques afin de refléter au mieux les conditions environnementales et les pressions étudiées.
+
+Une fois les moyennes calculées sur la période retenue, le dataframe utilisé pour la suite des analyses est constitué de 232 lignes, où chaque *code_station_hydrobio* se voit attribuer une seule valeur pour chaque paramètre physico-chimique (14 colonnes correspondant aux 14 variables environnementales). Il s'agit du dataframe *resultat_physico_final*, qui a été transposé par la suite pour la réalisation des analyses suivantes.
+
+### 2.3) Selection des variables pour la modélisation
+
+Par l'ACP des paramètres physico-chimiques, un gradient clair de pression environnementale s'oppose à celui de l'oxygénation. Ce gradient de pression est fortement influencé par les nitrites, l'ammonium, le phosphore total, la DBO5, la turbidité, la conductivité et les matières en suspension (MES). Ces variables, inter-corrélées, témoignent d'une pollution organique et particulaire impactant directement l'oxygène dissous. En revanche, les nitrates (NO3-) sont faiblement représentés sur cet axe principal, contrairement aux autres formes d'azote. Ils présentent également une faible corrélation avec les autres éléments azotés et phosphorés, suggérant une dynamique et des facteurs d'influence distincts.
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE,results= 'hide', message=FALSE, warning=FALSE, fig.show='hide' }
+library(FactoMineR)
+library(devtools)
+library(factoextra)
+library(dplyr)
+library(tidyverse)
+
+load(file = "../Data/10_donnees_pretraitees.rda")
+load(file = "../Data/70_choix_parametre.rda")
+load(file = "../Data/80_donnees_globales_trans.rda")
+
+
+label_physico <- c(
+  "1301" = "T°",
+  "1302" = "pH",
+  "1303" = "Conductiv",
+  "1305" = "MES",
+  "1311" = "O2 dissous",
+  "1312" = "Satur.O2",
+  "1313" = "DBO5",
+  "1335" = "NH4+",
+  "1339" = "NO2-",
+  "1340" = "NO3-",
+  "1350" = "P total",
+  "1433" = "PO4-",
+  "1295" = "Turbidité",
+  "1841" = "C organique")
+
+acp_physico <- physico_wide %>%
+  dplyr::select(`1295`:`1841`)
+
+donnees_centrees_reduites_pc_2 <- scale(acp_physico,center=TRUE,scale=TRUE)
+resultat_acp_physico_2<- PCA(donnees_centrees_reduites_pc_2, graph=TRUE)
+print(resultat_acp_physico_2)
+valeurspropres_pc_2<- resultat_acp_physico_2$eig
+valeurspropres_pc_2
+
+old_names <- rownames(resultat_acp_physico_2$var$coord)
+new_names <- old_names
+new_names[old_names %in% names(label_physico)] <- label_physico[old_names[old_names %in% names(label_physico)]]
+
+resultat_acp_physico_2$var$cos2 <- `rownames<-`(resultat_acp_physico_2$var$cos2, new_names)
+
+
+#barplot(valeurspropres_pc_2[,2],names.arg=1:nrow(valeurspropres_pc_2),
+        #main="Pourcentage de la variance expliquée par chaque composante",
+        #xlab="Composantes principales",
+        #ylab="Pourcentage de variance expliquée",
+        #col="steelblue")
+#Add connected line segments to the plot
+#lines(x=1:nrow(valeurspropres_pc_2),valeurspropres_pc_2[,2],
+      #type="b", pch=19, col="red")
+
+resultat_acp_physico_2$var$coord <- `rownames<-`(resultat_acp_physico_2$var$coord, new_names)
+resultat_acp_physico_2$var$contrib <- `rownames<-`(resultat_acp_physico_2$var$contrib, new_names)
+resultat_acp_physico_2$var$cos2 <- `rownames<-`(resultat_acp_physico_2$var$cos2, new_names)
+resultat_acp_physico_2$var$cor <- `rownames<-`(resultat_acp_physico_2$var$cor, new_names)
+
+fviz_pca_var(resultat_acp_physico_2,
+             col.var="cos2",
+             gradient.cols=c("#8fd175", "#60BD68","#2d543d"),
+             repel=TRUE,
+             title="Cercle de Corrélation des Variables")
+
+
+#fviz_contrib(resultat_acp_physico_2,choice="var", axes=1, top = 10)
+#fviz_contrib(resultat_acp_physico_2,choice="var", axes=2, top = 10)
+#fviz_contrib(resultat_acp_physico_2,choice="var", axes=3, top = 10)
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=5, fig.cap= "Fig.16 = Analyse des composantes principales des paramètres physico-chimiques, faisant apparaitre le gradient de pression"}
+
+fviz_pca_var(resultat_acp_physico_2,
+             col.var="cos2",
+             gradient.cols=c("#8fd175", "#60BD68","#2d543d"),
+             repel=TRUE,
+             title="Cercle de Corrélation des Variables")
+```
+
+L'extraction des coordonnées des points sur l'axe F1 et F2 permet de visualiser le gradient de pression.
+
+Les variables explicatives pour la modélisation ont été sélectionnées selon leur contribution aux axes de l'ACP, l'absence de colinéarité excessive (évaluée également par le biais des calculs de corrélation en annexe) et leur pertinence écologique. L'ammonium, en tant que forme azotée la plus toxique, a été conservé, de même que les nitrates, fortement représentatifs des apports agricoles diffus caractéristiques du contexte breton. Le phosphore total a été retenu comme indicateur principal de la pression phosphorée, compte tenu de sa forte contribution au gradient de l'axe 1 de l'ACP. Enfin, l'oxygène dissous a été sélectionné en tant qu'indicateur de la qualité globale du milieu.
+
+## 3) L'influence des variables selectionnées sur les indices et métriques
+
+Le jeu de données utilisé regroupe les indices biologiques, les métriques et les paramètres physico chimiques, consolidés à l'échelle des stations d'échantillonnage. Afin de se concentrer sur les patterns spatiaux inter-stations et de neutraliser la variabilité temporelle, une moyenne a été calculée pour chaque variable (paramètre, indice ou métrique) par station. Chaque station est ainsi représentée par une valeur unique par variable, ce qui permet d'analyser des tendances générales.
+
+La modélisation est réalisée via un Modèle Linéaire Généralisé (GLM), en utilisant la fonction suivante pour l'illustrer avec l'indice I2M2 comme variable dépendante :
+
+*glm(I2M2 \~ O2dissous + NH4 + NO3 + Ptot, data = df_global_sans_stations, family = gaussian(link = "identity"))*
+
+Deux versions du modèle seront explorées : l'une inclura la longitude comme variable explicative pour évaluer la robustesse du modèle, et l'autre n'en tiendra pas compte. Pour chaque modèle, la fonction stepAIC sera appliquée afin de retenir la version simplifiée présentant le critère d'information d'Akaike (AIC) le plus bas, indiquant un meilleur compromis entre ajustement du modèle et parcimonie.
+
+Pour rationaliser le processus, la modélisation des réponses pour chaque métrique et indice sera automatisée grâce à la création d'une fonction de modélisation paramétrable. La démarche méthodologique détaillée sera présentée pour l'indice I2M2, et les résultats des modélisations pour l'ensemble des variables biologiques seront synthétisés dans un tableau récapitulatif.
+
+### 3.1) Modélisation de la réponse de l'I2M2 (sans la longitude)
+
+Après la simplification du modèle à l'aide de la fonction *stepAIC* du package *MASS*, quatre variables ont été retenues, dont trois exercent un effet significatif sur l'I2M2 : l'oxygène dissous, l'ammonium et le phosphore total.
+
+Pour ce modèle, une loi normale (ou gaussienne) avec une fonction de lien identité a été sélectionnée après plusieurs essais. Ce choix implique la validation des hypothèses suivantes :
+
+-   Relation linéaire entre la variable dépendante et les prédicteurs.
+
+-   Absence de multicolinéarité parmi les prédicteurs, évaluée par les coefficients VIF (Variance Inflation Factors). Des VIF supérieurs à 10 indiqueront la présence de multicolinéarité.
+
+-   Absence d'influence extrême des observations, contrôlée par l'examen graphique du modèle et l'estimation de la distance de Cook.
+
+-   Homogénéité des variances des résidus, testée via le test de White.
+
+-   Distribution normale des résidus, vérifiée par le test de Shapiro.
+
+Afin de valider spécifiquement l'hypothèse de non-multicolinéarité, les coefficients VIF seront calculés.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='markup'}
+
+load(file = "../Data/80_donnees_globales_trans.rda")
+library(car)
+library(MASS)
+library(tidyverse)
+library(sjPlot)
+library(lmtest)
+
+
+# On renomme les variables
+df_global <- df_global %>% 
+  rename(I2M2 = `7613`,
+         richesI2M2 = `8054`,
+         ovovivI2M2 = `8055`,
+         polyvolI2M2 = `8056`,
+         ASPT = `8057`,
+         ShannonI2M2 = `8058`,
+         IPS = `1022`,
+         IBD = `5856`,
+         turbidité = `1295`,
+         Temp = `1301`,
+         pH = `1302`,
+         conductiv = `1303`,
+         MES = `1305`,
+         O2dissous = `1311`,
+         SaturO2 = `1312`,
+         DBO5 = `1313`,
+         NH4 = `1335`,
+         NO2 = `1339`,
+         NO3 = `1340`,
+         Ptot = `1350`,
+         PO4 = `1433`,
+         Corga = `1841`)
+
+#On garde seulement les variables numériques
+df_global_sans_stations <- df_global %>% 
+  dplyr::select(I2M2:Corga)
+
+model_normal_non_transformées <- glm(I2M2 ~
+                                       O2dissous +
+                                       NH4 +
+                                       NO3 +
+                                       Ptot,
+                                     data = df_global_sans_stations,
+                                     family = gaussian(link = "identity"))
+
+model_simplifié <- MASS::stepAIC(model_normal_non_transformées)
+
+vif(model_simplifié)
+```
+
+Les résultats sont tous inférieurs à cinq, le critère de non multicolinéarité est respecté.
+
+A la suite de cela, les test d'homoscédasticité et normalité des résidus sont réalisés, à l'aide des test associés.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='markup'}
+
+bptest(model_simplifié, ~fitted(model_normal_non_transformées) + I(fitted(model_normal_non_transformées)^2)) # test de white, variance constante
+
+shapiro.test(residuals(model_simplifié)) #si pvalue < 0,05 ce n'est pas normal
+```
+
+La p-value étant supérieure à 0,05 dans les deux cas, les hypothèses d'homoscédasticité et normalité sont validées.
+
+Par conséquent, on peut valider le modèle et tracer les graphiques associés.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=5, fig.cap= "Fig.17 = Graphiques illustrants le modèle , autrice : Ilona Garcia"}
+plot(model_simplifié)
+```
+
+### 3.2) Tableau récapitulatif
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE }
+load(file = "../Data/80_donnees_globales_trans.rda")
+
+library(car)
+library(MASS)
+library(tidyverse)
+library(sjPlot)
+library(lmtest)
+library(DT)
+
+
+functions <- list.files(path = "../R",
+                        pattern = ".R$",
+                        full.names = TRUE)
+
+map(.x = functions,
+    .f = source)
+
+
+df_global <- df_global %>% 
+  rename(I2M2 = `7613`,
+         richesI2M2 = `8054`,
+         ovovivI2M2 = `8055`,
+         polyvolI2M2 = `8056`,
+         ASPT = `8057`,
+         ShannonI2M2 = `8058`,
+         IPS = `1022`,
+         IBD = `5856`,
+         turbidité = `1295`,
+         Temp = `1301`,
+         pH = `1302`,
+         conductiv = `1303`,
+         MES = `1305`,
+         O2dissous = `1311`,
+         SaturO2 = `1312`,
+         DBO5 = `1313`,
+         NH4 = `1335`,
+         NO2 = `1339`,
+         NO3 = `1340`,
+         Ptot = `1350`,
+         PO4 = `1433`,
+         Corga = `1841`)
+
+#On garde seulement les variables numériques
+df_global_sans_stations <- df_global %>% 
+  dplyr::select(I2M2:Corga) 
+
+
+mes_metriques <- names(df_global_sans_stations)[1:8]
+
+res <- map_df(.x = mes_metriques,
+              .f = caler_modele,
+              df = df_global_sans_stations)
+
+res_large <- res %>% 
+  pivot_wider(names_from = variable,
+              values_from = coef)
+```
+
+```{r, echo=FALSE, fig.cap= "Tableau 1 : Récapitulatif des résultats"}
+library(DT)
+
+res_large <- res %>% 
+  pivot_wider(names_from = variable,
+              values_from = coef)
+
+datatable(res_large, head(iris), options = list(dom = 't'))
+```
+
+D'après les résultats, les indices et métriques liés à l'I2M2, à l'exception de la diversité de Shannon et la richesse taxonomique, sont sensibles à l'augmentation de la teneur en oxygène dissous dans l'eau, démontrant l'importance de cet élement pour maintenir un cours d'eau en bon état vis à vis des macro-invertébrés.
+
+Tous les indices et métriques réagissent à l'augmentation de la concentration en ammonium, à l'exception de la richesse taxonomique, démontrant l'effet toxique pour les macroinvertébrés et diatomées sensibles à ce genre de pollution impliquant une baisse de la note de l'indice. Cela suggère une diminution de la diversité et de l'abondance des espèces sensibles, souvent au profit de taxons plus tolérants. Les nitrates présents de manière continue en Bretagne, moins toxiques que l'ammonium, ont un poids relativement faible sur les réponses biologiques. En remplçant l'ammonium par les nitrites en tant que variable explicative du modèle, les effets se révèlent être significatifs sur les indices et métriques, tout autant que l'ammonium.
+
+Il est intéressant de noter que le phosphore total est le seul élement suscitant une réponse de la richesse taxonomique des peuplements de macro-invertébrés, qui diminue lorsque ce dernier augmente. En effet, cela confirme l'hypothèse que l'excès de phosphore favorise la prolifération d'espèces de diatomées opportunistes et tolérantes à l'eutrophisation, au détriment des espèces sensibles indicatrices d'une bonne qualité de l'eau.
+
+### 3.3) Modélisation en incluant la longitude comme prédicteur
+
+Afin de s'assurer que les résultats ne soient pas uniquement dus au gradient ouest-est, il est utile de l'intégrer dans l'équation du modèle.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+library(tidyverse)
+library(sjPlot)
+library(lmtest)
+
+
+stations_long1 <- clean_minv %>% 
+  dplyr::select(code_station_hydrobio,longitude) %>% 
+  distinct(code_station_hydrobio, longitude)
+
+df_global_longitude <- df_global %>% 
+  left_join(stations_long1, by = "code_station_hydrobio")
+
+#On garde seulement les variables numériques
+df_global_sans_stations_longitude <- df_global_longitude %>% 
+  dplyr::select(I2M2:longitude) 
+
+model_normal_non_transformées <- glm(I2M2 ~
+                                       O2dissous +
+                                       NH4 +
+                                       NO3 +
+                                       Ptot +
+                                       longitude,
+                                     data = df_global_sans_stations_longitude,
+                                     family = gaussian(link = "identity"))
+summary(model_normal_non_transformées)
+
+```
+
+En prenant l'exemple de l'I2M2, l'intégration de la longitude dans l'équation ne change pas le sens ni la significativité des effets des prédicteurs sur les variables biologiques. Le même résultat est constaté pour le reste des indices et métriques. En revanche, la longitude n'a aucun effet sur les variables biologiques, donc la fonction stepAIC supprime celle-ci parmi la liste des prédicteurs.
+
+## 4) Listes taxonomiques
+
+### 3.1) Macroinvertébrés
+
+#### 3.1.1) Explorations des indicateurs
+
+# Discussion
+
+D'après l'article *Multi-decadal improvements in the ecological quality of European rivers are not consistently reflected in biodiversity metrics[NOM]* , à l'échelle des pays de l'Europe, c'était l'indice de Shannon et la richesse taxonomique qui montrait la relation la plus forte aux changements de la qualité de l'eau, ce qui est contraire aux résultats obenues.
+
+En effet, à partir d'un certain seuil, cet élement peut modifier la diversité et l'abondance des macro-invertébrés dans les cours d'eau, ajouté d'une augmentation de la présence de taxons tolérants tels que *Gammarus pulex*. Certaines diatomées ont également un seuil, 100M, à partir duquel est observée une diminution de la croissance ([soucre].

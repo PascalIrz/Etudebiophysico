@@ -2,11 +2,12 @@ Classes_carayon <- function(Listediat){
   library(lubridate)# pour utiliser la fct year()
   library(dplyr)# a enlever si appelé par ailleurs
   library(hubeau)#a enlever si appelé par ailleurs
+  library(tidyr)#pour utiliser pivot_wider
 
 #entree : DF contenant les listes taxo :station, date, code taxon, abondance
 
 ############# test avec le DF d'Ilona (a supprimer)
-  # load('../Data/df_abondance_rel_diat.RData')
+  # load('/Data/df_abondance_rel_diat.RData')
   # Listediat <- df1_ligne1
   ############################################
   
@@ -29,9 +30,10 @@ Listeavecmodalites <-  left_join(Listediat,Carayontaxons,by=c("code_appel_taxon"
   filter(!is.na(Class))
 ################ calcul des classes par prel
 Classescarayon <- Listeavecmodalites %>% 
-  mutate(resmod=total_abondance*Class) %>% 
+  mutate(resmod=round(total_abondance*Class)) %>% 
   group_by(code_station_hydrobio,annee,parameter) %>%
-  summarise(resultat=sum(resmod/sum(total_abondance)))
+  summarise(resultat=sum(resmod/sum(total_abondance))) %>% 
+  pivot_wider(names_from = parameter,values_from = resultat)
   
 return(Classescarayon)
 

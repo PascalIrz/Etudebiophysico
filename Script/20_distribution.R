@@ -7,7 +7,56 @@ load(file = "Data/10_donnees_pretraitees.rda")
 #                       I2M2                               #
 #################################################################################
 
-#Création de l'histogramme : donnees I2M2 et métriques 
+##### Test
+clean_minv_distrib <- clean_minv %>%
+  mutate(
+    classe_I2M2 = case_when(
+      resultat_indice > 0.665 ~ "Très bon",
+      resultat_indice > 0.433 ~ "Bon",
+      resultat_indice > 0.295 ~ "Moyen",
+      resultat_indice >= 0.148 ~ "Médiocre",
+      resultat_indice < 0.148  ~ "Mauvais",
+      TRUE ~ NA_character_ 
+    )
+  ) %>%
+  mutate(
+    classe_I2M2 = factor(classe_I2M2,
+                         levels = c("Très bon", "Bon", "Moyen", "Médiocre", "Mauvais"))
+  )
+
+ggplot(clean_minv_distrib, aes(x = resultat_indice, fill = classe_I2M2)) +
+  geom_histogram(binwidth = 0.01, color = "black", alpha = 0.7, stat = "bin") +
+  geom_vline(xintercept = c(0.148, 0.295, 0.433, 0.665),
+             linetype = "dashed", color = "grey50", linewidth = 0.8) +
+  
+  scale_fill_manual(
+    values = c(
+      "Très bon" = "blue",
+      "Bon"      = "lightgreen",
+      "Moyen"    = "yellow",
+      "Médiocre" = "orange",
+      "Mauvais"  = "red"
+    ),
+    name = "Classe I2M2"
+  ) +
+  facet_wrap(~ libelle_indice, labeller = label_wrap_gen(width = 20), scales = "free") +
+  labs(
+    title = "Distribution des valeurs des métriques de l'I2M2 par classe de qualité",
+    x = "Valeur de la métrique",
+    y = "Fréquence des prélèvements"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    legend.title = element_text(face = "bold"),
+    legend.position = "right",
+    strip.text = element_text(face = "bold")
+  )
+
+
+##### Ancienne version :Création de l'histogramme : donnees I2M2 et métriques 
 ggplot(clean_minv %>% 
          mutate(classe_I2M2 = case_when(
             resultat_indice > 0.665 ~ "Très bon",
@@ -71,6 +120,52 @@ ggplot(clean_ibd, aes(x = resultat_indice)) +
        x = "Valeur de l'indice",
        y = "Fréquence") +
   theme_minimal()
+
+#### Test
+clean_ibd_distrib <- clean_ibd %>%
+  mutate(
+    classe_ibd = case_when(
+      resultat_indice > 16.4 ~ "Très bon",
+      resultat_indice > 13.8 ~ "Bon",
+      resultat_indice > 10   ~ "Moyen",
+      resultat_indice > 5.9  ~ "Médiocre",
+      TRUE                   ~ "Mauvais"
+    )
+  )
+
+clean_ibd_distrib$classe_ibd <- factor(clean_ibd_distrib$classe_ibd,
+                                       levels = c("Très bon", "Bon", "Moyen", "Médiocre", "Mauvais"))
+
+ggplot(clean_ibd_distrib, aes(x = resultat_indice, fill = classe_ibd)) +
+  geom_histogram(binwidth = 0.1, color = "black", alpha = 0.7, stat = "bin") +
+  geom_vline(xintercept = c(5.9, 10, 13.8, 16.4),
+             linetype = "dashed", color = "grey50", linewidth = 0.8) +
+  
+  scale_fill_manual(
+    values = c(
+      "Très bon" = "blue",
+      "Bon"      = "lightgreen",
+      "Moyen"    = "yellow",
+      "Médiocre" = "orange",
+      "Mauvais"  = "red"
+    ),
+    name = "Classe IBD"
+  ) +
+  facet_wrap(~ libelle_indice, labeller = label_wrap_gen(width = 20), scales = "free") +
+  labs(
+    title = "Distribution des valeurs des indices IBD et IPS par classe de qualité",
+    x = "Valeur de l'indice",
+    y = "Fréquence des prélèvements"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    legend.title = element_text(face = "bold"),
+    legend.position = "right",
+    strip.text = element_text(face = "bold")
+  )         
 
 
 ggplot(clean_ibd, aes (x=factor(annee), y = resultat_indice)) +

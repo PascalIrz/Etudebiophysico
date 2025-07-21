@@ -18,6 +18,7 @@ library(ggrepel)
 library(mapview)
 library(lubridate)
 library(httr)
+library(readr)
 
 functions <- list.files(path = "R",
                         pattern = ".R$",
@@ -182,8 +183,43 @@ annee = format(date_prelevement, "%Y")) %>%
 Indice_ibd <- bind_rows(Indice_ibd, indicesdiatcomplement)
 
 save(Indice_ibd,file="Data/Indice_ibd.Rdata")
+load(file="Data/Indice_ibd.Rdata")
 
+##############################################Test 2017
+diat_2017 <-read.csv("C:/Users/ilona.garcia/Documents/RstudioGIT/Etudebiophysico/Data/ResultatsBiologiques.csv",
+                              header = TRUE,
+                              sep = ";",
+                              dec = ".",
+                              fileEncoding = "UTF-8")
+diat_2017 <- diat_2017 %>%  
+  filter(CdParametreResultatBiologique %in% c(1022,5856))
+  
+diat_2017 <- diat_2017 %>% select(-CdPointEauxSurf, -CdSupport, -LbSupport, -DtProdResultatBiologique, -HeureResultat, -CdUniteMesure,
+         -SymUniteMesure, -CdRqIndiceResultatBiologique, -MnemoRqAna, -CdMethEval, -RefOperationPrelBio,
+         -CdProducteur, -NomProducteur, -CdAccredRsIndiceResultatBiologique, -MnAccredRsIndiceResultatBiologique)
 
+diat_2017 <- diat_2017 %>% 
+  rename(code_station_hydrobio = CdStationMesureEauxSurface,
+         libelle_station_hydrobio = LbStationMesureEauxSurface,
+         date_prelevement = DateDebutOperationPrelBio,
+         code_indice = CdParametreResultatBiologique,
+         resultat_indice = ResIndiceResultatBiologique,
+         libelle_indice = LbLongParametre)
+
+diat_2017 <- diat_2017 %>% 
+  mutate(annee = year(date_prelevement))
+
+diat_2017 <- diat_2017 %>%
+  mutate(code_station_hydrobio = paste0("0", as.character(code_station_hydrobio)))
+
+diat_2017<- diat_2017 %>%
+  mutate(code_indice = as.character(code_indice))
+diat_2017 <- diat_2017 %>% 
+  mutate(date_prelevement = ymd(date_prelevement))
+
+Indice_ibd <- bind_rows(Indice_ibd, diat_2017)
+
+################################################################################
 
 # On garde seulement les stations où l'on a + de 5 années de données
 comptemulti_ibd <-
@@ -200,15 +236,18 @@ clean_ibd <-
   ) %>% arrange(code_station_hydrobio, annee)
 
 
-nb_stations <- clean_ibd %>%
-  distinct(code_station_hydrobio) %>%
-  nrow()
-print(nb_stations)
-
 # On sait que les années 2005 et 2006 ont très peu de données, on les enleve 
 
 clean_ibd <- clean_ibd %>% 
   filter(!(code_indice == "5856" & annee %in% c(2005, 2006, 2007)))
+clean_ibd <- clean_ibd %>% 
+  filter(!(code_indice == "1022" & annee %in% c(1996, 1997, 1998, 1999, 2000, 2001,
+                                                2002, 2003, 2004, 2005, 2006, 2007)))
+
+nb_stations <- clean_ibd %>%
+  distinct(code_station_hydrobio) %>%
+  nrow()
+print(nb_stations)
 
 #Nombre total d'analyses par année 
 nb_analyses_par_annee_ibd<- clean_ibd %>%
@@ -222,7 +261,7 @@ compte_prelevement_ibd <- clean_ibd %>%
   group_by(code_station_hydrobio,annee) %>% 
   summarise(n_prelevement = n(), .groups="drop")
 compte_prelevement_ibd %>% 
-  filter(n_prelevement>2)
+  filter(n_prelevement>4)
 
 mois_repartition <- clean_ibd %>%
   mutate(mois = month(as.Date(date_prelevement))) %>%  # transforme en date si besoin

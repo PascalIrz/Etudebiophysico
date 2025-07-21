@@ -8,7 +8,7 @@ load(file = "Data/10_donnees_pretraitees.rda")
 load(file = "Data/70_choix_parametre.rda")
 load(file = "Data/80_donnees_globales_trans.rda")
 
-label <- c(
+label_physico <- c(
   "1301" = "T°",
   "1302" = "pH",
   "1303" = "Conductiv",
@@ -22,13 +22,7 @@ label <- c(
   "1350" = "P total",
   "1433" = "PO4-",
   "1295" = "Turbidité",
-  "1841" = "C organique",
-  "7613" = "I2M2",
-  "8054" = "RichesI2M2",
-  "8055" = "OvovivI2M2",
-  "8056" = "PolyvolI2M2",
-  "8057" = "ASPT",
-  "8058" = "H'"
+  "1841" = "C organique"
 )
 
  
@@ -316,96 +310,6 @@ fviz_pca_var(resultat_acp_physico_test,
 fviz_contrib(resultat_acp_physico_test,choice="var", axes=1, top = 10)
 fviz_contrib(resultat_acp_physico_test,choice="var", axes=2, top = 10)
 fviz_contrib(resultat_acp_physico_test,choice="var", axes=3, top = 10)
-
-#################################################################################
-#                       Physico ; par sous groupe                                            
-#################################################################################
-
-#Inter-stations : NUTRIMENTS
-
-nutri_wide <- physico_wide %>% 
-  select(c("1350","1295","1313","1339","1335"))
-
-donnees_centrees_reduites_nutri <- scale(nutri_wide,center=TRUE,scale=TRUE)
-resultat_acp_nutri<- PCA(donnees_centrees_reduites_nutri, graph=TRUE)
-print(resultat_acp_nutri)
-valeurspropres_nutri<- resultat_acp_nutri$eig
-valeurspropres_nutri
-
-barplot(valeurspropres_nutri[,2],names.arg=1:nrow(valeurspropres_nutri),
-        main="Pourcentage de la variance expliquée par chaque composante",
-        xlab="Composantes principales",
-        ylab="Pourcentage de variance expliquée",
-        col="steelblue")
-#Add connected line segments to the plot
-lines(x=1:nrow(valeurspropres_nutri),valeurspropres_nutri[,2],
-      type="b", pch=19, col="red")
-
-
-fviz_pca_var(resultat_acp_nutri,
-             col.var="cos2",
-             gradient.cols=c("deeppink", "maroon","navy"),
-             repel=TRUE,
-             title="Cercle de Corrélation des Variables")
-fviz_contrib(resultat_acp_physico,choice="var", axes=1, top = 10)
-fviz_contrib(resultat_acp_physico,choice="var", axes=2, top = 10)
-
-
-# Inter-station : Oxygène et nitrates
-
-oxy_wide <- physico_wide %>% 
-  select(c("1311","1312","1340"))
-
-donnees_centrees_reduites_oxy <- scale(oxy_wide,center=TRUE,scale=TRUE)
-resultat_acp_oxy <- PCA(donnees_centrees_reduites_oxy, graph=TRUE)
-print(resultat_acp_oxy)
-valeurspropres_oxy <- resultat_acp_oxy$eig
-valeurspropres_oxy
-
-barplot(valeurspropres_oxy[,2],names.arg=1:nrow(valeurspropres_oxy),
-        main="Pourcentage de la variance expliquée par chaque composante",
-        xlab="Composantes principales",
-        ylab="Pourcentage de variance expliquée",
-        col="steelblue")
-#Add connected line segments to the plot
-lines(x=1:nrow(valeurspropres_oxy),valeurspropres_oxy[,2],
-      type="b", pch=19, col="red")
-
-
-fviz_pca_var(resultat_acp_oxy,
-             col.var="cos2",
-             gradient.cols=c("deeppink", "maroon","navy"),
-             repel=TRUE,
-             title="Cercle de Corrélation des Variables")
-
-
-# Inter-stations : PHYSIQUE 
-
-acp_physic_wide <- physico_wide %>% 
-  select(c("1295","1305","1313"))
-
-donnees_centrees_reduites_physic <- scale(acp_physic_wide,center=TRUE,scale=TRUE)
-resultat_acp_physic <- PCA(donnees_centrees_reduites_physic, graph=TRUE)
-print(resultat_acp_physic)
-valeurspropres_physic <- resultat_acp_physic$eig
-valeurspropres_physic
-
-barplot(valeurspropres_physic[,2],names.arg=1:nrow(valeurspropres_physic),
-        main="Pourcentage de la variance expliquée par chaque composante",
-        xlab="Composantes principales",
-        ylab="Pourcentage de variance expliquée",
-        col="steelblue")
-#Add connected line segments to the plot
-lines(x=1:nrow(valeurspropres_physic),valeurspropres_physic[,2],
-      type="b", pch=19, col="red")
-
-
-fviz_pca_var(resultat_acp_physic,
-             col.var="cos2",
-             gradient.cols=c("deeppink", "maroon","navy"),
-             repel=TRUE,
-             title="Cercle de Corrélation des Variables")
-
 
 
 #################################################################################

@@ -30,6 +30,13 @@ mean_physico_periode <- mean_physico %>%
       (periode == "janvier_mars" & mois >= 1 & mois <= 3)
   )
 
+physico_moyenne_annee <- mean_physico_periode %>% 
+  group_by(code_station_hydrobio,annee,code_parametre) %>%
+  summarise(para_moy_periode = mean(para_moy, na.rm = TRUE), .groups = "drop")
+
+save(physico_moyenne_annee, 
+     file = "Data/physico_moyenne_annuelle.rda"
+       )
 
 resultat_physico_final <- mean_physico_periode %>%
   group_by(code_station_hydrobio, code_parametre) %>%

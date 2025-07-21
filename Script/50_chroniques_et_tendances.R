@@ -468,8 +468,8 @@ ggplot(i2m2_56) +  geom_point(aes(x = annee, color=libelle_station_hydrobio,y =r
 
 #On calcule les tendances
 Tendances_donneesdiat<-mk_st_by_group(clean_ibd,resultat_indice,code_indice,code_indice,code_station_hydrobio)
-Tendance_ibd <- filter(Tendances_donneesdiat, code_indice==5856) %>% select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
-Tendance_ips <-filter(Tendances_donneesdiat,code_indice==1022)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_ibd <- filter(Tendances_donneesdiat, code_indice==5856) %>% dplyr::select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_ips <-filter(Tendances_donneesdiat,code_indice==1022)%>% dplyr::select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
 
 ibd <- filter(clean_ibd,code_indice==5856)
 ibd_et_trend <- left_join(ibd,Tendance_ibd,by="code_station_hydrobio")

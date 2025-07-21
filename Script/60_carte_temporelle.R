@@ -135,8 +135,4 @@ proportion_mediocre <- nb_mediocre / nb_total
 proportion_mediocre
 
 
-#################################################################################
-#                       Physico                              #
-#################################################################################
-
-#seuils ??? avec moyenne choisie
+save(i2m2test, file="Data/classe_i2m2.rda")

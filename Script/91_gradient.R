@@ -4,9 +4,14 @@ load(file = "Data/90_acp.rda")
 load(file ="Data/40_statistiques_descriptives.rda")
 
 library(sf)
+library(ggplot2)
 library(dplyr)
 library(mapview)
 library(ggspatial)
+library(COGiter)
+library(webshot)
+webshot::install_phantomjs()
+
 
 functions <- list.files(path = "R",
                         pattern = ".R$",
@@ -41,8 +46,18 @@ gradient <- acp_liste_pc %>%
 gradient_sf <- gradient %>%
   st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
 
+departement_breton <- departements_metro_geo %>%
+  filter(DEP %in% c("22","29","35","56")) %>%
+  st_transform(crs = 4326)
+
 map_dim1 <- map_dim(gradient_sf, "Dim.1")
 map_dim1
+
+mapshot(map_dim1, file="gradient_de_pression.png",
+        width = 1200, vheight = 1000,
+        cliprect = "viewport")
+
+
 map_dim2 <- map_dim(gradient_sf, "Dim.2")
 map_dim2
 map_dim3 <- map_dim(gradient_sf, "Dim.3")
@@ -110,15 +125,14 @@ ggplot() +
   geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
   geom_sf(data = gradient_nit_sf, aes(color = classe_nitrites), size = 2) +
   scale_color_manual(values = classenit) +
-  annotation_north_arrow(location = "br", which_north = "true",
-                         style = north_arrow_fancy_orienteering,
-                         height = unit(1, "cm"), width = unit(1, "cm")) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
   annotation_scale(location = "br", width_hint = 0.3) +
   coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
-  labs(title = "Gradient des concentrations en nitrites sur le territoire breton",
+  labs(title = "Etat chimique selon les concentrations en nitrites (P90) dans les cours d'eau bretons, 2015-2023.",
        color = "Classe d'état") +
   theme_minimal() +
   theme(legend.position = "bottom")
+
 
 
 
@@ -213,12 +227,10 @@ ggplot() +
   geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
   geom_sf(data = ammonium_sf, aes(color = classe_ammonium), size = 2) +
   scale_color_manual(values = classe_nh4) +
-  annotation_north_arrow(location = "br", which_north = "true",
-                         style = north_arrow_fancy_orienteering,
-                         height = unit(1, "cm"), width = unit(1, "cm")) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
   annotation_scale(location = "br", width_hint = 0.3) +
   coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
-  labs(title = "Gradient des concentrations en ammonium sur le territoire breton",
+  labs(title = "Etat chimique selon les concentrations en ammonium (P90) dans les cours d'eau bretons, 2015-2023.",
        color = "Classe d'état") +
   theme_minimal() +
   theme(legend.position = "bottom")
@@ -270,12 +282,10 @@ ggplot() +
   geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
   geom_sf(data = ptot_sf, aes(color = classe_ptot), size = 2) +
   scale_color_manual(values = classe_ptotal) +
-  annotation_north_arrow(location = "br", which_north = "true",
-                         style = north_arrow_fancy_orienteering,
-                         height = unit(1, "cm"), width = unit(1, "cm")) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
   annotation_scale(location = "br", width_hint = 0.3) +
   coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
-  labs(title = "Gradient des concentrations en phosphore total sur le territoire breton",
+  labs(title = "Etat chimique selon les concentrations en phosphore total (P90) dans les cours d'eau bretons, 2015-2023.",
        color = "Classe d'état") +
   theme_minimal() +
   theme(legend.position = "bottom")
@@ -369,3 +379,16 @@ gradient_oxy <- oxy_carte %>%
 
 mapview(gradient_oxy, zcol="classe_o2", col.regions=classe_oxy, xcol="longitude", ycol="latitude", crs= 4326, grid=FALSE,cex=4.5)
 
+oxy_sf<-st_as_sf(gradient_oxy, coords=c("longitude","latitude"),crs=4326)
+
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = oxy_sf, aes(color = classe_o2), size = 2) +
+  scale_color_manual(values = classe_oxy) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  annotation_scale(location = "br", width_hint = 0.3) +
+  coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
+  labs(title = "Etat chimique selon les concentrations en oxygène dissous (P90) dans les cours d'eau bretons, 2015-2023.",
+       color = "Classe d'état") +
+  theme_minimal() +
+  theme(legend.position = "bottom")

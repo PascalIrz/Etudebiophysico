@@ -1,3 +1,5 @@
+# Chargement df et librairie
+
 library(tidyverse)
 load(file = "Data/10_donnees_pretraitees.rda")
 
@@ -37,7 +39,6 @@ plot_var_station <- ggplot(var_par_station, aes(x = code_station_hydrobio, y = v
 theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   labs(title = "Variance des indices par station", x = "Station", y = "Variance")
 
-print(plot_var_station)
 
 #Calcul des quantiles des variances pour chaque indice
 quantiles_variance <- var_par_station %>%
@@ -56,7 +57,6 @@ var_par_station_quantiles <- var_par_station %>%
 # Sélection des 10% des stations les plus variables pour chaque indice
 top10_var <- var_par_station_quantiles %>%
   filter(var >= Seuil_90)
-
 
 # Vérification des résultats
 table(top10_var$libelle_indice)  # Nombre de stations retenues par indice
@@ -136,6 +136,7 @@ ggplot(med_par_annee, aes(x = annee, y = med, color = as.factor(libelle_indice))
        color = "Indice") +
   theme_minimal()+coord_cartesian(ylim=c(0,1))
 
+# Calcul des médiannes par station
 med_par_station <- clean_minv %>%
   group_by(libelle_indice, code_station_hydrobio) %>%
   summarise(med = median(resultat_indice, na.rm = TRUE), .groups = "drop")
@@ -164,7 +165,7 @@ stations_min_i2m2_2022 <- data_2022_i2m2 %>%
 print(stations_min_i2m2_2022)
 
 
-#----Exploration stat : quantiles----
+#----Exploration stat : quartiles----
 ### Calcul des quantiles par année et par station
 quantiles_par_annee <- clean_minv %>%
   group_by(libelle_indice, annee) %>%
@@ -202,6 +203,7 @@ ggplot(moy_par_annee, aes(x = annee, y = moy, color = as.factor(libelle_indice))
        color = "Indice") +
   theme_minimal()+coord_cartesian(ylim=c(0,0.8))
 
+# Calcul des moyennes par station
 moy_par_station <- clean_minv %>%
   group_by(libelle_indice, code_station_hydrobio) %>%
   summarise(moy = mean(resultat_indice, na.rm = TRUE), .groups = "drop")
@@ -267,8 +269,6 @@ gg_ajouter_arriere_plan_int <- function(graphique, classesi2m2) {
 
 classesi2m2$cli_borne_inf)<- as.numeric(gsub(",", ".", classesi2m2$cli_borne_inf))
 
-
-
 ploti2m2 <- ggplot(m_i2m2, aes(x=annee,y=moy))  +
   geom_point(colour='blue')+geom_line(aes(x = annee, y =moy),colour='blue')+
   ggtitle("Moyenne I2M2")+coord_cartesian(ylim=c(0,1))
@@ -293,106 +293,6 @@ plotrichesse <- ggplot(m_rich)+ aes(x=annee,y=moy)  +
 
 
 plot_grid(ploti2m2,plotaspt,plotpolyv,plotovov,plotshannon, plotrichesse)
-
-
-
-#################################################################################
-#                       Physico                                                 #
-#################################################################################
-
-#----Exploration statistique : variance----
-
-## Calcul de la variance par année pour chaque indice
-var_par_annee_pc <- parametres_physico %>%
-  group_by(code_parametre, annee) %>%
-  summarise(var = var(resultat, na.rm = TRUE), .groups = "drop")
-
-# Graphique de la variance par année avec facet_wrap()
-plot_var_annee_pc <- ggplot(var_par_annee_pc, aes(x = annee, y = var, color = code_parametre, group = code_parametre)) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(~code_parametre, scales = "free_y") +
-  theme_minimal() 
-labs(title = "Variance des indices au fil des années", x = "Année", y = "Variance")
-
-print(plot_var_annee_pc)
-
-### Calcul de la variance par station pour chaque indice
-var_par_station_pc <- parametres_physico %>%
-  group_by(code_parametre, code_station_hydrobio, libelle_station) %>%
-  summarise(var = var(resultat, na.rm = TRUE), .groups = "drop")
-
-# Graphique de la variance par station avec facet_wrap()
-plot_var_station_pc <- ggplot(var_par_station_pc, aes(x = code_station_hydrobio, y = var, fill = code_parametre)) +
-  geom_col(position = "dodge") +
-  facet_wrap(~code_parametre, scales = "free_y") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(title = "Variance des indices par station", x = "Station", y = "Variance")
-    
-
-print(plot_var_station_pc)
-
-
-#----Exploration stat : médiane----
-
-### Calcul de la médiane par année et par station
-
-med_par_annee_pc <- parametres_physico %>%
-  group_by(code_parametre, annee) %>%
-  summarise(med = median(resultat, na.rm = TRUE),
-            var=var(resultat, na.rm = TRUE),
-            ecart_type=sd(resultat, na.rm = TRUE),
-            .groups = "drop")
-
-ggplot(med_par_annee_pc, aes(x = annee, y = med, color = as.factor(code_parametre))) +
-  geom_point() +
-  geom_line() +
-  geom_errorbar(aes(ymin= med - ecart_type, ymax= med + ecart_type),width=0.2) +
-  facet_wrap(~code_parametre, scales = "free_y") +
-  labs(title = "Médiane des indices par année",
-       x = "Année",
-       y = "Médiane du paramètre",
-       color = "Indice") +
-  theme_minimal()
-
-med_par_station_pc <- parametres_physico %>%
-  group_by(code_parametre, code_station_hydrobio) %>%
-  summarise(med = median(resultat, na.rm = TRUE), .groups = "drop")
-ggplot(med_par_station_pc, aes(x = code_station_hydrobio, y = med, color = as.factor(code_parametre))) +
-  geom_col() +
-  geom_line() +
-  facet_wrap(~code_parametre, scales = "free_y") +
-  labs(title = "Médiane des indices par station",
-       x = "Station",
-       y = "Médiane de l'indice",
-       color = "Indice") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-
-#----Exploration stat : quantiles----
-### Calcul des quantiles par année et par station
-quantiles_par_annee_pc <- parametres_physico %>%
-  group_by(code_parametre, annee) %>%
-  summarise(
-    Q1 = quantile(resultat, probs = 0.25, na.rm = TRUE),
-    Q2 = quantile(resultat, probs = 0.50, na.rm = TRUE),
-    Q3 = quantile(resultat, probs = 0.75, na.rm = TRUE),
-    .groups = "drop"
-  )
-ggplot(quantiles_par_annee_pc, aes(x = annee, color = as.factor(code_parametre))) +
-  geom_line(aes(y = Q1), linetype = "dashed") +
-  geom_line(aes(y = Q2)) +
-  geom_line(aes(y = Q3), linetype = "dotted") +
-  facet_wrap(~code_parametre, scales = "free_y") +
-  labs(title = "Quantiles des indices par année",
-       x = "Année",
-       y = "Valeur de l'indice",
-       color = "Indice") +
-  theme_minimal()
-
-
 
 
 #################################################################################
@@ -437,6 +337,7 @@ print(plot_var_station_ibd)
 
 ### Calcul de la médiane par année et par station
 
+# Médiane interannuelle
 med_par_annee_ibd <- clean_ibd %>%
   group_by(code_indice, annee) %>%
   summarise(med = median(resultat_indice, na.rm = TRUE),
@@ -444,6 +345,7 @@ med_par_annee_ibd <- clean_ibd %>%
             ecart_type=sd(resultat_indice, na.rm = TRUE),
             .groups = "drop")
 
+# Graphique 
 ggplot(med_par_annee_ibd, aes(x = annee, y = med, color = as.factor(code_indice))) +
   geom_point() +
   geom_line() +
@@ -455,10 +357,206 @@ ggplot(med_par_annee_ibd, aes(x = annee, y = med, color = as.factor(code_indice)
        color = "Indice") +
   theme_minimal()
 
+# Médiane par station
 med_par_station_ibd <- clean_ibd %>%
   group_by(code_indice, code_station_hydrobio) %>%
   summarise(med = median(resultat_indice, na.rm = TRUE), .groups = "drop")
 
+# Graphique 
+ggplot(med_par_station_ibd, aes(x = code_station_hydrobio, y = med, color = as.factor(code_indice))) +
+  geom_col() +
+  geom_line() +
+  facet_wrap(~code_indice, scales = "free_y") +
+  labs(title = "Médiane des indices par station",
+       x = "Station",
+       y = "Médiane de l'indice",
+       color = "Indice") +
+  theme_minimal() 
+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+#----Exploration stat : quantiles----
+### Calcul des quantiles par année et par station
+quantiles_par_annee_ibd <- clean_ibd %>%
+  group_by(code_indice, annee) %>%
+  summarise(
+    Q1 = quantile(resultat_indice, probs = 0.25, na.rm = TRUE),
+    Q2 = quantile(resultat_indice, probs = 0.50, na.rm = TRUE),
+    Q3 = quantile(resultat_indice, probs = 0.75, na.rm = TRUE),
+    .groups = "drop"
+  )
+ggplot(quantiles_par_annee_ibd, aes(x = annee, color = as.factor(code_indice))) +
+  geom_line(aes(y = Q1), linetype = "dashed") +
+  geom_line(aes(y = Q2)) +
+  geom_line(aes(y = Q3), linetype = "dotted") +
+  facet_wrap(~code_indice, scales = "free_y") +
+  labs(title = "Quantiles des indices par année",
+       x = "Année",
+       y = "Valeur de l'indice",
+       color = "Indice") +
+  theme_minimal()
+
+
+#################################################################################
+#                       Physico                                                 #
+#################################################################################
+
+#----Exploration statistique : variance----
+
+## Calcul de la variance par année pour chaque indice
+var_par_annee_pc <- parametres_physico %>%
+  group_by(code_parametre, annee) %>%
+  summarise(var = var(resultat, na.rm = TRUE), .groups = "drop")
+
+# Graphique de la variance par année avec facet_wrap()
+plot_var_annee_pc <- ggplot(var_par_annee_pc, aes(x = annee, y = var, color = code_parametre, group = code_parametre)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~code_parametre, scales = "free_y") +
+  theme_minimal() 
+labs(title = "Variance des indices au fil des années", x = "Année", y = "Variance")
+
+
+### Calcul de la variance par station pour chaque indice
+var_par_station_pc <- parametres_physico %>%
+  group_by(code_parametre, code_station_hydrobio, libelle_station) %>%
+  summarise(var = var(resultat, na.rm = TRUE), .groups = "drop")
+
+# Graphique de la variance par station avec facet_wrap()
+plot_var_station_pc <- ggplot(var_par_station_pc, aes(x = code_station_hydrobio, y = var, fill = code_parametre)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~code_parametre, scales = "free_y") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Variance des indices par station", x = "Station", y = "Variance")
+    
+#----Exploration stat : médiane----
+
+### Calcul de la médiane par année et par station
+
+med_par_annee_pc <- parametres_physico %>%
+  group_by(code_parametre, annee) %>%
+  summarise(med = median(resultat, na.rm = TRUE),
+            var=var(resultat, na.rm = TRUE),
+            ecart_type=sd(resultat, na.rm = TRUE),
+            .groups = "drop")
+
+ggplot(med_par_annee_pc, aes(x = annee, y = med, color = as.factor(code_parametre))) +
+  geom_point() +
+  geom_line() +
+  geom_errorbar(aes(ymin= med - ecart_type, ymax= med + ecart_type),width=0.2) +
+  facet_wrap(~code_parametre, scales = "free_y") +
+  labs(title = "Médiane des indices par année",
+       x = "Année",
+       y = "Médiane du paramètre",
+       color = "Indice") +
+  theme_minimal()
+
+# Calcul des médiannes par stations
+med_par_station_pc <- parametres_physico %>%
+  group_by(code_parametre, code_station_hydrobio) %>%
+  summarise(med = median(resultat, na.rm = TRUE), .groups = "drop")
+ggplot(med_par_station_pc, aes(x = code_station_hydrobio, y = med, color = as.factor(code_parametre))) +
+  geom_col() +
+  geom_line() +
+  facet_wrap(~code_parametre, scales = "free_y") +
+  labs(title = "Médiane des indices par station",
+       x = "Station",
+       y = "Médiane de l'indice",
+       color = "Indice") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+#----Exploration stat : quantiles----
+### Calcul des quantiles par année et par station
+quantiles_par_annee_pc <- parametres_physico %>%
+  group_by(code_parametre, annee) %>%
+  summarise(
+    Q1 = quantile(resultat, probs = 0.25, na.rm = TRUE),
+    Q2 = quantile(resultat, probs = 0.50, na.rm = TRUE),
+    Q3 = quantile(resultat, probs = 0.75, na.rm = TRUE),
+    .groups = "drop"
+  )
+ggplot(quantiles_par_annee_pc, aes(x = annee, color = as.factor(code_parametre))) +
+  geom_line(aes(y = Q1), linetype = "dashed") +
+  geom_line(aes(y = Q2)) +
+  geom_line(aes(y = Q3), linetype = "dotted") +
+  facet_wrap(~code_parametre, scales = "free_y") +
+  labs(title = "Quantiles des indices par année",
+       x = "Année",
+       y = "Valeur de l'indice",
+       color = "Indice") +
+  theme_minimal()
+
+#################################################################################
+#                       IBD                                          #
+#################################################################################
+
+#----Exploration statistique : variance----
+
+## Calcul de la variance par année pour chaque indice
+var_par_annee_ibd <- clean_ibd %>%
+  group_by(code_indice, annee) %>%
+  summarise(var = var(resultat_indice, na.rm = TRUE), .groups = "drop")
+
+# Graphique de la variance par année avec facet_wrap()
+plot_var_annee_ibd <- ggplot(var_par_annee_ibd, aes(x = annee, y = var, color = code_indice, group = code_indice)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~code_indice, scales = "free_y") +
+  theme_minimal() 
+labs(title = "Variance des indices au fil des années", x = "Année", y = "Variance")
+
+print(plot_var_annee_ibd)
+
+### Calcul de la variance par station pour chaque indice
+var_par_station_ibd <- clean_ibd %>%
+  group_by(code_indice, code_station_hydrobio) %>%
+  summarise(var = var(resultat_indice, na.rm = TRUE), .groups = "drop")
+
+# Graphique de la variance par station avec facet_wrap()
+plot_var_station_ibd <- ggplot(var_par_station_ibd, aes(x = code_station_hydrobio, y = var, fill = code_indice)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~code_indice, scales = "free_y") +
+  theme_minimal() 
+
+theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Variance des indices par station", x = "Station", y = "Variance")
+
+print(plot_var_station_ibd)
+
+
+#----Exploration stat : médiane----
+
+### Calcul de la médiane par année et par station
+
+# Médiane interannuelle
+med_par_annee_ibd <- clean_ibd %>%
+  group_by(code_indice, annee) %>%
+  summarise(med = median(resultat_indice, na.rm = TRUE),
+            var=var(resultat_indice, na.rm = TRUE),
+            ecart_type=sd(resultat_indice, na.rm = TRUE),
+            .groups = "drop")
+
+# Graphique 
+ggplot(med_par_annee_ibd, aes(x = annee, y = med, color = as.factor(code_indice))) +
+  geom_point() +
+  geom_line() +
+  geom_errorbar(aes(ymin= med - ecart_type, ymax= med + ecart_type),width=0.2) +
+  facet_wrap(~code_indice, scales = "free_y") +
+  labs(title = "Médiane des indices par année",
+       x = "Année",
+       y = "Médiane du paramètre",
+       color = "Indice") +
+  theme_minimal()
+
+# Médiane par station
+med_par_station_ibd <- clean_ibd %>%
+  group_by(code_indice, code_station_hydrobio) %>%
+  summarise(med = median(resultat_indice, na.rm = TRUE), .groups = "drop")
+
+# Graphique 
 ggplot(med_par_station_ibd, aes(x = code_station_hydrobio, y = med, color = as.factor(code_indice))) +
   geom_col() +
   geom_line() +

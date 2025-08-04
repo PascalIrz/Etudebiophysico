@@ -1,3 +1,4 @@
+# Chargement des df et des librairies 
 load(file = "Data/10_donnees_pretraitees.rda")
 library(tidyverse)
 library(readxl)
@@ -30,28 +31,31 @@ stations_indice_counts <- stations_indice_counts %>%
 # On prépare les données
 station_reseau <- read_excel("C:/Users/ilona.garcia/Documents/RstudioGIT/Etudebiophysico/Data/reseau_stations.xlsx")
 
+# Jointure par le code_station_hydrobio
 minv_joint <- clean_minv %>% 
   left_join(station_reseau, by = "code_station_hydrobio")
 
+# Jointure par le code_station_hydrobio, on regarde quelles sont 
+#les stations sans reseau
 stations_sans_reseau <- clean_minv %>% 
   left_join(station_reseau, by = "code_station_hydrobio") %>% 
   filter(is.na(reseau)) %>% 
   distinct(code_station_hydrobio, code_departement)
 
-stations_sans_reseau
-
+# Jointure par le code_station_hydrobio
 ibd_joint <- clean_ibd %>% 
   left_join(station_reseau, by = "code_station_hydrobio")
 
+# Jointure par le code_station_hydrobio, on regarde quelles sont les stations
+#sans réseau
 stations_sans_reseau_ibd <- clean_ibd %>% 
   left_join(station_reseau, by = "code_station_hydrobio") %>% 
   filter(is.na(reseau)) %>% 
   distinct(code_station_hydrobio, code_departement)
 
-stations_sans_reseau_ibd
-
 # On calcule
 
+# Proportion de stations pour chaque réseau
 proportion_i2m2 <- minv_joint %>% 
   distinct(code_station_hydrobio,reseau) %>% 
   count(reseau) %>% 
@@ -60,6 +64,7 @@ proportion_i2m2 <- minv_joint %>%
     code_indice = "7613"
   )
 
+# Proportion de stations pour chaque réseau
 proportion_ibd <- ibd_joint %>% 
   distinct(code_station_hydrobio,reseau) %>% 
   count(reseau) %>% 
@@ -68,6 +73,7 @@ proportion_ibd <- ibd_joint %>%
     code_indice = "5856"
   )
 
+# Mise en commun des df
 proportion_reseau <- bind_rows(proportion_i2m2, proportion_ibd) %>% 
   mutate(
     pourcentage = round(proportion * 100, 1),
@@ -80,6 +86,7 @@ proportion_reseau <- proportion_reseau %>%
     reseau = factor(reseau, levels = c("RRP", "RCS", "RCO", "RD", "NA"))
   )
 
+# Graphique 
 ggplot(proportion_reseau, aes(x = code_indice, y = reseau, fill = pourcentage)) +
   geom_tile(color = "white") +
   geom_text(aes(label = paste0(pourcentage, "%")), color = "black", size = 4) +

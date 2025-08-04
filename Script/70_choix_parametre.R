@@ -1,4 +1,8 @@
+# Chargement librairies, fonctions et données 
 library(tidyverse)
+library(purrr)
+library(ggplot2)
+library(corrplot)
 source (file = "R/calculer_indicateur.R")
 
 #Constitution des combinaisons de mois : avoir toutes les combinaisons possibles

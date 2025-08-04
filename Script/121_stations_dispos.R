@@ -1,11 +1,11 @@
 library(ggplot2)
 
-# Supposons que taxo_data contient aussi une colonne `libelle_station`
+# Si données présentes : TRUE
 station_year <- liste_taxon_ajout %>%
   distinct(libelle_station_hydrobio, annee) %>%
   mutate(donnees = TRUE)
 
-# Heatmap
+# Graphique avec heatmap
 ggplot(station_year, aes(x = as.factor(annee), y = libelle_station_hydrobio)) +
   geom_tile(aes(fill = donnees), color = "white") +
   scale_fill_manual(

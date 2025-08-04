@@ -1,0 +1,655 @@
+---
+title: "Graphiques rapports"
+output: html_document
+date: "2025-07-03"
+---
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.width= 13, fig.height=15, fig.cap= " Fig.7 : Chroniques des prélèvements de diatomées pour le suivi DCE, de 2008 à 2023"}
+
+library(ggplot2)
+library(dplyr)
+load(file = "../Data/10_donnees_pretraitees.rda")
+
+#Préparation des données : présence/absence
+data_presence <- clean_ibd %>%
+  filter(libelle_indice == "Indice Biologique Diatomées (IBD)") %>%
+  group_by(code_station_hydrobio, annee) %>%
+  summarise(presence = ifelse(n() > 0, 1, 0), .groups = "drop")
+
+#On joint les libellés des stations au dataframe
+data_presence_complet <- data_presence %>%
+  left_join(
+    clean_ibd %>%
+      select(code_station_hydrobio, libelle_station_hydrobio) %>%
+      distinct(),
+    by = "code_station_hydrobio"
+  )
+
+#Création du graphique
+ggplot(data_presence_complet,
+       aes(
+         x = as.factor(annee),
+         y = factor(libelle_station_hydrobio),
+         fill = as.factor(presence)
+       )) +
+  geom_tile(
+    color = "white",
+    size = 0.3,
+    height = 0.9,
+    width = 0.9
+  ) +
+  scale_fill_manual(values = c("0" = "#e0e0e0", "1" = "darkgreen"),
+                    guide = "none"
+                    ) +
+  labs(
+    x = "Année",
+    y = "Station",
+    fill = "Prélèvement"
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    plot.title = element_blank(),
+    plot.subtitle = element_blank(),
+    legend.position = "none",
+    axis.text.x = element_text(angle = 45, hjust =1),
+    panel.grid = element_blank()
+  ) +
+  scale_y_discrete(guide = guide_axis(n.dodge = 2)) +
+scale_x_discrete(expand = c(0, 0))
+```
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.width= 13, fig.height=5, fig.cap= " Fig.7 : Chroniques des prélèvements de diatomées pour le suivi DCE, de 2008 à 2023"}
+
+station_annee <- clean_minv %>% 
+  group_by(annee) %>% 
+  summarise(n = n_distinct(code_station_hydrobio))
+
+ggplot(clean_minv, aes (x=factor(annee), y = resultat_indice)) +
+  geom_boxplot() +
+  geom_text(data = station_annee,
+            aes(x = as.factor(annee), y=0, label = paste0("n=",n)),
+            vjust = 0.5, size = 3, color = "blue") +
+  facet_wrap(~ libelle_indice, scales = "free_y") +
+  labs(x = "Année", y= "Valeur", title ="Distribution de l'indice I2M2 et ses métriques par année") +
+  theme_bw()
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 8, fig.height= 5, fig.align='center', fig.cap= " Fig.8 : Distribution de l'I2M2 et ses métriques, faisant apparaître les limites de classe de l'I2M2"}
+clean_minv_distrib <- clean_minv %>%
+  mutate(
+    classe_I2M2 = case_when(
+      resultat_indice > 0.665 ~ "Très bon",
+      resultat_indice > 0.433 ~ "Bon",
+      resultat_indice > 0.295 ~ "Moyen",
+      resultat_indice >= 0.148 ~ "Médiocre",
+      resultat_indice < 0.148  ~ "Mauvais",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  mutate(
+    classe_I2M2 = factor(classe_I2M2,
+                         levels = c("Très bon", "Bon", "Moyen", "Médiocre", "Mauvais"))
+  )
+
+
+ggplot(clean_minv_distrib, aes(x = resultat_indice, fill = classe_I2M2)) +
+  geom_histogram(binwidth = 0.01, color = "NA", alpha = 0.7, stat = "bin") +
+  geom_vline(xintercept = c(0.148, 0.295, 0.433, 0.665),
+             linetype = "dashed", color = "grey50", linewidth = 0.8) +
+  
+  scale_fill_manual(
+    values = c(
+      "Très bon" = "blue",
+      "Bon"      = "lightgreen",
+      "Moyen"    = "yellow",
+      "Médiocre" = "orange",
+      "Mauvais"  = "red"
+    ),
+    name = "Classe I2M2" # Nom de la légende
+  ) +
+  facet_wrap(~ libelle_indice, labeller = label_wrap_gen(width = 20), scales = "free") +
+  labs(
+    title = "Distribution des valeurs de l'I2M2 et ses métriques par classe de qualité",
+    x = "Valeur de la métrique",
+    y = "Fréquence des prélèvements"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    legend.title = element_text(face = "bold"),
+    legend.position = "right",
+    strip.text = element_text(face = "bold")
+  )
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 5, fig.align='center', fig.cap= " Fig.9 : Distribution de l'IBD et de l'IPS, faisant apparaitre les limites de classe de l'IBD"}
+
+library(tidyverse)
+load(file = "../Data/10_donnees_pretraitees.rda")
+
+
+clean_ibd_distrib <- clean_ibd %>%
+  mutate(
+    classe_ibd = case_when(
+      resultat_indice > 16.4 ~ "Très bon",
+      resultat_indice > 13.8 ~ "Bon",
+      resultat_indice > 10   ~ "Moyen",
+      resultat_indice > 5.9  ~ "Médiocre",
+      TRUE                   ~ "Mauvais"
+    )
+  )
+
+clean_ibd_distrib$classe_ibd <- factor(clean_ibd_distrib$classe_ibd,
+                                       levels = c("Très bon", "Bon", "Moyen", "Médiocre", "Mauvais"))
+
+ggplot(clean_ibd_distrib, aes(x = resultat_indice, fill = classe_ibd)) +
+  geom_histogram(binwidth = 0.1, color = "NA", alpha = 0.7, stat = "bin") +
+  geom_vline(xintercept = c(5.9, 10, 13.8, 16.4),
+             linetype = "dashed", color = "grey50", linewidth = 0.8) +
+  
+  scale_fill_manual(
+    values = c(
+      "Très bon" = "blue",
+      "Bon"      = "lightgreen",
+      "Moyen"    = "yellow",
+      "Médiocre" = "orange",
+      "Mauvais"  = "red"
+    ),
+    name = "Classe IBD"
+  ) +
+  facet_wrap(~ libelle_indice, labeller = label_wrap_gen(width = 20), scales = "free") +
+  labs(
+    title = "Distribution des valeurs des indices IBD et IPS par classe de qualité, 2008-2023.",
+    x = "Valeur de l'indice",
+    y = "Fréquence des prélèvements"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    legend.title = element_text(face = "bold"),
+    legend.position = "right",
+    strip.text = element_text(face = "bold")
+  )         
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 12, fig.height= 10, fig.align='center', fig.cap= " Fig.9 : Distribution de l'IBD et de l'IPS, faisant apparaitre les limites de classe de l'IBD"}
+library(sf)
+library(dplyr)
+library(mapview)
+library(ggplot2)
+library(ggspatial)
+load(file = "../Data/50_chroniques_et_tendance.rda")
+remotes::install_github("MaelTheuliere/COGiter")
+library(COGiter)
+
+
+couleursi2m2<-c(
+  "Très bon" = "darkgreen",
+  "Bon" = "lightgreen",
+   "Moyen" = "yellow",
+  "Médiocre"="orange",
+  "Mauvais" = "red"
+  
+)
+
+
+i2m2test <- i2m2 %>%
+  mutate(classe_etat= case_when(... = 
+                                resultat_indice > 0.665 ~ "Très bon",
+                                resultat_indice > 0.443 ~ "Bon",
+                                resultat_indice > 0.295 ~ "Moyen",
+                                resultat_indice > 0.148 ~ "Médiocre",
+                                TRUE                    ~ "Mauvais"
+
+  ))
+
+i2m2test<- i2m2test %>%
+  mutate(classe_etat=factor(classe_etat,levels=c("Très bon","Bon","Moyen","Médiocre","Mauvais")))
+
+
+#On teste avec facet_wrap
+
+i2m2_sf<-st_as_sf(i2m2test, coords=c("longitude","latitude"),crs=4326)
+
+departement_breton <- departements_metro_geo %>% 
+  filter(DEP %in% c("22","29","35","56")) %>% 
+  st_transform(crs = 4326)
+
+
+ggplot() + 
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = i2m2_sf, aes(color = classe_etat), size = 2) +
+  scale_color_manual(values = couleursi2m2) +
+   annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
+  facet_wrap(~ as.factor(annee)) +
+  labs(title = "La qualité biologique des cours d'eau bretons selon l'I2M2, 2015-2023",
+       color = "Classe d'état") +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(size = 18, face = "bold"), 
+    legend.title = element_text(size = 14, face = "bold"), 
+    legend.text = element_text(size = 12) 
+  )
+```
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 15, fig.height= 10, fig.align='center', fig.cap= " Fig.9 : Distribution de l'IBD et de l'IPS, faisant apparaitre les limites de classe de l'IBD"}
+
+#On crée les couleurs par classe
+couleursibd<-c(
+  "Très bon" = "darkgreen",
+  "Bon" = "lightgreen",
+  "Moyen" = "yellow",
+  "Médiocre"="orange",
+  "Mauvais" = "red"
+  
+)
+
+#On va regarder l'évolution de la classe d'i2m2 au cours du temps 
+ibdtest <- ibd %>%
+  mutate(classe_etat= case_when(... = 
+                                  resultat_indice > 16.4 ~ "Très bon",
+                                resultat_indice > 13.8 ~ "Bon",
+                                resultat_indice > 10 ~ "Moyen",
+                                resultat_indice > 5.9 ~ "Médiocre",
+                                TRUE                    ~ "Mauvais"
+                                
+  ))
+
+# On classe les ordres dans l'ordre
+ibdtest<- ibdtest %>%
+  mutate(classe_etat=factor(classe_etat,levels=c("Très bon","Bon","Moyen","Médiocre","Mauvais")))
+
+# Carte intéractive
+mapview(ibdtest, zcol="classe_etat", col.regions=couleursi2m2, xcol="longitude", ycol="latitude", crs= 4326, grid=FALSE,cex=4.5)
+
+# On créé l'objet sf 
+ibd_sf<-st_as_sf(ibdtest, coords=c("longitude","latitude"),crs=4326)
+
+# Départements bretons à partir de COGITER
+departement_breton <- departements_metro_geo %>% 
+  filter(DEP %in% c("22","29","35","56")) %>% 
+  st_transform(crs = 4326)
+
+# Cartes 
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = ibd_sf, aes(color = classe_etat), size = 2) +
+  scale_color_manual(values = couleursibd) +
+   annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
+  facet_wrap(~ as.factor(annee)) +
+  labs(title = "La qualité biologique des cours d'eau bretons selon l'IBD, 2008-2023",
+       color = "Classe d'état") +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(size = 18, face = "bold"), 
+    legend.title = element_text(size = 14, face = "bold"), 
+    legend.text = element_text(size = 12) 
+  )
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 3, fig.cap= " Fig.7 : Réseaux des stations étudiées"}
+
+load(file = "../Data/10_donnees_pretraitees.rda")
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+
+station_reseau <- read_excel("C:/Users/ilona.garcia/Documents/RstudioGIT/Etudebiophysico/Data/reseau_stations.xlsx")
+
+minv_joint <- clean_minv %>% 
+  left_join(station_reseau, by = "code_station_hydrobio")
+ibd_joint <- clean_ibd %>% 
+  left_join(station_reseau, by = "code_station_hydrobio")
+
+proportion_i2m2 <- minv_joint %>% 
+  distinct(code_station_hydrobio,reseau) %>% 
+  count(reseau) %>% 
+  mutate(
+    proportion = n/sum(n),
+    code_indice = "7613"
+  )
+
+proportion_ibd <- ibd_joint %>% 
+  distinct(code_station_hydrobio,reseau) %>% 
+  count(reseau) %>% 
+  mutate(
+    proportion = n/sum(n),
+    code_indice = "5856"
+  )
+
+proportion_reseau <- bind_rows(proportion_i2m2, proportion_ibd) %>% 
+  mutate(
+    pourcentage = round(proportion * 100, 1),
+    code_indice = recode(code_indice, "7613" = "I2M2", "5856" = "IBD")
+  ) %>% 
+  select(code_indice, reseau, n, proportion, pourcentage)
+
+proportion_reseau <- proportion_reseau %>% 
+  mutate(
+    reseau = factor(reseau, levels = c("RRP", "RCS", "RCO", "RD", "NA"))
+  )
+
+ggplot(proportion_reseau, aes(x = code_indice, y = reseau, fill = pourcentage)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = paste0(pourcentage, "%")), color = "black", size = 4) +
+  scale_fill_gradient(low = "white", "high" = "darkgreen") +
+  labs(
+    title = "Répartition des stations par réseau et indices.",
+    x = "Indice",
+    y = "Réseau",
+    fill = "Pourcentage"
+  ) +
+  scale_y_discrete(limits = rev) +
+  theme_minimal()
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 3}
+
+library(tidyverse)
+library(trend)
+library(sf)
+library(ggplot2)
+library(scales)
+remotes::install_github("MaelTheuliere/COGiter")
+library(COGiter)
+library(ggspatial)
+
+functions <- list.files(path = "R",
+                        pattern = ".R$",
+                        full.names = TRUE)
+
+map(.x = functions,
+    .f = source)
+
+load(file = "../Data/10_donnees_pretraitees.rda")
+source(file = "../R/mk_st_by_group.R")
+source(file = "../R/Mann_kendall_div.R")
+
+
+Tendances_multi <-mk_st_by_group(clean_minv,resultat_indice,code_indice,code_indice,code_station_hydrobio)
+Tendance_ASPT <-filter(Tendances_multi,code_indice==8057)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_OVI <-filter(Tendances_multi,code_indice==8055)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_POL <-filter(Tendances_multi,code_indice==8056)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_SHA <-filter(Tendances_multi,code_indice==8058)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+Tendance_RIC <-filter(Tendances_multi,code_indice==8054)%>%select(code_station_hydrobio,trend,sens_slope,mk_pvalue)
+
+ASPT <- filter(clean_minv,code_indice==8057)
+aspt_et_trend <- left_join(ASPT,Tendance_ASPT,by="code_station_hydrobio")
+
+OVI <- filter(clean_minv,code_indice==8055)
+ovi_et_trend <- left_join(OVI,Tendance_OVI,by="code_station_hydrobio")
+
+POL <- filter(clean_minv,code_indice==8056)
+pol_et_trend <- left_join(POL,Tendance_POL,by="code_station_hydrobio")
+
+SHA <- filter(clean_minv,code_indice==8058)
+sha_et_trend <- left_join(SHA,Tendance_SHA,by="code_station_hydrobio")
+
+
+RIC <- filter(clean_minv,code_indice==8054)
+ric_et_trend <- left_join(RIC,Tendance_RIC,by="code_station_hydrobio")
+
+aspt_et_trend <- aspt_et_trend %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      
+      trend == "Decrease" ~ "\u25BC"
+                             
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+    
+  )
+  )
+
+aspt_et_trend_sf <- st_as_sf(aspt_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+
+
+departement_breton <- departements_metro_geo %>% 
+  filter(DEP %in% c("22","29","35","56")) %>% 
+  st_transform(crs = 4326)
+
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = aspt_et_trend_sf) +
+  geom_sf_text(
+    data = aspt_et_trend_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : Amélioration, ▼ : Dégradation, ● : Aucun changement")
+
+ovi_et_trend <- ovi_et_trend %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      
+      trend == "Decrease" ~ "\u25BC"
+                             
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+    
+  )
+  )
+
+ovi_et_trend_sf <- st_as_sf(ovi_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+
+
+departement_breton <- departements_metro_geo %>% 
+  filter(DEP %in% c("22","29","35","56")) %>% 
+  st_transform(crs = 4326)
+
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = ovi_et_trend_sf) +
+  geom_sf_text(
+    data = ovi_et_trend_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : Amélioration, ▼ : Dégradation, ● : Aucun changement")
+
+pol_et_trend <- pol_et_trend %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      
+      trend == "Decrease" ~ "\u25BC"
+                             
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+    
+  )
+  )
+
+pol_et_trend_sf <- st_as_sf(pol_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+
+
+departement_breton <- departements_metro_geo %>% 
+  filter(DEP %in% c("22","29","35","56")) %>% 
+  st_transform(crs = 4326)
+
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = pol_et_trend_sf) +
+  geom_sf_text(
+    data = pol_et_trend_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : Amélioration, ▼ : Dégradation, ● : Aucun changement")
+
+ric_et_trend <- ric_et_trend %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      
+      trend == "Decrease" ~ "\u25BC"
+                             
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+    
+  )
+  )
+
+ric_et_trend_sf <- st_as_sf(ric_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+
+
+departement_breton <- departements_metro_geo %>% 
+  filter(DEP %in% c("22","29","35","56")) %>% 
+  st_transform(crs = 4326)
+
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = ric_et_trend_sf) +
+  geom_sf_text(
+    data = ric_et_trend_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : Amélioration, ▼ : Dégradation, ● : Aucun changement")
+
+sha_et_trend <- sha_et_trend %>%
+  mutate(
+    symbole = case_when(
+      trend == "Increase" ~ "\u25B2",      
+      trend == "Decrease" ~ "\u25BC"
+                             
+    ),
+    couleur = case_when(
+      trend == "Increase" & mk_pvalue < 0.05 ~ "#60BD68",
+      trend == "Decrease" & mk_pvalue < 0.05 ~ "red",
+      TRUE ~ "black"
+    ),
+    taille = case_when(
+      trend %in% c("Increase", "Decrease") ~ rescale(abs(sens_slope), to = c(1, 6)),
+      TRUE ~ 0.5
+    
+  )
+  )
+
+sha_et_trend_sf <- st_as_sf(sha_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
+
+
+departement_breton <- departements_metro_geo %>% 
+  filter(DEP %in% c("22","29","35","56")) %>% 
+  st_transform(crs = 4326)
+
+
+# Tracer la carte avec geom_sf
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = sha_et_trend_sf) +
+  geom_sf_text(
+    data = sha_et_trend_sf,
+    aes(label = symbole, color = couleur, size = taille),
+    show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_size_identity() +
+  annotation_scale(location = "br", line_width = .5) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  theme_minimal() +
+  labs(caption = "▲ : Amélioration, ▼ : Dégradation, ● : Aucun changement")
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 10, fig.height= 5}
+library(tidyverse)
+library(ggplot2)
+library(corrplot)
+library(GGally)
+
+load(file = "../Data/10_donnees_pretraitees.rda")
+load(file = "../Data/70_choix_parametre.rda")
+load(file = "../Data/80_donnees_globales_trans.rda")
+load(file = "../Data/90_acp.rda")
+
+
+label_bio <- c("7613" = "I2M2",
+               "8054" = "RichesI2M2",
+               "8055" = "OvovivI2M2",
+               "8056" = "PolyvolI2M2",
+               "8057" = "ASPT",
+               "8058" = "H'",
+               "5856" = "IBD",
+               "1022" = "IPS"
+               
+)
+ 
+i2m2_ibd_matrix <- i2m2_ibd %>% 
+  cor(method="spearman")
+colnames(i2m2_ibd_matrix) <- label_bio
+rownames(i2m2_ibd_matrix) <- label_bio
+
+corrplot.mixed(i2m2_ibd_matrix, upper = "ellipse", tl.col = "black", 
+               tl.cex = 0.5)
+
+```
+

@@ -1,13 +1,15 @@
+#Chargement des librairies et données
 library(FactoMineR)
 library(devtools)
 library(factoextra)
-library(dplyr)
 library(tidyverse)
+library(ggplot2)
 
 load(file = "Data/10_donnees_pretraitees.rda")
 load(file = "Data/70_choix_parametre.rda")
 load(file = "Data/80_donnees_globales_trans.rda")
 
+# Table de correspondance
 label_physico <- c(
   "1301" = "T°",
   "1302" = "pH",
@@ -25,59 +27,6 @@ label_physico <- c(
   "1841" = "C organique"
 )
 
- 
-#################################################################################
-#                       I2M2 et IBD mensuel                                              #
-#################################################################################
-
-acp<- clean_minv %>% 
-  select(code_station_hydrobio, date_prelevement, code_indice, resultat_indice) %>% 
-  distinct() %>% 
-  pivot_wider(names_from = "code_indice",
-              values_from = "resultat_indice") %>% 
-   dplyr::select(`8058`:`7613`)
-
-
-donnees_centrees_reduites<- scale(acp,center=TRUE,scale=TRUE)
-
-resultat_acp<- PCA(donnees_centrees_reduites, graph=TRUE)
-print(resultat_acp)
-valeurspropres<- resultat_acp$eig
-valeurspropres
-
-barplot(valeurspropres[,2],names.arg=1:nrow(valeurspropres),
-        main="Pourcentage de la variance expliquée par chaque composante",
-        xlab="Composantes principales",
-        ylab="Pourcentage de variance expliquée",
-        col="steelblue")
-#Add connected line segments to the plot
-lines(x=1:nrow(valeurspropres),valeurspropres[,2],
-      type="b", pch=19, col="red")
-        
-
-fviz_pca_var(resultat_acp,
-             col.var="cos2",
-             gradient.cols=c("lightgreen", "yellow","orange"),
-             repel=TRUE,
-             title="Cercle de Corrélation des Variables")
-fviz_contrib(resultat_acp,choice="var", axes=1, top = 10)
-fviz_contrib(resultat_acp,choice="var", axes=2, top = 10)
-
-#################################################################################
-#                       I2M2 inter-station                                            #
-#################################################################################
-
-i2m2_ibd <- i2m2_wide %>% 
-  left_join(ibd_wide, by = "code_station_hydrobio") %>% 
-  dplyr::select(`7613`:`5856`)
-
-donnees_centrees_reduites_bio <- scale(i2m2_ibd,center=TRUE,scale=TRUE)
-
-resultat_acp_bio<- PCA(donnees_centrees_reduites_bio, graph=TRUE)
-print(resultat_acp_bio)
-valeurspropres_bio<- resultat_acp_bio$eig
-valeurspropres_bio
-
 label_bio <- c("7613" = "I2M2",
                "8054" = "RichesI2M2",
                "8055" = "OvovivI2M2",
@@ -86,20 +35,41 @@ label_bio <- c("7613" = "I2M2",
                "8058" = "H'",
                "5856" = "IBD",
                "1022" = "IPS"
-  
+               
 )
 
+#################################################################################
+#                       I2M2 inter-station                                            #
+#################################################################################
+
+#i2m2_ibd <- i2m2_wide %>% 
+  #left_join(ibd_wide, by = "code_station_hydrobio") %>% 
+  #dplyr::select(`7613`:`5856`)
+
+# On garde seulement les valeurs numériques 
+i2m2_wide <- i2m2_wide %>% 
+  select(`7613`:`8058`)
+
+# Les valeurs sont centrées-réduites
+donnees_centrees_reduites_bio <- scale(i2m2_wide,center=TRUE,scale=TRUE)
+
+# On fait l'ACP 
+resultat_acp_bio<- PCA(donnees_centrees_reduites_bio, graph=TRUE)
+
+# On récupère les valeurs propres
+valeurspropres_bio<- resultat_acp_bio$eig
+
+# On renomme
 old_names_bio <- rownames(resultat_acp_bio$var$coord)
 new_names_bio <- old_names_bio
 new_names_bio[old_names_bio %in% names(label_bio)] <- label_bio[old_names_bio[old_names_bio %in% names(label_bio)]]
 
-
+# Barplot
 barplot(valeurspropres_bio[,2],names.arg=1:nrow(valeurspropres_bio),
         main="Pourcentage de la variance expliquée par chaque composante",
         xlab="Composantes principales",
         ylab="Pourcentage de variance expliquée",
         col="steelblue")
-#Add connected line segments to the plot
 lines(x=1:nrow(valeurspropres_bio),valeurspropres_bio[,2],
       type="b", pch=19, col="red")
 
@@ -108,11 +78,14 @@ resultat_acp_bio$var$contrib <- `rownames<-`(resultat_acp_bio$var$contrib, new_n
 resultat_acp_bio$var$cos2 <- `rownames<-`(resultat_acp_bio$var$cos2, new_names_bio)
 resultat_acp_bio$var$cor <- `rownames<-`(resultat_acp_bio$var$cor, new_names_bio)
 
+# Visualisation de l'ACP
 fviz_pca_var(resultat_acp_bio,
              col.var="cos2",
              gradient.cols=c("deeppink", "maroon","navy"),
              repel=TRUE,
-             title="Cercle de Corrélation des Variables")
+             title="Cercle des corrélations des variables")
+
+# Contribution sur les différents axes
 fviz_contrib(resultat_acp_bio,choice="var", axes=1, top = 10)
 fviz_contrib(resultat_acp_bio,choice="var", axes=2, top = 10)
 fviz_contrib(resultat_acp_bio,choice="var", axes=3, top = 10)
@@ -170,81 +143,32 @@ fviz_pca_var(resultat_acp_bio_2018,
 fviz_contrib(resultat_acp_bio,choice="var", axes=1, top = 10)
 fviz_contrib(resultat_acp_bio,choice="var", axes=2, top = 10)
 
-
-
-
-#################################################################################
-#                       Physico valeurs mensuelles                                                
-#################################################################################
-
-acp_pc<- mean_physico_periode %>%
-  select(code_station_hydrobio, annee, mois, code_parametre, para_moy) %>% 
-  distinct() %>% 
-  pivot_wider(names_from = "code_parametre",
-              values_from = "para_moy",
-              values_fn = mean) %>% 
-  ungroup() %>%
-  select(`mois`:`1841`) %>% 
-  mutate(across(everything(), ~ ifelse(is.na(.), mean(., na.rm = TRUE), .)))
-
-donnees_centrees_reduites_pc<- scale(acp_pc,center=TRUE,scale=TRUE)
-
-resultat_acp_physico<- PCA(donnees_centrees_reduites_pc, graph=TRUE)
-print(resultat_acp_physico)
-valeurspropres_pc<- resultat_acp_physico$eig
-valeurspropres_pc
-
-barplot(valeurspropres_pc[,2],names.arg=1:nrow(valeurspropres_pc),
-        main="Pourcentage de la variance expliquée par chaque composante",
-        xlab="Composantes principales",
-        ylab="Pourcentage de variance expliquée",
-        col="steelblue")
-#Add connected line segments to the plot
-lines(x=1:nrow(valeurspropres_pc),valeurspropres_pc[,2],
-      type="b", pch=19, col="red")
-
-fviz_pca_ind(resultat_acp_physico,
-             label = "none",
-             habillage = acp_pc$mois,
-             addEllipses = TRUE,
-             palette = "Dark2",
-             repel = TRUE) +
-  labs(title = "ACP des mois")
-             
-fviz_pca_var(resultat_acp_physico,
-             col.var="cos2",
-             gradient.cols=c("deeppink", "maroon","navy"),
-             repel=TRUE,
-             title="Cercle de Corrélation des Variables")
-fviz_contrib(resultat_acp_physico,choice="var", axes=1, top = 10)
-fviz_contrib(resultat_acp_physico,choice="var", axes=2, top = 10)
-
-#graph avec mois et les années avec cette ACP
-#transfo log? et enlever les outliers (4* ec type) --> en amont du remplacement,
-#des valeurs manquantes
-#modélisation : 1 ligne par site --> refaire ACP dessus (peut-être pas du tout même resultats),
-#différentes periode entre I2M2 et diat ?? --> généralités sur mon tableau (ex )
-
 #################################################################################
 #                       Physico : inter-stations                                               
 #################################################################################
 
+# On garde seulement les variables numériques
 acp_physico <- physico_wide %>%
   dplyr::select(`1295`:`1841`)
 
+# On centre-réduit les variables
 donnees_centrees_reduites_pc_2 <- scale(acp_physico,center=TRUE,scale=TRUE)
-resultat_acp_physico_2<- PCA(donnees_centrees_reduites_pc_2, graph=TRUE)
-print(resultat_acp_physico_2)
-valeurspropres_pc_2<- resultat_acp_physico_2$eig
-valeurspropres_pc_2
 
+# ACP
+resultat_acp_physico_2<- PCA(donnees_centrees_reduites_pc_2, graph=TRUE)
+
+# On récupère les valeurs propres
+valeurspropres_pc_2<- resultat_acp_physico_2$eig
+
+# On renomme
 old_names <- rownames(resultat_acp_physico_2$var$coord)
 new_names <- old_names
 new_names[old_names %in% names(label_physico)] <- label_physico[old_names[old_names %in% names(label_physico)]]
 
+
 resultat_acp_physico_2$var$cos2 <- `rownames<-`(resultat_acp_physico_2$var$cos2, new_names)
 
-
+# Barplot
 barplot(valeurspropres_pc_2[,2],names.arg=1:nrow(valeurspropres_pc_2),
         main="Pourcentage de la variance expliquée par chaque composante",
         xlab="Composantes principales",
@@ -259,13 +183,14 @@ resultat_acp_physico_2$var$contrib <- `rownames<-`(resultat_acp_physico_2$var$co
 resultat_acp_physico_2$var$cos2 <- `rownames<-`(resultat_acp_physico_2$var$cos2, new_names)
 resultat_acp_physico_2$var$cor <- `rownames<-`(resultat_acp_physico_2$var$cor, new_names)
 
+# Visualisation de l'ACP
 fviz_pca_var(resultat_acp_physico_2,
              col.var="cos2",
              gradient.cols=c("deeppink", "maroon","navy"),
              repel=TRUE,
-             title="Cercle de Corrélation des Variables")
+             title="Cercle des corrélations des variables")
 
-
+# Contributions sur chacun des axes  
 fviz_contrib(resultat_acp_physico_2,choice="var", axes=1, top = 10)
 fviz_contrib(resultat_acp_physico_2,choice="var", axes=2, top = 10)
 fviz_contrib(resultat_acp_physico_2,choice="var", axes=3, top = 10)
@@ -313,7 +238,7 @@ fviz_contrib(resultat_acp_physico_test,choice="var", axes=3, top = 10)
 
 
 #################################################################################
-#                       Global                                                
+#                       ACP sur le jeu de données global                                               
 #################################################################################
 
 

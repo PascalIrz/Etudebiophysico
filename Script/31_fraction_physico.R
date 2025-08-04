@@ -4,18 +4,23 @@ load(file = "Data/10_donnees_pretraitees.rda")
 #Librairies
 library(tidyverse)
 
-# Vérification de la fraction analysée pour les nitrates 
+##################################################################################
+# NITRATES 
+################################################################################## 
+
+## On garde seulement les nitrates 
 verif_fraction <- parametres_physico %>%
   select(code_parametre,code_station_hydrobio,date_prelevement,code_fraction, resultat) %>% 
   filter(code_parametre==1340) %>% 
   arrange(code_station_hydrobio)
 
+# On garde seulement les résultats où plus d'un code fraction est observé
 date_fraction <- verif_fraction %>% 
   group_by(date_prelevement, code_station_hydrobio) %>%
   summarise(nb_fraction = n_distinct(code_fraction), .groups = "drop") %>%
   filter(nb_fraction > 1)
   
-
+# On associe différent score selon le code_fraction
 verif_fraction <- verif_fraction %>%
   group_by(date_prelevement, code_station_hydrobio) %>%
   mutate(
@@ -28,7 +33,7 @@ verif_fraction <- verif_fraction %>%
   ) %>%
   ungroup()
 
-
+# Graphique des code_fractions observés 
 ggplot(verif_fraction,
        aes(x = as.factor(date_prelevement), 
            y = factor(code_station_hydrobio),
@@ -45,12 +50,15 @@ ggplot(verif_fraction,
 
 which(is.na(verif_fraction))
  
+##################################################################################
+# AMMONIUM 
+##################################################################################
+
 #Pour l'ammonium
 verif_fraction_ammonium<- parametres_physico %>%
   select(code_parametre,code_station_hydrobio,date_prelevement,code_fraction, resultat) %>% 
   filter(code_parametre==1335) %>% 
   arrange(code_station_hydrobio)
-
 
 
 verif_fraction_ammonium <- verif_fraction_ammonium %>%
@@ -64,7 +72,6 @@ verif_fraction_ammonium <- verif_fraction_ammonium %>%
     )
   ) %>%
   ungroup()
-
 
 ggplot(verif_fraction_ammonium,
        aes(x = as.factor(date_prelevement), 
@@ -81,8 +88,11 @@ ggplot(verif_fraction_ammonium,
   theme_classic()
 
 
+##################################################################################
+# NITRITES 
+##################################################################################
 
-#Pour les nitrites
+#On garde seulement les nitrites 
 verif_fraction_nitrites <- parametres_physico %>%
   select(code_parametre,code_station_hydrobio,date_prelevement,code_fraction, resultat) %>% 
   filter(code_parametre==1339) %>% 
@@ -118,6 +128,11 @@ ggplot(verif_fraction_nitrites,
 
 which(is.na(verif_fraction))
 
+
+##################################################################################
+# Orthophosphates 
+##################################################################################
+
 #Pour les orthophosphates
 verif_fraction_po4 <- parametres_physico %>%
   select(code_parametre,code_station_hydrobio,date_prelevement,code_fraction, resultat) %>% 
@@ -151,6 +166,10 @@ ggplot(verif_fraction_po4,
     fill = "Score"
   ) +
   theme_classic()
+
+##################################################################################
+# Phosphore total
+##################################################################################
 
 #Pour le phosphore total
 verif_fraction_poT <- parametres_physico %>%
@@ -186,6 +205,10 @@ ggplot(verif_fraction_poT,
   ) +
   theme_classic()
 
+##################################################################################
+# MES
+##################################################################################
+
 #Pour MES
 verif_fraction_mes <- parametres_physico %>%
   select(code_parametre,code_station_hydrobio,date_prelevement,code_fraction, resultat) %>% 
@@ -220,6 +243,9 @@ ggplot(verif_fraction_mes,
   ) +
   theme_classic() 
   
+##################################################################################
+# Conductivité
+##################################################################################
 
 #Pour conductivé
 verif_fraction_cond <- parametres_physico %>%
@@ -254,6 +280,10 @@ ggplot(verif_fraction_cond,
     fill = "Score"
   ) +
   theme_classic() 
+
+##################################################################################
+# Carbone organique 
+##################################################################################
 
 # Carbone organique 
 

@@ -172,7 +172,7 @@ Ayant posé comme hypothèse, l'absence de variabilité temporelle, ceci sera é
 
 L’analyse des données I2M2 a été restreinte à la période 2015-2023, en raison de l’absence de transfert automatisé entre les portails SEEE et Hub’Eau après 2023. Concernant l’Indice Biologique Diatomées (IBD), les données couvrent une période plus large, de 2005 à 2023. Toutefois, les années 2005 à 2007 ont été exclues de l’analyse en raison d’un nombre insuffisant de données, lié à la mise en place progressive des réseaux de contrôle opérationnel à partir de 2007. Les campagnes d’échantillonnage étant réalisées annuellement en période d’étiage, lorsque deux prélèvements ont été effectués au cours d’une même année sur une station, seul le plus tardif a été retenu. Des valeurs manquantes subsistent en raison de la variabilité des fréquences de prélèvement selon les réseaux, ou de contraintes hydrologiques ayant empêché certaines campagnes. Ces valeurs ne pouvant être reconstituées, seules les stations disposant d’au moins cinq années de données (non nécessairement consécutives) ont été retenues. Ainsi, le jeu de données macroinvertébrés comprend 112 stations et celui des diatomées 233 stations.
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 5, fig.cap= " Fig.7 : Réseaux des stations étudiées"  }
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 3, fig.height= 3, fig.cap= " Fig.7 : Réseaux des stations étudiées"  }
 
 load(file = "../Data/10_donnees_pretraitees.rda")
 library(tidyverse)
@@ -229,6 +229,7 @@ ggplot(proportion_reseau, aes(x = code_indice, y = reseau, fill = pourcentage)) 
 ```
 
 ```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.width= 13, fig.height=8, fig.cap= " Fig.7 : Chroniques des prélèvements de macroinvertébrés pour le suivi DCE"}
+
 library(ggplot2)
 library(dplyr)
 load(file = "../Data/10_donnees_pretraitees.rda")
@@ -281,56 +282,178 @@ ggplot(data_presence_complet,
 scale_x_discrete(expand = c(0, 0))
 ```
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 13, fig.height=15, fig.cap= " Fig.7 : Chroniques des prélèvements de diatomées pour le suivi DCE" }
+
+library(ggplot2)
+library(dplyr)
+load(file = "../Data/10_donnees_pretraitees.rda")
+
+#Préparation des données : présence/absence
+data_presence <- clean_ibd %>%
+  filter(libelle_indice == "Indice Biologique Diatomées (IBD)") %>%
+  group_by(code_station_hydrobio, annee) %>%
+  summarise(presence = ifelse(n() > 0, 1, 0), .groups = "drop")
+
+#On joint les libellés des stations au dataframe
+data_presence_complet <- data_presence %>%
+  left_join(
+    clean_ibd %>%
+      select(code_station_hydrobio, libelle_station_hydrobio) %>%
+      distinct(),
+    by = "code_station_hydrobio"
+  )
+
+#Création du graphique
+ggplot(data_presence_complet,
+       aes(
+         x = as.factor(annee),
+         y = factor(libelle_station_hydrobio),
+         fill = as.factor(presence)
+       )) +
+  geom_tile(
+    color = "white",
+    size = 0.3,
+    height = 0.9,
+    width = 0.9
+  ) +
+  scale_fill_manual(values = c("0" = "#e0e0e0", "1" = "darkgreen"),
+                    guide = "none"
+                    ) +
+  labs(
+    x = "Année",
+    y = "Station",
+    fill = "Prélèvement"
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    plot.title = element_blank(),
+    plot.subtitle = element_blank(),
+    legend.position = "none",
+    axis.text.x = element_text(angle = 45, hjust =1),
+    panel.grid = element_blank()
+  ) +
+  scale_y_discrete(guide = guide_axis(n.dodge = 2)) +
+scale_x_discrete(expand = c(0, 0))
+```
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.width= 13, fig.height=5, fig.cap= " Fig.7 : Chroniques des prélèvements de diatomées pour le suivi DCE, de 2008 à 2023"}
+
+station_annee_bis <- clean_ibd %>% 
+  group_by(annee) %>% 
+  summarise(n = n_distinct(code_station_hydrobio))
+
+ggplot(clean_ibd, aes (x=factor(annee), y = resultat_indice)) +
+  geom_boxplot() +
+  geom_text(data = station_annee_bis,
+            aes(x = as.factor(annee), y=0, label = paste0("n=",n)),
+            vjust = 0.5, size = 3, color = "blue") +
+  facet_wrap(~ code_indice, scales = "free_y") +
+  labs(x = "Année", y= "Valeur", title ="Distribution des indices par année") +
+  theme_bw()
+
+```
+
+
 ### a) Analyses univariées
 
 Le calcul d'une statistique de tendance centrale telle que la médiane, témoigne d'une stabilité globale des indices et métriques au cours du temps, suggérant une variabilité inter-annuelle modérée. Il est est de même pour l'IBD et l'IPS (annexe). La richesse taxonomique se distingue par une plus grande variabilité, avec des médianes fluctuantes et davantage de valeurs aberrantes basses sur plusieurs années.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 10, fig.height= 5, fig.cap= " Fig.10 : Distribution inter-annuelle de l'indice I2M2 et ses métriques, autrice : Ilona Garcia"}
 
+station_annee <- clean_minv %>% 
+  group_by(annee) %>% 
+  summarise(n = n_distinct(code_station_hydrobio))
+
 ggplot(clean_minv, aes (x=factor(annee), y = resultat_indice)) +
   geom_boxplot() +
-  facet_wrap(~ libelle_indice, scales = "free_y") +
-  labs(x = "Année", y= "Valeur", title ="Distribution des métriques par année") +
+  geom_text(data = station_annee,
+            aes(x = as.factor(annee), y=0, label = paste0("n=",n)),
+            vjust = 0.5, size = 3, color = "blue") +
+  facet_wrap(~ code_indice, scales = "free_y") +
+  labs(x = "Année", y= "Valeur") +
+  theme_bw() +
+  theme(
+    axis.title.x = element_text(face = "bold"), 
+    axis.title.y = element_text(face = "bold")
+  )
+
+```
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.width= 10, fig.height= 5, fig.cap= " Fig.10 : Distribution inter-annuelle de l'IBD et l'IPS, de 2008 à 2023" }
+
+station_annee_bis <- clean_ibd %>% 
+  group_by(annee) %>% 
+  summarise(n = n_distinct(code_station_hydrobio))
+
+ggplot(clean_ibd, aes (x=factor(annee), y = resultat_indice)) +
+  geom_boxplot() +
+  geom_text(data = station_annee_bis,
+            aes(x = as.factor(annee), y=0, label = paste0("n=",n)),
+            vjust = 0.5, size = 3, color = "blue") +
+  facet_wrap(~ code_indice, scales = "free_y") +
+  labs(x = "Année", y= "Valeur", title ="Distribution des indices par année") +
   theme_bw()
 
 ```
+
 
 Les classes de couleurs associées à la note de l'I2M2 sont également appliquées aux métriques, pour faciliter la comparaison. D'après l'étude des distributions, la majorité des notes I2M2 comptabilisées en Bretagne depuis 2015 tendent vers le "Bon" et "Très Bon" état selon la DCE. Les métriques ASPT et Indice de Shannon suivent une tendance similaire avec une prédominance des classes supérieures. Néanmoins, pour les métriques Ovoviviparité, Polyvoltinisme et Richesse Taxonomique, une proportion non négligeable de stations se classe dans les catégories "Moyen" ou "Médiocre" (s'écartant de l'état de référence). Cela peut indiquer une abondance importante de taxons polyvoltins et ovovivipares, entraînant une diminution de la richesse si ceux-ci sont en compétition avec les taxons sensibles.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 8, fig.height= 5, fig.align='center', fig.cap= " Fig.8 : Distribution de l'I2M2 et ses métriques, faisant apparaître les limites de classe de l'I2M2"}
 
-library(tidyverse)
-load(file = "../Data/10_donnees_pretraitees.rda")
+clean_minv_distrib <- clean_minv %>%
+  mutate(
+    classe_I2M2 = case_when(
+      resultat_indice > 0.665 ~ "Très bon",
+      resultat_indice > 0.433 ~ "Bon",
+      resultat_indice > 0.295 ~ "Moyen",
+      resultat_indice >= 0.148 ~ "Médiocre",
+      resultat_indice < 0.148  ~ "Mauvais",
+      TRUE ~ NA_character_ # Gérer les NA si des resultat_indice sont manquants
+    )
+  ) %>%
+  # Convertir 'classe_I2M2' en facteur avec l'ordre désiré pour la légende et les couleurs
+  mutate(
+    classe_I2M2 = factor(classe_I2M2,
+                         levels = c("Très bon", "Bon", "Moyen", "Médiocre", "Mauvais"))
+  )
 
-
-clean_minv_distrib <- clean_minv %>% 
-         mutate(classe_I2M2 = case_when(
-            resultat_indice > 0.665 ~ "Très bon",
-            resultat_indice > 0.433 ~ "Bon",
-            resultat_indice > 0.295 ~ "Moyen",
-            resultat_indice >= 0.148 ~ "Médiocre",
-            resultat_indice < 0.148  ~ "Mauvais" 
-           
-         ))
-clean_minv_distrib$classe_I2M2 <- factor(clean_minv_distrib$classe_I2M2, levels = c("Très bon", "Bon", "Moyen", "Médiocre", "Mauvais"))
-
-
-
+# 2. Création de l'histogramme amélioré pour l'I2M2
 ggplot(clean_minv_distrib, aes(x = resultat_indice, fill = classe_I2M2)) +
-  geom_histogram(bins = 10, color = "white", alpha = 0.7) + 
-  scale_fill_manual(values = c(
-    "Très bon" = "blue",
-    "Bon"= "lightgreen",
-    "Moyen"="yellow",
-    "Médiocre"="orange",
-    "Mauvais"="red"
-  ))+
-  facet_wrap(~ libelle_indice,labeller = label_wrap_gen(width = 20), scales = "free") +  # Un histogramme par métrique
-  labs(title = "Distribution des valeurs des métriques de l'I2M2",
-       x = "Valeur de la métrique",
-       y = "Fréquence") +
-  theme_minimal()
-
+  # Utilisez 'binwidth' au lieu de 'bins'.
+  # J'ai choisi 0.05, mais vous pouvez l'ajuster en fonction de la granularité désirée.
+  # Une plus petite valeur rendra les barres plus étroites et la transition plus nette.
+  geom_histogram(binwidth = 0.01, color = "black", alpha = 0.7, stat = "bin") +
+  
+  # Ajout de lignes verticales pour marquer les seuils des catégories
+  geom_vline(xintercept = c(0.148, 0.295, 0.433, 0.665),
+             linetype = "dashed", color = "grey50", linewidth = 0.8) +
+  
+  scale_fill_manual(
+    values = c(
+      "Très bon" = "blue",
+      "Bon"      = "lightgreen",
+      "Moyen"    = "yellow",
+      "Médiocre" = "orange",
+      "Mauvais"  = "red"
+    ),
+    name = "Classe I2M2" # Nom de la légende
+  ) +
+  facet_wrap(~ libelle_indice, labeller = label_wrap_gen(width = 20), scales = "free") +
+  labs(
+    title = "Distribution des valeurs des métriques de l'I2M2 par classe de qualité",
+    x = "Valeur de la métrique",
+    y = "Fréquence des prélèvements"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    legend.title = element_text(face = "bold"),
+    legend.position = "right",
+    strip.text = element_text(face = "bold")
+  )
 
 ```
 
@@ -341,31 +464,57 @@ library(tidyverse)
 load(file = "../Data/10_donnees_pretraitees.rda")
 
 
-clean_ibd_distrib <- clean_ibd %>% 
-         mutate(classe_ibd = case_when(
-            resultat_indice > 16.4 ~ "Très bon",
-                                resultat_indice > 13.8 ~ "Bon",
-                                resultat_indice > 10 ~ "Moyen",
-                                resultat_indice > 5.9 ~ "Médiocre",
-                                TRUE                    ~ "Mauvais"
-           
-         ))
-clean_ibd_distrib$classe_ibd <- factor(clean_ibd_distrib$classe_ibd, levels = c("Très bon", "Bon", "Moyen", "Médiocre", "Mauvais"))
+# 1. Préparation des données (identique à la précédente, car elle est correcte)
+clean_ibd_distrib <- clean_ibd %>%
+  mutate(
+    classe_ibd = case_when(
+      resultat_indice > 16.4 ~ "Très bon",
+      resultat_indice > 13.8 ~ "Bon",
+      resultat_indice > 10   ~ "Moyen",
+      resultat_indice > 5.9  ~ "Médiocre",
+      TRUE                   ~ "Mauvais"
+    )
+  )
 
+clean_ibd_distrib$classe_ibd <- factor(clean_ibd_distrib$classe_ibd,
+                                       levels = c("Très bon", "Bon", "Moyen", "Médiocre", "Mauvais"))
+
+# 2. Création de l'histogramme avec une 'binwidth' plus fine
 ggplot(clean_ibd_distrib, aes(x = resultat_indice, fill = classe_ibd)) +
-  geom_histogram(bins = 10, color = "white", alpha = 0.7) + 
-  scale_fill_manual(values = c(
-    "Très bon" = "blue",
-    "Bon"= "lightgreen",
-    "Moyen"="yellow",
-    "Médiocre"="orange",
-    "Mauvais"="red"
-  ))+
-  facet_wrap(~ libelle_indice,labeller = label_wrap_gen(width = 20), scales = "free") +  # Un histogramme par métrique
-  labs(title = "Distribution des valeurs des indices IBD et IPS",
-       x = "Valeur de la métrique",
-       y = "Fréquence") +
-  theme_minimal()
+  # Utilisez 'binwidth' au lieu de 'bins'.
+  # Ajustez la valeur de 'binwidth' (ex: 0.5, 0.2, 0.1) selon l'échelle de vos données.
+  # Une plus petite valeur rendra les barres plus étroites et la transition plus nette.
+  geom_histogram(binwidth = 0.1, color = "black", alpha = 0.7, stat = "bin") +
+  
+  # Ajout des lignes verticales pour marquer les seuils des catégories
+  geom_vline(xintercept = c(5.9, 10, 13.8, 16.4),
+             linetype = "dashed", color = "grey50", linewidth = 0.8) +
+  
+  scale_fill_manual(
+    values = c(
+      "Très bon" = "blue",
+      "Bon"      = "lightgreen",
+      "Moyen"    = "yellow",
+      "Médiocre" = "orange",
+      "Mauvais"  = "red"
+    ),
+    name = "Classe IBD"
+  ) +
+  facet_wrap(~ libelle_indice, labeller = label_wrap_gen(width = 20), scales = "free") +
+  labs(
+    title = "Distribution des valeurs des indices IBD et IPS par classe de qualité",
+    x = "Valeur de l'indice",
+    y = "Fréquence des prélèvements"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    legend.title = element_text(face = "bold"),
+    legend.position = "right",
+    strip.text = element_text(face = "bold")
+  )         
 
 ```
 
@@ -373,7 +522,7 @@ ggplot(clean_ibd_distrib, aes(x = resultat_indice, fill = classe_ibd)) +
 
 Cette étape permet d'identifier les stations où les indices et métriques évoluent de manière significatives et les stations où la tendance est nulle ou non aléatoire. La significativité de la tendance est obtenue grâce au test paramétrique de Mann-Kendall (Mann, 1945, Kendall, 1975), efficace pour traiter les tendances non linéaires, et robuste aux distributions non normales.
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 5, fig.align='center', fig.cap= " Fig.12 : Carte des tendances temporelles de l'indice I2M2 en Bretagne : Ilona Garcia"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width= 5, fig.height= 5, fig.cap= " Fig.12 : Carte des tendances temporelles de l'indice I2M2 en Bretagne : Ilona Garcia"}
 
 library(tidyverse)
 library(trend)
@@ -522,7 +671,7 @@ load(file = "../Data/10_donnees_pretraitees.rda")
 load(file = "../Data/50_chroniques_et_tendance.rda")
 
 
-#On crée les couleurs par classe
+
 couleursi2m2<-c(
   "Très bon" = "darkgreen",
   "Bon" = "lightgreen",
@@ -532,7 +681,7 @@ couleursi2m2<-c(
   
 )
 
-#On va regarder l'évolution de la classe d'i2m2 au cours du temps 
+
 i2m2test <- i2m2 %>%
   mutate(classe_etat= case_when(... = 
                                 resultat_indice > 0.665 ~ "Très bon",
@@ -604,7 +753,8 @@ label_bio <- c("7613" = "I2M2",
  
 i2m2_ibd_matrix <- i2m2_ibd %>% 
   cor(method="spearman")
-corrplot.mixed(i2m2_ibd_matrix,upper="ellipse") 
+corrplot.mixed(i2m2_ibd_matrix,upper="ellipse", tl.col = "black", # Couleur du texte des labels (noir)
+               tl.cex = 1.2)
 
 
 ```
@@ -765,7 +915,7 @@ ggplot() +
                          height = unit(1, "cm"), width = unit(1, "cm")) +
   annotation_scale(location = "br", width_hint = 0.3) +
   coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
-  labs(title = "Gradient des concentrations en nitrates sur le territoire breton",
+  labs(title = "Etat chimique selon les concentrations en nitrates à partir des P90, données de 2015 à 2023",
        color = "Classe d'état") +
   theme_minimal() +
   theme(legend.position = "bottom")
@@ -815,12 +965,15 @@ ggplot() +
                          height = unit(1, "cm"), width = unit(1, "cm")) +
   annotation_scale(location = "br", width_hint = 0.3) +
   coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
-  labs(title = "Gradient des concentrations en phosphore total sur le territoire breton",
+  labs(title = "-	Etat chimique selon les concentrations en phosphore total à partir des P90, données de 2015 à 2023)",
        color = "Classe d'état") +
   theme_minimal() +
   theme(legend.position = "bottom")
 
 ```
+
+
+
 
 ### 2.2) Sélection des periodes temporelles
 
@@ -852,7 +1005,7 @@ Les prélèvements physico-chimiques sont réalisés tout au long de l'année, p
 
 -   un graphique final est créé pour représenter les corrélations en fonction des mois de début et de fin, en utilisant un gradient de couleurs pour indiquer la force de la corrélation (on appelle ce genre de graphique fenêtre glissante).
 
-    ```{r, echo=FALSE,results= 'hide', message=FALSE, warning=FALSE, fig.show='hide'}
+```{r, echo=FALSE,results= 'hide', message=FALSE, warning=FALSE, fig.show='hide'}
     source (file = "../R/calculer_indicateur.R")
 
     #Constitution des combinaisons de mois : avoir toutes les combinaisons possibles
@@ -948,9 +1101,9 @@ Les prélèvements physico-chimiques sont réalisés tout au long de l'année, p
       summarise(indice_moy = mean(resultat_indice, na.rm = TRUE),
                 .groups = "drop")
 
-    ```
+```
 
-    ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8, fig.cap= "Fig.14 = Fenêtre glissante des corrélations entre les paramètres physico-chimiques et l'indice I2M2 et ses métriques, autrice : Ilona Garcia"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8, fig.cap= "Fig.14 = Fenêtre glissante des corrélations entre les paramètres physico-chimiques et l'indice I2M2 et ses métriques, autrice : Ilona Garcia"}
 
     #Ajouter les noms
     cor_i2m2_label <- cor_i2m2 %>%
@@ -1021,7 +1174,7 @@ Les prélèvements physico-chimiques sont réalisés tout au long de l'année, p
       )
 
 
-    ```
+```
 
 D'après le graphique ci-dessus, trois periodes peuvent être distinguées (les résultats sont les même pour l'IBD et l'IPS) :
 

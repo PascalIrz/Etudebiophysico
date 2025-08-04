@@ -1,3 +1,5 @@
+# Chargement des librairies et données
+
 load(file = "Data/80_donnees_globales_trans.rda")
 load(file = "Data/10_donnees_pretraitees.rda")
 library(car)
@@ -5,7 +7,6 @@ library(MASS)
 library(tidyverse)
 library(sjPlot)
 library(lmtest)
-
 
 # On renomme les variables
 df_global <- df_global %>%
@@ -33,20 +34,6 @@ df_global <- df_global %>%
     PO4 = `1433`,
     Corga = `1841`
   )
-
-stations_long1 <- clean_minv %>%
-  dplyr::select(code_station_hydrobio, longitude) %>%
-  distinct(code_station_hydrobio, longitude)
-
-df_global_longitude <- df_global %>%
-  left_join(stations_long1, by = "code_station_hydrobio")
-
-#On garde seulement les variables numériques
-df_global_sans_stations <- df_global %>%
-  dplyr::select(I2M2:Corga)
-
-df_global_sans_stations_longitude <- df_global_longitude %>%
-  dplyr::select(I2M2:longitude)
 
 
 # Utilisation de la fonction de calage du modèle

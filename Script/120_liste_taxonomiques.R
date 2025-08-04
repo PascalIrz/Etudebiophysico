@@ -1,21 +1,15 @@
+# Chargement des librairies et données 
 library(hubeau)
-# library(dplyr)
-# library(stringr) #pour str_extract
 library(ggplot2)
 library(tidyverse)
-library(tibble)
 library(readxl)
 library(sf)
 library(DT)
-library(httr)#utiliser POST pour calcul i2m2 à partir du SEEE
-library(trend)
-library(ggrepel)
-library(mapview)
+library(httr)
 library(lubridate)
 library(httr)
 library(openxlsx)
 library(stringr)
-install.packages("writexl")
 library(writexl)
 
 load(file = "Data/10_donnees_pretraitees.rda")
@@ -37,6 +31,7 @@ station_minv <- unique(clean_minv$code_station_hydrobio)
 #On charge la liste
 Liste_taxo_minv <- map_df(station_minv,f_get_liste_taxo_minv)
 
+# On garde seulement les code_qualification CORRECTES 
 Liste_taxo_minv <- Liste_taxo_minv %>% 
   filter(code_qualification == "1")
 
@@ -44,6 +39,7 @@ Liste_taxo_minv <- Liste_taxo_minv %>%
 Liste_taxo_minv <-Liste_taxo_minv %>% 
   mutate(annee = year(date_prelevement))
 
+# On sélectionne les colonnes intéressantes
 Liste_taxo_minv <- Liste_taxo_minv %>% 
   select(c(code_station_hydrobio, libelle_station_hydrobio, date_prelevement, code_appel_taxon, libelle_appel_taxon, annee, longitude, latitude, resultat_taxon))
 
@@ -51,22 +47,25 @@ save(Liste_taxo_minv,file="Data/ListeTaxonomique_new.Rdata")
 load(file="Data/ListeTaxonomique_new.Rdata")
 
 
-# On retire les années inférieures à 2012 car changement de protocole
+# On retire les années inférieures à 2013
 liste_taxo_minv_new <- Liste_taxo_minv %>% 
   filter(annee >=2013)
 
 # Ajout du document labo
-
 ajout_new <- read_excel("C:/Users/ilona.garcia/Documents/RstudioGIT/Etudebiophysico/Data/TableMINV2025_modif.xlsx")
 
+# Conversion en valeurs numérique
 liste_taxo_minv_new$code_appel_taxon <- as.numeric(liste_taxo_minv_new$code_appel_taxon)
 
+# Jointure
 liste_taxon_ajout <- liste_taxo_minv_new %>% 
   left_join(ajout_new, by = "code_appel_taxon") 
 
+# On supprime les colonnes inutiles
 liste_taxon_ajout <- liste_taxon_ajout %>% 
   select(-ORDRE,-FAMILLE,-GFI)
 
+# On renomme de manière correcte les noms des groupes taxonomiques
 liste_taxon_ajout <- liste_taxon_ajout %>%
   mutate(GroupTaxo = recode(GroupTaxo,
                             "01-PLECOPTERA" = "Plecoptera",
@@ -113,6 +112,7 @@ date <- liste_taxon_ajout %>%
   summarise(nb_prelevements = n_distinct(date_prelevement)) %>%
   filter(nb_prelevements > 1)
 
+# On supprime les doublosn
 liste_taxon_ajout <- liste_taxon_ajout %>%
   filter(!(code_station_hydrobio == "04175500" & date_prelevement == as.Date("2022-08-08T00:00:00Z")),
          !(code_station_hydrobio == "04177050" & date_prelevement == as.Date("2023-08-29T00:00:00Z")),
@@ -143,7 +143,6 @@ taxons_frequents <- comptage_total_taxons %>%
 liste_taxon_ajout_filtre <- liste_taxon_ajout %>%
   filter(Cd_Taxon_norm %in% taxons_frequents)
 
-
 # On calcule l'abondance de chaque taxon par station et année
 abondance_par_station_annee <- liste_taxon_ajout %>% 
   group_by(code_station_hydrobio,libelle_station_hydrobio, annee, Cd_Taxon_norm, Lb_Taxon,GroupTaxo, longitude, latitude) %>% 
@@ -156,9 +155,11 @@ abondance_relative <- abondance_par_station_annee %>%
   abondance_rel = abondance / total_abondance) %>% 
   ungroup()
 
+# Calcul du pourcentage 
 abondance_relative <- abondance_relative %>% 
   mutate(pourcentage = 100 * abondance / total_abondance)
 
+# Graphique de l'abondance totale par stations
 ggplot(abondance_relative, aes(x = annee, y = total_abondance, color = code_station_hydrobio,
                           group = code_station_hydrobio)) + geom_line() + geom_point() +
   labs(title = "Evolution de l'abondance totale par station, 2013-2023.",
@@ -167,11 +168,12 @@ ggplot(abondance_relative, aes(x = annee, y = total_abondance, color = code_stat
        color = "station") +
   theme_minimal()
 
+# On charge les stations où une abondance sup à 15000 est observée
 abondance_relative_verif <- abondance_relative %>% 
   filter(total_abondance > 15000)
 write_xlsx(abondance_relative_verif, "abondance_sup_15000.xlsx")
 
-
+# Graphique de l'abondance moyenne
 abondance_relative %>%
   distinct(code_station_hydrobio, annee, total_abondance) %>%
   group_by(annee) %>%
@@ -193,6 +195,7 @@ abondance_relative %>%
 
 #Les stations qui varient peu et celles qui varient beaucoup
 
+# Calcul du coeficient de variation
 variation_stations <- abondance_relative %>%
   group_by(code_station_hydrobio) %>%
   summarise(
@@ -203,13 +206,12 @@ variation_stations <- abondance_relative %>%
   arrange(desc(cv_abondance)) %>% 
   mutate(libelle_station_hydrobio = clean_minv$libelle_station_hydrobio[match(code_station_hydrobio, clean_minv$code_station_hydrobio)])
  
-
+# Les stations stables
 stations_stables <- variation_stations %>%
   filter(cv_abondance < 0.5) 
-
+# Les stations instables
 stations_instables <- variation_stations %>%
   filter(cv_abondance >= 0.5 & cv_abondance <=1)
-
 
 # On calcule la richesse spécifique pour chaque station et année 
 richesse_taxo <- liste_taxon_ajout %>% 
@@ -217,7 +219,6 @@ richesse_taxo <- liste_taxon_ajout %>%
   summarise(nb_taxons = n_distinct(Cd_Taxon_norm), .groups = "drop")
 
 #Calcule de la richesse par ordre
-
 richesse_taxo_ordre <- liste_taxon_ajout %>% 
   group_by(code_station_hydrobio, annee, GroupTaxo) %>% 
   summarise(richesse_ordre = n_distinct(Cd_Taxon_norm), .groups = "drop") %>% 
@@ -255,6 +256,7 @@ ggplot(richesse_taxo, aes(x = annee, y = nb_taxons, color = code_station_hydrobi
        color = "station") +
   theme_minimal()
 
+# Calcul du coeficient de variations par rapport à la richesse
 variation_stations_richesse <- richesse_taxo %>%
   group_by(code_station_hydrobio) %>%
   summarise(
@@ -265,26 +267,26 @@ variation_stations_richesse <- richesse_taxo %>%
   arrange(desc(cv_richesse)) %>% 
   mutate(libelle_station_hydrobio = clean_minv$libelle_station_hydrobio[match(code_station_hydrobio, clean_minv$code_station_hydrobio)])
 
-
+# Stations stables
 stations_stables_richesse <- variation_stations_richesse %>%
   filter(cv_richesse < 0.5) 
 
+# Stations instables
 stations_instables_richesse <- variation_stations_richesse %>%
   filter(cv_richesse >= 1.5)
 
-
 # ON calcule le pourcentage d'EPT par an et par station
-
 ept_par_station_annee <- abondance_relative %>%
   filter(GroupTaxo %in% c("Ephemeroptera", "Plecoptera", "Trichoptera")) %>%
   group_by(code_station_hydrobio, annee) %>%
   summarise(abondance_EPT = sum(abondance, na.rm = TRUE), .groups = "drop")
 
+# Abondance relative des EPT : indicateur EPT
 abondance_EPT <- abondance_relative %>%
   left_join(ept_par_station_annee, by = c("code_station_hydrobio", "annee")) %>%
   mutate(pourcentage_EPT = 100 * abondance_EPT / total_abondance)
 
-
+# Graphique indicateur EPT moyen
 abondance_EPT %>%
   distinct(code_station_hydrobio, annee, pourcentage_EPT) %>%
   group_by(annee) %>%
@@ -309,15 +311,18 @@ abondance_EPT %>%
 
 ### Gold 
 
+# On calcul l'indicateur gold par station et année
 gold_par_station_annee <- abondance_relative %>%
   filter(GroupTaxo %in% c("Gastropoda", "Oligochaeta", "Diptera")) %>%
   group_by(code_station_hydrobio, annee) %>%
   summarise(abondance_GOLD = sum(abondance, na.rm = TRUE), .groups = "drop")
 
+# Abondance relative : indicateur GOLD
 abondance_GOLD <- abondance_relative %>%
   left_join(gold_par_station_annee, by = c("code_station_hydrobio", "annee")) %>%
   mutate(pourcentage_GOLD = 100 * abondance_GOLD / total_abondance)
 
+# Graphique : indicateur GOLD moyen
 abondance_GOLD %>%
   distinct(code_station_hydrobio, annee, pourcentage_GOLD) %>%
   group_by(annee) %>%
@@ -341,55 +346,19 @@ abondance_GOLD %>%
 
 
 #Gasteropode
-# 1. Calculer l'abondance totale de TOUS les taxons par station et par année
-total_abondance_par_station_annee <- abondance_relative %>%
-  group_by(code_station_hydrobio, annee) %>%
-  summarise(total_abondance = sum(abondance, na.rm = TRUE), .groups = "drop")
 
-# 2. Calculer l'abondance des Gastéropodes par station et par année
+# Calcul abondance par station et année
 gast_par_station_annee <- abondance_relative %>%
   filter(GroupTaxo == "Gastropoda") %>%
   group_by(code_station_hydrobio, annee) %>%
   summarise(abondance_gast = sum(abondance, na.rm = TRUE), .groups = "drop")
 
-# 3. Joindre les deux résumés et calculer le pourcentage de Gastéropodes
-# Nous utilisons un left_join depuis le total_abondance pour s'assurer que toutes les stations/années avec des données totales sont incluses.
-# replace_na(abondance_gast, 0) gère les cas où il n'y a pas eu de Gastéropodes pour une station/année.
-data_pour_pourcentage_gast <- total_abondance_par_station_annee %>%
+# Abondance relative gastéropodes
+abondance_gast <- abondance_relative %>%
   left_join(gast_par_station_annee, by = c("code_station_hydrobio", "annee")) %>%
-  mutate(abondance_gast = tidyr::replace_na(abondance_gast, 0)) %>% # Remplace NA par 0 si pas de Gasteropoda
-  # Gérer la division par zéro si total_abondance est 0 (aucune abondance recensée)
-  mutate(pourcentage_gast = ifelse(total_abondance == 0, 0, 100 * abondance_gast / total_abondance))
+  mutate(pourcentage_gast = 100 * abondance_gast / total_abondance)
 
-# 4. Agréger les pourcentages par année et créer le graphique
-data_pour_pourcentage_gast %>%
-  group_by(annee) %>%
-  summarise(pourcentage_gast_moy = mean(pourcentage_gast, na.rm = TRUE), .groups = "drop") %>%
-  ggplot(aes(x = annee, y = pourcentage_gast_moy)) +
-  geom_line(color = "darkgreen") +
-  geom_point(color = "darkgreen") +
-  labs(
-    title = "Évolution annuelle du % Gastropoda moyen, 2023-2023.",
-    x = "Année",
-    y = "Pourcentage Gastropoda moyen"
-  ) +
-  scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
-  scale_y_continuous(limits = c(0, NA)) +
-  theme_minimal()
-
-
-
-## Oligochaete
-
-oligo_par_station_annee <- abondance_relative %>%
-  filter(GroupTaxo == "Oligochaeta") %>%
-  group_by(code_station_hydrobio, annee) %>%
-  summarise(abondance_oligo = sum(abondance, na.rm = TRUE), .groups = "drop")
-
-abondance_oligo <- abondance_relative %>%
-  left_join(oligo_par_station_annee, by = c("code_station_hydrobio", "annee")) %>%
-  mutate(pourcentage_oligo = 100 * abondance_oligo / total_abondance)
-
+# Graphique abondance relative moyenne gastéropodes
 abondance_oligo %>%
   distinct(code_station_hydrobio, annee, pourcentage_oligo) %>%
   group_by(annee) %>%
@@ -398,7 +367,34 @@ abondance_oligo %>%
   geom_line(color = "darkgreen") +
   geom_point(color = "darkgreen") +
   labs(
-    title = "Évolution annuelle du % Oligochaeta moyen, 2013-2023.",
+    x = "Année", y = "Pourcentage Oligochaeta moyen"
+  ) +
+  scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
+  scale_y_continuous(limits = c(0, NA)) +
+  theme_minimal()
+
+## Oligochaete
+
+# Calcul abondance par année et station
+oligo_par_station_annee <- abondance_relative %>%
+  filter(GroupTaxo == "Oligochaeta") %>%
+  group_by(code_station_hydrobio, annee) %>%
+  summarise(abondance_oligo = sum(abondance, na.rm = TRUE), .groups = "drop")
+
+# Abondance relative
+abondance_oligo <- abondance_relative %>%
+  left_join(oligo_par_station_annee, by = c("code_station_hydrobio", "annee")) %>%
+  mutate(pourcentage_oligo = 100 * abondance_oligo / total_abondance)
+
+# Graphique abondance relative moyenne
+abondance_oligo %>%
+  distinct(code_station_hydrobio, annee, pourcentage_oligo) %>%
+  group_by(annee) %>%
+  summarise(pourcentage_oligo_moy = mean(pourcentage_oligo, na.rm = TRUE)) %>%
+  ggplot(aes(x = annee, y = pourcentage_oligo_moy)) +
+  geom_line(color = "darkgreen") +
+  geom_point(color = "darkgreen") +
+  labs(
     x = "Année", y = "Pourcentage Oligochaeta moyen"
   ) +
   scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
@@ -406,18 +402,20 @@ abondance_oligo %>%
   theme_minimal()
 
 
-
 # Pourcentage Chironome 
 
+# Abondance par station et année
 chiro_par_station_annee <- abondance_relative %>%
   filter(Cd_Taxon_norm == "807") %>%
   group_by(code_station_hydrobio, annee) %>%
   summarise(abondance_chiro = sum(abondance, na.rm = TRUE), .groups = "drop")
 
+# Abondance relative 
 abondance_chiro <- abondance_relative %>%
   left_join(chiro_par_station_annee, by = c("code_station_hydrobio", "annee")) %>%
   mutate(pourcentage_chiro = 100 * abondance_chiro / total_abondance)
 
+# Graphique abondance relative moyenne
 abondance_chiro %>%
   distinct(code_station_hydrobio, annee, pourcentage_chiro) %>%
   group_by(annee) %>%
@@ -426,7 +424,6 @@ abondance_chiro %>%
   geom_line(color = "darkgreen") +
   geom_point(color = "darkgreen") +
   labs(
-    title = "Évolution annuelle du % Chironomidae moyen, 2013-2023.",
     x = "Année", y = "Pourcentage Chironomidae moyen"
   ) +
   scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
@@ -434,7 +431,6 @@ abondance_chiro %>%
   theme_minimal()
 
 # Rapport EPT/Chironnome 
-
 ratio_ept_chiro <- abondance_relative %>%
   mutate(groupe = case_when(
     GroupTaxo %in% c("Ephemeroptera", "Plecoptera", "Trichoptera") ~ "EPT",
@@ -460,15 +456,18 @@ ratio_ept_chiro %>%
 
 # On regarde les Gammares 
 
+# Abondance par station et année
 gam_par_station_annee <- abondance_relative %>%
   filter(Cd_Taxon_norm %in% c("892", "888","887")) %>%
   group_by(code_station_hydrobio, annee) %>%
   summarise(abondance_gam = sum(abondance, na.rm = TRUE), .groups = "drop")
 
+# Abondance relative
 abondance_gam <- abondance_relative %>%
   left_join(gam_par_station_annee, by = c("code_station_hydrobio", "annee")) %>%
   mutate(pourcentage_gam = 100 * abondance_gam / total_abondance)
 
+#Graphique abondance relative 
 abondance_gam %>%
   distinct(code_station_hydrobio, annee, pourcentage_gam) %>%
   group_by(annee) %>%
@@ -477,7 +476,6 @@ abondance_gam %>%
   geom_line(color = "darkgreen") +
   geom_point(color = "darkgreen") +
   labs(
-    title = "Évolution annuelle du % Gammaridae moyen, 2013-2023",
     x = "Année", y = "Pourcentage Gammaridae moyen"
   ) +
   scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
@@ -486,15 +484,18 @@ abondance_gam %>%
 
 # Diptères 
 
+# Abondance par station et année
 dipt_par_station_annee <- abondance_relative %>%
   filter(GroupTaxo == "Diptera") %>%
   group_by(code_station_hydrobio, annee) %>%
   summarise(abondance_dipt = sum(abondance, na.rm = TRUE), .groups = "drop")
 
+#Abondance relative
 abondance_dipt <- abondance_relative %>%
   left_join(dipt_par_station_annee, by = c("code_station_hydrobio", "annee")) %>%
   mutate(pourcentage_dipt = 100 * abondance_dipt / total_abondance)
 
+# Graphique abondance relative
 abondance_dipt %>%
   distinct(code_station_hydrobio, annee, pourcentage_dipt) %>%
   group_by(annee) %>%
@@ -503,7 +504,6 @@ abondance_dipt %>%
   geom_line(color = "darkgreen") +
   geom_point(color = "darkgreen") +
   labs(
-    title = "Évolution annuelle du % Diptera moyen, 2013-2023.",
     x = "Année", y = "Pourcentage Diptera moyen"
   ) +
   scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
@@ -530,6 +530,7 @@ save(abondance_relative,
 # DIAT
 ################################################################################
 
+# On garde seulement les stations étudiées durant la première partie (IBD)
 stations_ibd <- unique(clean_ibd$code_station_hydrobio)
   
 
@@ -544,9 +545,11 @@ if (file.exists("Data/ListeTaxonomique_diat.Rdata"))
     save(liste_taxo_diat,file="Data/ListeTaxonomique_diat.Rdata")
 }
 
+# On garde seulement les variables correctes
 liste_taxo_diat <- liste_taxo_diat %>% 
   filter(code_qualification == "1")
 
+# Ajout de l'année
 liste_taxo_diat <- liste_taxo_diat %>%
   mutate(annee=year(date_prelevement))
 
@@ -563,12 +566,15 @@ abondance_relative_diat <- abondance_par_station_annee_diat %>%
          abondance_rel = abondance / total_abondance) %>% 
   ungroup()
 
+# Calcul des abondances relatives
 abondance_relative_diat <- abondance_relative_diat %>% 
   mutate(pourcentage = 100 * abondance / total_abondance)
 
+# On garde seulement les abondances relatives supérieures à 5 
 abondance_taxo_diat_filtre <- abondance_relative_diat %>% 
   filter(pourcentage >= 5)
 
+#Graphique abondance totale moyenne
 abondance_taxo_diat_filtre %>%
   distinct(code_station_hydrobio, annee, total_abondance) %>%
   group_by(annee) %>%
@@ -582,14 +588,16 @@ abondance_taxo_diat_filtre %>%
   ) +
   theme_minimal()
 
-
+# Liste des taxons recencés après filtrage
 liste <- abondance_taxo_diat_filtre %>% 
   distinct(code_appel_taxon)
 
+# Richesse taxonomique
 richesse_taxo_diat_calcul <- abondance_taxo_diat_filtre %>% 
   group_by(code_station_hydrobio, annee) %>% 
   summarise(nb_taxons = n_distinct(code_appel_taxon), .groups = "drop")
 
+# Graphique richesse moyenne 
 richesse_taxo_diat_calcul %>%
   distinct(code_station_hydrobio, annee, nb_taxons) %>%
   group_by(annee) %>%
@@ -606,10 +614,4 @@ richesse_taxo_diat_calcul %>%
 save(abondance_taxo_diat_filtre, file="Data/abondance_diat.rda")
 
 
-
-
-
-
-#tableau de contingence : AFC selon taille du BV ? Selon station seulement ? 
-#Traits écologiques 
 

@@ -6,7 +6,7 @@
 library(hubeau)
 # library(dplyr)
 # library(stringr) #pour str_extract
-# library(ggplot2)
+library(ggplot2)
 library(tidyverse)
 library(sf)
 # library(purrr)
@@ -19,6 +19,8 @@ library(mapview)
 library(lubridate)
 library(httr)
 library(readr)
+library(COGiter)
+
 
 functions <- list.files(path = "R",
                         pattern = ".R$",
@@ -144,9 +146,17 @@ stations_map<- clean_minv %>%
   select(code_station_hydrobio,libelle_station_hydrobio,longitude,latitude) %>%
   distinct()
 mapview(stations_map, xcol="longitude", ycol="latitude", crs=4326, grid= FALSE, layer.name="Stations",cex=4) #stations I2M2
-mapview(stations_map %>% filter(code_station_hydrobio=="04195000"),
-        xcol="longitude", ycol="latitude", crs=4326, grid= FALSE, layer.name="Stations",cex=4)
-
+stations_map <- st_as_sf(stations_map, coords = c("longitude", "latitude"), crs = 4326)
+departement_breton <- departements_metro_geo %>%
+  filter(DEP %in% c("22","29","35","56")) %>%
+  st_transform(crs = 4326)
+ggplot() +
+  geom_sf(data = departement_breton, fill = "lightgray", color = "darkgray") +
+  geom_sf(data = stations_map, 
+          color = "purple", 
+          size = 3,         
+          shape = 19) +
+  theme(panel.background = element_rect(fill = "white"))
 
 #################################################################################
 #                       import IBD                                              #
@@ -313,6 +323,25 @@ ibd_trans <- clean_ibd %>%
   distinct() %>% 
   pivot_wider(names_from = "code_indice",
               values_from = "resultat_indice")
+
+# Visualisation des stations
+stations_map_ibd<- clean_ibd %>%
+  select(code_station_hydrobio,libelle_station_hydrobio,longitude,latitude) %>%
+  distinct()
+
+stations_map_ibd <- st_as_sf(stations_map_ibd, coords = c("longitude", "latitude"), crs = 4326)
+
+departement_breton <- departements_metro_geo %>%
+  filter(DEP %in% c("22","29","35","56")) %>%
+  st_transform(crs = 4326)
+
+ggplot() +
+  geom_sf(data = departement_breton, fill = "lightgray", color = "darkgray") +
+  geom_sf(data = stations_map_ibd, 
+          color = "navyblue", 
+          size = 3,         
+          shape = 19) +
+  theme(panel.background = element_rect(fill = "white"))
 
 
 

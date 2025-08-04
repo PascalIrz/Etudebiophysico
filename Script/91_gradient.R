@@ -1,3 +1,5 @@
+# Chargement des librairies, fonctions et données 
+
 load(file = "Data/10_donnees_pretraitees.rda")
 load(file = "Data/80_donnees_globales_trans.rda")
 load(file = "Data/90_acp.rda")
@@ -5,13 +7,10 @@ load(file ="Data/40_statistiques_descriptives.rda")
 
 library(sf)
 library(ggplot2)
-library(dplyr)
+library(tidyverse)
 library(mapview)
 library(ggspatial)
 library(COGiter)
-library(webshot)
-webshot::install_phantomjs()
-
 
 functions <- list.files(path = "R",
                         pattern = ".R$",
@@ -21,16 +20,16 @@ map(.x = functions,
     .f = source)
 
 #############################################################################
-#                                  Physico inter-stations 
+#                                  Cartes à partir de l'ACP physico-chimie
 ###############################################################################
 
+# On récupère les scores des stations sur les axes principaux de l'ACP
 acp_liste_pc <- physico_wide %>% 
   mutate(
     num_line = row_number()) %>% 
   arrange(code_station_hydrobio) %>% 
   dplyr::select(code_station_hydrobio,num_line)
   
-
 dim_acp <- as.data.frame(resultat_acp_physico_2[["ind"]][["coord"]]) %>% 
   mutate(
     num_line = row_number()) 
@@ -43,13 +42,16 @@ gradient <- acp_liste_pc %>%
             by = "code_station_hydrobio"
             )
 
+# On crée un objet sf
 gradient_sf <- gradient %>%
   st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
 
+# Délimitations des départements bretons
 departement_breton <- departements_metro_geo %>%
   filter(DEP %in% c("22","29","35","56")) %>%
   st_transform(crs = 4326)
 
+# Sur la dimension 1
 map_dim1 <- map_dim(gradient_sf, "Dim.1")
 map_dim1
 
@@ -57,22 +59,16 @@ mapshot(map_dim1, file="gradient_de_pression.png",
         width = 1200, vheight = 1000,
         cliprect = "viewport")
 
-
+# Sur la dimension 2
 map_dim2 <- map_dim(gradient_sf, "Dim.2")
 map_dim2
-map_dim3 <- map_dim(gradient_sf, "Dim.3")
-map_dim3
-map_dim4 <- map_dim(gradient_sf, "Dim.4")
-map_dim4
-map_dim5 <- map_dim(gradient_sf, "Dim.5")
-map_dim5
 
 
 #############################################################################
 #                                  Nitrites, nitrates et ammonium
 ###############################################################################
 
-#on calcule les percentiles 90 
+#on calcule les percentiles 90  et 10
 
 p90 <- parametres_physico %>% 
   group_by(code_station_hydrobio,code_parametre) %>% 
@@ -85,6 +81,7 @@ p10 <- parametres_physico %>%
 
 # Nitrites 
 
+# Couleurs associées aux classes
 classenit<-c(
   "Très bon" = "darkgreen",
   "Bon" = "lightgreen",
@@ -93,6 +90,7 @@ classenit<-c(
   "Mauvais"="red"
 )
 
+# On récupère le p90 des nitrites et on définit les seuils
 nit_carte <- p90 %>%
   filter(code_parametre == "1339") %>%
   arrange(code_station_hydrobio) %>% 
@@ -106,10 +104,11 @@ nit_carte <- p90 %>%
                                 
 ))
 
-
+# On met les classes dans l'ordre
 nit_carte <- nit_carte %>%
   mutate(classe_nitrites=factor(classe_nitrites,levels=c("Très bon","Bon","Moyen","Médiocre","Mauvais")))
 
+#On joint les coordonnées des stations à partir de clean_ibd car paramètres physico ne les a pas
 gradient_nit <- nit_carte %>% 
   left_join(clean_ibd %>% 
             dplyr::select(code_station_hydrobio, longitude, latitude) %>% 
@@ -117,10 +116,13 @@ gradient_nit <- nit_carte %>%
             by = "code_station_hydrobio"
 ) 
 
+# Carte intéractive
 mapview(gradient_nit, zcol="classe_nitrites", col.regions=classenit, xcol="longitude", ycol="latitude", crs= 4326, grid=FALSE,cex=4.5)
 
+# Objet sf
 gradient_nit_sf <- st_as_sf(gradient_nit, coords=c("longitude","latitude"),crs=4326)
 
+# Carte
 ggplot() +
   geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
   geom_sf(data = gradient_nit_sf, aes(color = classe_nitrites), size = 2) +
@@ -128,12 +130,10 @@ ggplot() +
   annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
   annotation_scale(location = "br", width_hint = 0.3) +
   coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
-  labs(title = "Etat chimique selon les concentrations en nitrites (P90) dans les cours d'eau bretons, 2015-2023.",
+  labs(title = "Etat physico-chimique selon les concentrations en nitrites (P90) dans les cours d'eau bretons, 2015-2023.",
        color = "Classe d'état") +
   theme_minimal() +
   theme(legend.position = "bottom")
-
-
 
 
 #Nitrates 
@@ -151,10 +151,7 @@ nitrates_carte <- p90 %>%
                                       P90 <= 10 ~ "Très bon",
                                     P90 <= 50 ~ "Bon",
                                     P90 > 50 ~ "Hors classement"
-                                   
-                                    
   ))
-
 
 nitrates_carte <- nitrates_carte %>%
   mutate(classe_nitrates=factor(classe_nitrates,levels=c("Très bon","Bon","Hors classement")))
@@ -179,7 +176,7 @@ ggplot() +
                          height = unit(1, "cm"), width = unit(1, "cm")) +
   annotation_scale(location = "br", width_hint = 0.3) +
   coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
-  labs(title = "Gradient des concentrations en nitrates sur le territoire breton",
+  labs(title = "Etat physico-chimique selon les concentrations en nitrates (P90) dans les cours d'eau bretons, 2015-2023.",
        color = "Classe d'état") +
   theme_minimal() +
   theme(legend.position = "bottom")
@@ -230,7 +227,7 @@ ggplot() +
   annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
   annotation_scale(location = "br", width_hint = 0.3) +
   coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
-  labs(title = "Etat chimique selon les concentrations en ammonium (P90) dans les cours d'eau bretons, 2015-2023.",
+  labs(title = "Etat physico-chimique selon les concentrations en ammonium (P90) dans les cours d'eau bretons, 2015-2023.",
        color = "Classe d'état") +
   theme_minimal() +
   theme(legend.position = "bottom")
@@ -285,7 +282,7 @@ ggplot() +
   annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
   annotation_scale(location = "br", width_hint = 0.3) +
   coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
-  labs(title = "Etat chimique selon les concentrations en phosphore total (P90) dans les cours d'eau bretons, 2015-2023.",
+  labs(title = "Etat physico-chimique selon les concentrations en phosphore total (P90) dans les cours d'eau bretons, 2015-2023.",
        color = "Classe d'état") +
   theme_minimal() +
   theme(legend.position = "bottom")
@@ -336,13 +333,13 @@ ggplot() +
                          height = unit(1, "cm"), width = unit(1, "cm")) +
   annotation_scale(location = "br", width_hint = 0.3) +
   coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
-  labs(title = "Gradient des concentrations en orthophosphates sur le territoire breton",
+  labs(title = "Etat physico-chimique selon les concentrations en orthophosphates (P90) dans les cours d'eau bretons, 2015-2023.",
        color = "Classe d'état") +
   theme_minimal() +
   theme(legend.position = "bottom")
 
 #############################################################################
-#                                  Taux de saturations en oxygène  
+#                                  Oxygène dissous  
 ###############################################################################
 
 classe_oxy <- c(
@@ -366,7 +363,6 @@ oxy_carte <- p10 %>%
                                     
   ))
 
-
 oxy_carte <- oxy_carte %>%
   mutate(classe_o2=factor(classe_o2,levels=c("Très bon","Bon","Moyen","Médiocre","Mauvais")))
 
@@ -388,7 +384,55 @@ ggplot() +
   annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
   annotation_scale(location = "br", width_hint = 0.3) +
   coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
-  labs(title = "Etat chimique selon les concentrations en oxygène dissous (P90) dans les cours d'eau bretons, 2015-2023.",
+  labs(title = "Etat physico-chimique selon les concentrations en oxygène dissous (P90) dans les cours d'eau bretons, 2015-2023.",
        color = "Classe d'état") +
   theme_minimal() +
   theme(legend.position = "bottom")
+
+
+classe_mo <- c(
+  "Très bon" = "darkgreen",
+  "Bon" = "lightgreen",
+  "Moyen" = "yellow",
+  "Médiocre"="orange",
+  "Mauvais"="red"
+)
+
+mo_carte <- p90 %>%
+  filter(code_parametre == "1841") %>%
+  arrange(code_station_hydrobio) %>% 
+  mutate(classe_mo= case_when(... = 
+                                P90 < 5 ~ "Très bon",
+                              P90 < 7 ~ "Bon",
+                              P90 < 10 ~ "Moyen",
+                              P90 < 15 ~ "Médiocre",
+                              P90 > 15 ~ "Mauvais"
+                              
+                              
+  ))
+
+mo_carte <- mo_carte %>%
+  mutate(classe_mo=factor(classe_mo,levels=c("Très bon","Bon","Moyen","Médiocre","Mauvais")))
+
+gradient_mo <- mo_carte %>% 
+  left_join(clean_ibd %>% 
+              dplyr::select(code_station_hydrobio, longitude, latitude) %>% 
+              distinct(),
+            by = "code_station_hydrobio"
+  ) 
+
+mo_sf<-st_as_sf(gradient_mo, coords=c("longitude","latitude"),crs=4326)
+
+ggplot() +
+  geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
+  geom_sf(data = mo_sf, aes(color = classe_mo), size = 2) +
+  scale_color_manual(values = classe_mo) +
+  annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
+  annotation_scale(location = "br", width_hint = 0.3) +
+  coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
+  labs(title = "Etat physico-chimique selon les concentrations en oxygène dissous (P90) dans les cours d'eau bretons, 2015-2023.",
+       color = "Classe d'état") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+

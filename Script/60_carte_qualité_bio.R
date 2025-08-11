@@ -3,6 +3,7 @@
 load(file = "Data/10_donnees_pretraitees.rda")
 load(file = "Data/50_chroniques_et_tendance.rda")
 library(sf)
+library(trend)
 library(tidyverse)
 library(mapview)
 library(ggplot2)
@@ -21,8 +22,9 @@ couleursi2m2<-c(
   
 )
 
+aspt <- filter(clean_minv,code_indice==8054)
 
-i2m2test <- i2m2 %>%
+i2m2test <- aspt %>%
   mutate(classe_etat= case_when(... = 
                                   resultat_indice > 0.665 ~ "Très bon",
                                 resultat_indice > 0.443 ~ "Bon",
@@ -53,12 +55,12 @@ ggplot() +
   annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
   coord_sf(xlim = c(-5.2, -1), ylim = c(47, 49), expand = FALSE) +
   facet_wrap(~ as.factor(annee)) +
-  labs(title = "La qualité biologique des cours d'eau bretons selon l'I2M2, 2015-2023",
+  labs(title = "La qualité biologique des cours d'eau bretons selon la richesse taxonomique de l'I2M2, 2015-2023",
        color = "Classe d'état") +
   theme_minimal() +
   theme(
     legend.position = "bottom",
-    plot.title = element_text(size = 18, face = "bold"), 
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5), 
     legend.title = element_text(size = 14, face = "bold"), 
     legend.text = element_text(size = 12) 
   )

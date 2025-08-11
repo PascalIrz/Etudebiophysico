@@ -22,7 +22,7 @@ nom_colonne_valeur_abondance <- "abondance_rel"
 nom_colonne_groupe_taxo <- "GroupTaxo" # Nom de la colonne des groupes taxonomiques
 
 # Année choisie pour l'analyse
-annee_choisie <- 2022
+annee_choisie <- 2017
 
 # Définir les catégories I2M2 pour chaque groupe
 categories_bon_etat <- c("Très Bon", "Bon")
@@ -209,7 +209,6 @@ resultat_ept <- run_analysis_for_taxa(
   analysis_name = "EPT"
 )
 
-# Vous pouvez ajouter d'autres analyses ici en appelant la fonction
 
 liste_codes_oligochetes <- c("933") 
 resultat_oligochetes <- run_analysis_for_taxa(

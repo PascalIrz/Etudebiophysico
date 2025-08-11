@@ -63,11 +63,9 @@ model_normal_non_transformées <-
   )
 summary(model_normal_non_transformées)
 model_simplifié <-
-  MASS::stepAIC(model_normal_non_transformées)bptest(
-    model_normal_non_transformées,
-    ~ fitted(model_normal_non_transformées) + I(fitted(model_normal_non_transformées) ^
-                                                  2)
-  ) # test de white, variance constante
+MASS::stepAIC(model_normal_non_transformées)
+bptest(model_normal_non_transformées,
+       ~ fitted(model_normal_non_transformées) + I(fitted(model_normal_non_transformées)^2)) # test de white, variance constante
 
 plot(
   fitted(model_normal_non_transformées),

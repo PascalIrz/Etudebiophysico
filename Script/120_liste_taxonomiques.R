@@ -359,15 +359,15 @@ abondance_gast <- abondance_relative %>%
   mutate(pourcentage_gast = 100 * abondance_gast / total_abondance)
 
 # Graphique abondance relative moyenne gastéropodes
-abondance_oligo %>%
-  distinct(code_station_hydrobio, annee, pourcentage_oligo) %>%
+abondance_gast %>%
+  distinct(code_station_hydrobio, annee, pourcentage_gast) %>%
   group_by(annee) %>%
-  summarise(pourcentage_oligo_moy = mean(pourcentage_oligo, na.rm = TRUE)) %>%
-  ggplot(aes(x = annee, y = pourcentage_oligo_moy)) +
+  summarise(pourcentage_gast_moy = mean(pourcentage_gast, na.rm = TRUE)) %>%
+  ggplot(aes(x = annee, y = pourcentage_gast_moy)) +
   geom_line(color = "darkgreen") +
   geom_point(color = "darkgreen") +
   labs(
-    x = "Année", y = "Pourcentage Oligochaeta moyen"
+    x = "Année", y = "Pourcentage Gastropoda moyen"
   ) +
   scale_x_continuous(breaks = seq(2013, 2023, by =1)) +
   scale_y_continuous(limits = c(0, NA)) +

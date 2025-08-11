@@ -310,9 +310,10 @@ parametres_physico_mois <- parametres_physico %>%
 # Graphique, distribution des paramètres physico-chimiques mensuelle 
 ggplot(parametres_physico, aes (x=factor(mois), y = resultat)) +
   geom_boxplot() +
-  facet_wrap(~ code_parametre, scales = "free_y") +
+  facet_wrap(~ libelle_parametre, scales = "free_y") +
   labs(x = "Mois", y= "Valeur", title ="Distribution des parametres par mois") +
-  theme_bw()
+  theme_bw() +
+  theme(strip.text = element_text(size = 7) )
 
 
 donnees_freq <- parametres_physico %>% 

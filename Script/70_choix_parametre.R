@@ -4,6 +4,7 @@ library(purrr)
 library(ggplot2)
 library(corrplot)
 source (file = "R/calculer_indicateur.R")
+load(file = "Data/10_donnees_pretraitees.rda")
 
 #Constitution des combinaisons de mois : avoir toutes les combinaisons possibles
 #entre le mois de début et le mois de fin

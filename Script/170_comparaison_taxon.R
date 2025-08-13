@@ -28,7 +28,7 @@ annee_choisie <- 2017
 categories_bon_etat <- c("Très Bon", "Bon")
 categories_mediocre_etat <- c("Médiocre", "Mauvais")
 
-# --- Filtrage initial des dataframes pour l'année choisie (à exécuter une seule fois) ---
+# --- Filtrage initial des dataframes pour l'année choisie ---
 df_i2m2_classification_filtered_year <- df_i2m2_classification[
   df_i2m2_classification[[nom_colonne_annee_i2m2]] == annee_choisie,
   , drop = FALSE
@@ -49,7 +49,7 @@ message(paste("Observations d'abondance pour l'année", annee_choisie, ":", nrow
 run_analysis_for_taxa <- function(
     filter_by = c("taxon_codes", "group_names"), # "taxon_codes" ou "group_names"
     filter_values,
-    analysis_name = "Taxon" # Nom pour les titres et messages (ex: "Gammares", "EPT")
+    analysis_name = "Taxon" 
 ) {
   
   # --- Filtrage des abondances relatives selon le type de filtre ---
@@ -70,7 +70,7 @@ run_analysis_for_taxa <- function(
   # Vérification si des données ont été trouvées
   if (nrow(selected_taxa_relative_abundance_filtered) == 0) {
     warning(paste("Aucune donnée pour", analysis_name, "trouvée avec les valeurs spécifiées pour l'année", annee_choisie, ". Passer à l'analyse suivante."))
-    return(NULL) # Retourne NULL si aucune donnée n'est trouvée
+    return(NULL) 
   }
   
   # Somme des abondances relatives pour chaque station-année

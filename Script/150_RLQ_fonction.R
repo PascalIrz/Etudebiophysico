@@ -7,135 +7,134 @@ library(wordcloud) # Pour textplot
 library(openxlsx)
 library(purrr)
 
-# --- Définir la fonction d'analyse RLQ ---
+#Définir la fonction d'analyse RLQ
 run_rlq_analysis <- function(selected_year,
                              path_to_traits = "C:/Users/ilona.garcia/Documents/RstudioGIT/Etudebiophysico/Data/traits_eco_bio.xlsx",
                              path_to_data = "Data/",
                              nutrients_param_codes = c("1339", "1340", "1433", "1335", "1350")) {
   
-  # --- Chargement des données brutes ---
-  load(file.path(path_to_data, "liste_taxon_ajout.Rdata"))
-  load(file.path(path_to_data, "df_taxo.rda"))
-  load(file.path(path_to_data, "physico_moyenne_annuelle.rda"))
+#Chargement des données brutes
+load(file.path(path_to_data, "liste_taxon_ajout.Rdata"))
+load(file.path(path_to_data, "df_taxo.rda"))
+load(file.path(path_to_data, "physico_moyenne_annuelle.rda"))
+traits <- read_excel(path = path_to_traits)
+traits <- na.omit(traits)
+traits <- traits %>%
+filter(gr_bio %in% c("a", "b", "h", "e") | gr_eco %in% c("A", "D", "F", "C"))
   
-  traits <- read_excel(path = path_to_traits)
-  traits <- na.omit(traits)
-  traits <- traits %>%
-    filter(gr_bio %in% c("a", "b", "h", "e") | gr_eco %in% c("A", "D", "F", "C"))
+  
+#Créer un identifiant unique dans les deux jeux et filtrer par année ---
+df_taxo_filtered <- abondance_relative %>%
+  mutate(station_annee = paste(code_station_hydrobio, annee, sep = "_")) %>%
+  filter(annee == selected_year)
+  
+df_physo_filtered <- physico_moyenne_annee %>%
+  mutate(station_annee = paste(code_station_hydrobio, annee, sep = "_")) %>%
+  filter(annee == selected_year)
+  
+#Vérifier si les données filtrées sont vides
+if (nrow(df_taxo_filtered) == 0 || nrow(df_physo_filtered) == 0) {
+  stop(paste("Aucune donnée disponible pour l'année", selected_year, ". Arrêt de l'analyse."))
+}
+  
+#Ne conserver que les lignes de physico présentes en taxo
+stations_taxo_uniques <- unique(df_taxo_filtered$station_annee)
+  
+df_physo_filtered <- df_physo_filtered %>%
+  filter(station_annee %in% stations_taxo_uniques)
+  
+#Construction de la matrice R (Abondances) --- il y a eu confusion au niveau des noms, ça aurait du être la matrice L
+R <- df_taxo_filtered %>%
+  group_by(station_annee, Cd_Taxon_norm) %>%
+  summarise(abondance_rel = sum(abondance_rel), .groups = "drop") %>%
+  pivot_wider(
+    names_from = Cd_Taxon_norm,
+    values_from = abondance_rel,
+    values_fill = 0
+  ) %>%
+  as.data.frame() %>%
+  column_to_rownames("station_annee")
+  
+message(paste("Nombre de lignes dans la matrice d'abondance (R) pour", selected_year, ":", nrow(R)))
   
   
-  # --- Créer un identifiant unique dans les deux jeux et filtrer par année ---
-  df_taxo_filtered <- abondance_relative %>%
-    mutate(station_annee = paste(code_station_hydrobio, annee, sep = "_")) %>%
-    filter(annee == selected_year)
+#Construction de la matrice L (Physico-chimique)
+L <- df_physo_filtered %>%
+  select(station_annee, code_parametre, para_moy_periode) %>%
+  pivot_wider(
+    names_from = code_parametre,
+    values_from = para_moy_periode,
+    values_fill = 0
+  ) %>%
+  as.data.frame() %>%
+  column_to_rownames("station_annee")
   
-  df_physo_filtered <- physico_moyenne_annee %>%
-    mutate(station_annee = paste(code_station_hydrobio, annee, sep = "_")) %>%
-    filter(annee == selected_year)
+message(paste("Nombre de lignes dans la matrice physico-chimique (L) pour", selected_year, ":", nrow(L)))
   
-  # Vérifier si les données filtrées sont vides
-  if (nrow(df_taxo_filtered) == 0 || nrow(df_physo_filtered) == 0) {
-    stop(paste("Aucune donnée disponible pour l'année", selected_year, ". Arrêt de l'analyse."))
+  
+#Préparer la matrice Q (Traits)
+taxon_map <- abondance_relative %>%
+  select(Cd_Taxon_norm, Lb_Taxon) %>%
+  distinct() %>%
+  mutate(
+    Cd_Taxon_norm = trimws(as.character(Cd_Taxon_norm)),
+    Lb_Taxon = trimws(as.character(Lb_Taxon))
+  )
+  
+Q_data <- traits %>%
+  mutate(Lb_Taxon = trimws(as.character(Lb_Taxon))) %>%
+  left_join(taxon_map, by = "Lb_Taxon") %>%
+  filter(!is.na(Cd_Taxon_norm)) %>%
+  distinct(Cd_Taxon_norm, .keep_all = TRUE) %>%
+  as.data.frame() %>%
+  column_to_rownames("Cd_Taxon_norm")
+  
+Q_final <- Q_data %>%
+  select(-Lb_Taxon) %>%
+  mutate(across(everything(), as.factor))
+  
+message(paste("Nombre de lignes dans la matrice de traits (Q) pour", selected_year, ":", nrow(Q_final)))
+  
+  
+#Harmonisation finale des matrices R, L, Q
+common_stations <- intersect(rownames(R), rownames(L))
+R_final <- R[common_stations, , drop = FALSE]
+L_final <- L[common_stations, , drop = FALSE]
+  
+if (!all(rownames(R_final) == rownames(L_final))) {
+  stop("Erreur critique : les noms de lignes des matrices R (abondance) et L (physico) ne correspondent pas après harmonisation initiale.")
+}
+  
+common_taxons <- intersect(colnames(R_final), rownames(Q_final))
+R_final <- R_final[, common_taxons, drop = FALSE]
+Q_final <- Q_final[common_taxons, , drop = FALSE]
+  
+if (!all(colnames(R_final) == rownames(Q_final))) {
+  stop("Erreur critique : les noms de colonnes de la matrice R (abondance) et les noms de lignes de la matrice Q (traits) ne correspondent pas après harmonisation initiale.")
   }
   
-  # --- Ne conserver que les lignes de physico présentes en taxo ---
-  stations_taxo_uniques <- unique(df_taxo_filtered$station_annee)
+#Filtration des lignes/colonnes avec variance ou somme nulle ---
+R_final <- R_final[, colSums(R_final, na.rm = TRUE) > 0, drop = FALSE]
+R_final <- R_final[rowSums(R_final, na.rm = TRUE) > 0, , drop = FALSE]
   
-  df_physo_filtered <- df_physo_filtered %>%
-    filter(station_annee %in% stations_taxo_uniques)
+L_final <- L_final[, !sapply(L_final, function(x) var(x, na.rm = TRUE) == 0 || all(is.na(x))), drop = FALSE]
+L_final <- L_final[rowSums(is.na(L_final)) < ncol(L_final), , drop = FALSE]
   
-  # --- Construction de la matrice R (Abondances) ---
-  R <- df_taxo_filtered %>%
-    group_by(station_annee, Cd_Taxon_norm) %>%
-    summarise(abondance_rel = sum(abondance_rel), .groups = "drop") %>%
-    pivot_wider(
-      names_from = Cd_Taxon_norm,
-      values_from = abondance_rel,
-      values_fill = 0
-    ) %>%
-    as.data.frame() %>%
-    column_to_rownames("station_annee")
+Q_final <- Q_final[, !sapply(Q_final, function(x) length(unique(x)) == 1), drop = FALSE]
+Q_final <- Q_final[rowSums(is.na(Q_final)) < ncol(Q_final), , drop = FALSE]
   
-  message(paste("Nombre de lignes dans la matrice d'abondance (R) pour", selected_year, ":", nrow(R)))
+#Ré-harmonisation ---
+common_stations_final <- intersect(rownames(R_final), rownames(L_final))
+R_final <- R_final[common_stations_final, , drop = FALSE]
+L_final <- L_final[common_stations_final, , drop = FALSE]
   
+common_taxons_final <- intersect(colnames(R_final), rownames(Q_final))
+R_final <- R_final[, common_taxons_final, drop = FALSE]
+Q_final <- Q_final[common_taxons_final, , drop = FALSE]
   
-  # --- Construction de la matrice L (Physico-chimique) ---
-  L <- df_physo_filtered %>%
-    select(station_annee, code_parametre, para_moy_periode) %>%
-    pivot_wider(
-      names_from = code_parametre,
-      values_from = para_moy_periode,
-      values_fill = 0
-    ) %>%
-    as.data.frame() %>%
-    column_to_rownames("station_annee")
-  
-  message(paste("Nombre de lignes dans la matrice physico-chimique (L) pour", selected_year, ":", nrow(L)))
-  
-  
-  # --- Préparer la matrice Q (Traits) ---
-  taxon_map <- abondance_relative %>%
-    select(Cd_Taxon_norm, Lb_Taxon) %>%
-    distinct() %>%
-    mutate(
-      Cd_Taxon_norm = trimws(as.character(Cd_Taxon_norm)),
-      Lb_Taxon = trimws(as.character(Lb_Taxon))
-    )
-  
-  Q_data <- traits %>%
-    mutate(Lb_Taxon = trimws(as.character(Lb_Taxon))) %>%
-    left_join(taxon_map, by = "Lb_Taxon") %>%
-    filter(!is.na(Cd_Taxon_norm)) %>%
-    distinct(Cd_Taxon_norm, .keep_all = TRUE) %>%
-    as.data.frame() %>%
-    column_to_rownames("Cd_Taxon_norm")
-  
-  Q_final <- Q_data %>%
-    select(-Lb_Taxon) %>%
-    mutate(across(everything(), as.factor))
-  
-  message(paste("Nombre de lignes dans la matrice de traits (Q) pour", selected_year, ":", nrow(Q_final)))
-  
-  
-  # --- Harmonisation finale des matrices R, L, Q ---
-  common_stations <- intersect(rownames(R), rownames(L))
-  R_final <- R[common_stations, , drop = FALSE]
-  L_final <- L[common_stations, , drop = FALSE]
-  
-  if (!all(rownames(R_final) == rownames(L_final))) {
-    stop("Erreur critique : les noms de lignes des matrices R (abondance) et L (physico) ne correspondent pas après harmonisation initiale.")
-  }
-  
-  common_taxons <- intersect(colnames(R_final), rownames(Q_final))
-  R_final <- R_final[, common_taxons, drop = FALSE]
-  Q_final <- Q_final[common_taxons, , drop = FALSE]
-  
-  if (!all(colnames(R_final) == rownames(Q_final))) {
-    stop("Erreur critique : les noms de colonnes de la matrice R (abondance) et les noms de lignes de la matrice Q (traits) ne correspondent pas après harmonisation initiale.")
-  }
-  
-  # --- Filtration des lignes/colonnes avec variance ou somme nulle ---
-  R_final <- R_final[, colSums(R_final, na.rm = TRUE) > 0, drop = FALSE]
-  R_final <- R_final[rowSums(R_final, na.rm = TRUE) > 0, , drop = FALSE]
-  
-  L_final <- L_final[, !sapply(L_final, function(x) var(x, na.rm = TRUE) == 0 || all(is.na(x))), drop = FALSE]
-  L_final <- L_final[rowSums(is.na(L_final)) < ncol(L_final), , drop = FALSE]
-  
-  Q_final <- Q_final[, !sapply(Q_final, function(x) length(unique(x)) == 1), drop = FALSE]
-  Q_final <- Q_final[rowSums(is.na(Q_final)) < ncol(Q_final), , drop = FALSE]
-  
-  # --- Ré-harmonisation ---
-  common_stations_final <- intersect(rownames(R_final), rownames(L_final))
-  R_final <- R_final[common_stations_final, , drop = FALSE]
-  L_final <- L_final[common_stations_final, , drop = FALSE]
-  
-  common_taxons_final <- intersect(colnames(R_final), rownames(Q_final))
-  R_final <- R_final[, common_taxons_final, drop = FALSE]
-  Q_final <- Q_final[common_taxons_final, , drop = FALSE]
-  
-  if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_final) == 0 || nrow(Q_final) == 0 || ncol(Q_final) == 0) {
-    stop(paste("Les matrices R, L ou Q sont vides après harmonisation et filtrage pour l'année", selected_year, ". Arrêt de l'analyse."))
-  }
+if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_final) == 0 || nrow(Q_final) == 0 || ncol(Q_final) == 0) {
+  stop(paste("Les matrices R, L ou Q sont vides après harmonisation et filtrage pour l'année", selected_year, ". Arrêt de l'analyse."))
+}
   
   message(paste("Dimensions finales pour", selected_year, ":"))
   message(paste("R (Abondance) :", paste(dim(R_final), collapse = "x")))
@@ -417,7 +416,7 @@ liste_resultats_rlq <- purrr::compact(liste_resultats_rlq)
 
 message("\n--- Analyse de toutes les années terminée. ---")
 
-# --- NOUVELLE SECTION : Comparaison par paires des listes de taxons (pression/qualité) SANS BOUCLE FOR ---
+# : Comparaison par paires des listes de taxons (pression/qualité) SANS BOUCLE FOR ---
 message("\n--- Démarrage des comparaisons par paires des listes de taxons 'pression' et 'bonne qualité' ---")
 
 # Collecter tous les libellés de taxons uniques sur l'ensemble des années pour la "population" totale

@@ -3,7 +3,6 @@
 load(file = "Data/10_donnees_pretraitees.rda")
 load(file = "Data/50_chroniques_et_tendance.rda")
 library(sf)
-library(trend)
 library(tidyverse)
 library(mapview)
 library(ggplot2)
@@ -24,7 +23,7 @@ couleursi2m2<-c(
 
 aspt <- filter(clean_minv,code_indice==8054)
 
-i2m2test <- aspt %>%
+i2m2test <- i2m2 %>%
   mutate(classe_etat= case_when(... = 
                                   resultat_indice > 0.665 ~ "Très bon",
                                 resultat_indice > 0.443 ~ "Bon",
@@ -42,6 +41,8 @@ i2m2test<- i2m2test %>%
 
 i2m2_sf<-st_as_sf(i2m2test, coords=c("longitude","latitude"),crs=4326)
 
+i2m2_sf_2021 <- filter(i2m2_sf, annee == 2021)
+
 departement_breton <- departements_metro_geo %>% 
   filter(DEP %in% c("22","29","35","56")) %>% 
   st_transform(crs = 4326)
@@ -49,7 +50,7 @@ departement_breton <- departements_metro_geo %>%
 
 ggplot() + 
   geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
-  geom_sf(data = i2m2_sf, aes(color = classe_etat), size = 2) +
+  geom_sf(data = i2m2_sf_2021, aes(color = classe_etat), size = 2) +
   scale_color_manual(values = couleursi2m2) +
   annotation_scale(location = "br", line_width = .5) +
   annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +
@@ -100,6 +101,8 @@ mapview(ibdtest, zcol="classe_etat", col.regions=couleursi2m2, xcol="longitude",
 # On créé l'objet sf 
 ibd_sf<-st_as_sf(ibdtest, coords=c("longitude","latitude"),crs=4326)
 
+ibd_sf_2021 <- filter(ibd_sf, annee == 2021)
+
 # Départements bretons à partir de COGITER
 departement_breton <- departements_metro_geo %>% 
   filter(DEP %in% c("22","29","35","56")) %>% 
@@ -108,7 +111,7 @@ departement_breton <- departements_metro_geo %>%
 # Cartes 
 ggplot() +
   geom_sf(data = departement_breton, fill = "gray95", color = "black", size = 0.3) +
-  geom_sf(data = ibd_sf, aes(color = classe_etat), size = 2) +
+  geom_sf(data = ibd_sf_2021, aes(color = classe_etat), size = 2) +
   scale_color_manual(values = couleursibd) +
   annotation_scale(location = "br", line_width = .5) +
   annotation_north_arrow(location = "bl", height = unit(0.7, "cm"), width = unit(0.7, "cm")) +

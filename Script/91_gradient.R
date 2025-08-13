@@ -51,13 +51,26 @@ departement_breton <- departements_metro_geo %>%
   filter(DEP %in% c("22","29","35","56")) %>%
   st_transform(crs = 4326)
 
+# Cartes du gradient de qualité
+
+ggplot() +
+  geom_sf(data = departement_breton,
+          fill = "white",
+          color = "grey50") +
+  geom_sf(data = gradient_sf,
+          aes(color = Dim.1),
+          size = 3) +
+  scale_color_gradient2(name = "Gradient",
+                        low = "blue", 
+                        mid = "white",
+                        high = "red",
+                        midpoint = 0) +
+  theme_void() + 
+  theme(panel.background = element_blank())
+
 # Sur la dimension 1
 map_dim1 <- map_dim(gradient_sf, "Dim.1")
 map_dim1
-
-mapshot(map_dim1, file="gradient_de_pression.png",
-        width = 1200, vheight = 1000,
-        cliprect = "viewport")
 
 # Sur la dimension 2
 map_dim2 <- map_dim(gradient_sf, "Dim.2")

@@ -1,6 +1,8 @@
 # Chargement df et librairie
 
 library(tidyverse)
+library(ggplot2)
+library(mapview)
 load(file = "Data/10_donnees_pretraitees.rda")
 
 #################################################################################

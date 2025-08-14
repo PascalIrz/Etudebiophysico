@@ -33,7 +33,7 @@ stations_taxo_uniques <- unique(df_taxo$station_annee)
 df_physo <- df_physo %>%
   filter(station_annee %in% stations_taxo_uniques)
 
-# Construction de la matrice R (Abondances)
+# Construction de la matrice R (Abondances) - en principe ça aurait dû être la matrice L
 R <- df_taxo %>%
   group_by(station_annee, Cd_Taxon_norm) %>%
   summarise(abondance_rel = sum(abondance_rel), .groups = "drop") %>%
@@ -48,7 +48,7 @@ R <- df_taxo %>%
 message(paste("Nombre de lignes dans la matrice d'abondance (R):", nrow(R)))
 
 
-# Construction de la matrice L (Physico-chimique)
+# Construction de la matrice L (Physico-chimique) - ça aurait du être R
 
 L <- df_physo %>%
   select(station_annee, code_parametre, para_moy_periode) %>%
@@ -89,7 +89,7 @@ Q_final <- Q_data %>%
 message(paste("Nombre de lignes dans la matrice de traits (Q):", nrow(Q_final)))
 
 
-# --- Harmonisation finale des matrices R, L, Q ---
+##Harmonisation finale des matrices R, L, Q 
 
 # Harmonisation des stations (lignes de R et L)
 common_stations <- intersect(rownames(R), rownames(L))
@@ -118,7 +118,7 @@ if (!all(colnames(R_final) == rownames(Q_final))) {
   stop("Erreur critique : les noms de colonnes de la matrice R (abondance) et les noms de lignes de la matrice Q (traits) ne correspondent pas après harmonisation initiale.")
 }
 
-# --- Filtration des lignes/colonnes avec variance ou somme nulle ---
+#Filtration des lignes/colonnes avec variance ou somme nulle
 R_final <- R_final[, colSums(R_final, na.rm = TRUE) > 0, drop = FALSE] 
 R_final <- R_final[rowSums(R_final, na.rm = TRUE) > 0, , drop = FALSE]
 
@@ -129,7 +129,7 @@ Q_final <- Q_final[, !sapply(Q_final, function(x) length(unique(x)) == 1), drop 
 Q_final <- Q_final[rowSums(is.na(Q_final)) < ncol(Q_final), , drop = FALSE] # Supprime les taxons sans traits valides
 
 
-# --- Ré-harmonisation ---
+##Ré-harmonisation
 
 # Ré-harmonisation des stations entre R et L
 common_stations_final <- intersect(rownames(R_final), rownames(L_final))
@@ -165,18 +165,18 @@ dudi_R_env$lw <- dudi_L_species$lw
 dudi_Q_traits <- dudi.hillsmith(Q_final, scannf = FALSE, nf = 2, row.w = dudi_L_species$cw)
 
 
-# --- RLQ ---
+# RLQ
 # L'ordre des arguments doit être: R (Environnement), L (Taxons), Q (Traits)
 rlq_result <- rlq(dudi_R_env, dudi_L_species, dudi_Q_traits, scannf = FALSE, nf = 2)
 
-# --- Fourth-corner test ---
+#Fourth-corner test
 summary(rlq_result)
 plot(rlq_result)
 
 
 
 ##############################################################################
-# --- Préparation des données pour le graphique combiné ---
+#Préparation des données pour le graphique combiné
 
 #TAXONS 
 taxon_scores <- dudi_L_species$co
@@ -206,7 +206,7 @@ plot_ylim <- c(min(taxon_scores[,2], env_weights[,2] * scaling_factor_vectors, t
                max(taxon_scores[,2], env_weights[,2] * scaling_factor_vectors, trait_weights[,2] * scaling_factor_vectors) * 1.1)
 
 
-# --- Création du graphique combiné ---
+#Création du graphique combiné
 new_xlim <- c(-0.7,4)
 new_ylim <- c(-4.8,8)
 
@@ -306,7 +306,7 @@ abline(h = 0, v = 0, lty = 2, col = "gray")
 symbols(0, 0, circles = 1, inches = FALSE, add = TRUE, fg = "gray")
 
 
-# --- Graphiques spécifiques combinés ---
+#Graphiques combinés
 
 max_abs_taxon_score_x <- max(abs(taxons_scores_rlq[,1]))
 max_abs_taxon_score_y <- max(abs(taxons_scores_rlq[,2]))
@@ -360,7 +360,7 @@ max_abs_lim <- max(abs(plot_xlim), abs(plot_ylim))
 plot_xlim <- c(-max_abs_lim, max_abs_lim)
 plot_ylim <- c(-max_abs_lim, max_abs_lim)
 
-# --- Création du graphique combiné ---
+#Création du graphique combiné
 par(mar = c(5, 5, 4, 2) + 0.1)
 
 plot(NULL, type = "n", asp = 1,
@@ -375,7 +375,7 @@ abline(h = 0, v = 0, lty = 2, col = "gray")
 # Ajouter le cercle unitaire
 symbols(0, 0, circles = 1, inches = FALSE, add = TRUE, fg = "gray", lty = 2)
 
-# --- Ajouter les vecteurs de traits ---
+#Ajouter les vecteurs de traits
 arrows(0, 0, traits_weights_rlq[,1], traits_weights_rlq[,2],
        length = 0.1, angle = 20, col = "purple", lwd = 1.5)
 textplot(x = traits_weights_rlq[,1], y = traits_weights_rlq[,2],
@@ -383,14 +383,14 @@ textplot(x = traits_weights_rlq[,1], y = traits_weights_rlq[,2],
          cex = 0.8, col = "purple",
          new = FALSE)
 
-# --- Ajouter les vecteurs des paramètres environnementaux ---
+#Ajouter les vecteurs des paramètres environnementaux
 arrows(0, 0, env_parameters_weights_rlq[,1] * scaling_factor_env,
        env_parameters_weights_rlq[,2] * scaling_factor_env,
        length = 0.1, angle = 20, col = "darkblue", lwd = 1.5)
 text(env_parameters_weights_rlq[,1]*1.1, env_parameters_weights_rlq[,2]*1.1, 
      labels = rownames(env_parameters_weights_rlq), cex = 0.8, col = "blue")
 
-# --- Légende ---
+# Légendes
 legend("topleft",
        legend = c("Traits écologiques", "Paramètres environnementaux"),
        lty = c(1, 1), lwd = c(1.5, 1.5),
@@ -424,6 +424,7 @@ legend("topleft", legend = c("Taxons", "Paramètres environnementaux"),
 
 ##########################################################################"
 
+# Méthode de seuillage
 seuil_bas_taxon <- quantile(taxons_scores_rlq[,1], probs = 0.25, na.rm = TRUE)
 seuil_haut_taxon <- quantile(taxons_scores_rlq[,1], probs = 0.75, na.rm = TRUE)
 
@@ -431,7 +432,7 @@ seuil_bas_trait <- quantile(traits_weights_rlq[, 1], probs = 0.25, na.rm = TRUE)
 seuil_haut_trait <- quantile(traits_weights_rlq[,1], probs = 0.75, na.rm = TRUE)
 
 
-# --- Extraire les taxons et traits associés à la "pression" ---
+#Extraire les taxons et traits associés à la "pression"
 
 #Taxons
 taxons_pression <- taxons_scores_rlq[taxons_scores_rlq[, 1] < seuil_bas_taxon, ]
@@ -496,7 +497,7 @@ if (nrow(traits_pression) > 0) {
 df_to_export_traits <- data.frame(Trait = rownames(traits_pression)) # <<< CORRECTION ICI
 write.xlsx(df_to_export_traits, file = "Traits_associes_pressions.xlsx", rowNames = FALSE)
 
-# --- Extraire les taxons et traits associés à la "Bonne Qualité" ---
+#Extraire les taxons et traits associés à la "Bonne qualité"
 
 # Taxons
 taxons_bonne_qualite <- taxons_scores_rlq[taxons_scores_rlq[, 1] > seuil_haut_taxon, ]
@@ -574,7 +575,7 @@ mean_nutrient_direction_Ax1 <- mean(nutrients_weights[,1])
 mean_nutrient_direction_Ax2 <- mean(nutrients_weights[,2])
 
 
-# --- Automatisation du choix de l'axe le plus pertinent pour les nutriments ---
+#Automatisation du choix de l'axe le plus pertinent pour les nutriments
 if (abs(mean_nutrient_direction_Ax1) >= abs(mean_nutrient_direction_Ax2)) {
   chosen_axis <- 1
   mean_nutrient_direction <- mean_nutrient_direction_Ax1
@@ -592,7 +593,7 @@ seuil_haut_station <- quantile(stations_scores_rlq[,1], probs = 0.75, na.rm = TR
 
 ### Identification des stations, taxons et traits associés aux nutriments
   
-#Identifier les stations dégradées par les nutriments ---
+#Identifier les stations dégradées par les nutriments
 
 degraded_stations <- stations_scores_rlq[
   stations_scores_rlq[,chosen_axis] < 0 &                 
@@ -609,7 +610,7 @@ if (nrow(degraded_stations_sorted) > 0) {
   print(message_no_station)
 }
 
-# Identifier les taxons associés aux nutriments ---
+# Identifier les taxons associés aux nutriments
 taxons_degraded_conditions <- taxons_scores_rlq[
   taxons_scores_rlq[,chosen_axis] < 0 &
     taxons_scores_rlq[,chosen_axis] < seuil_bas_taxon, ]
@@ -661,7 +662,7 @@ df_to_export_bad_taxons <- data.frame(LibelleTaxon = liste_libelles_sans_na_bad)
 write.xlsx(df_to_export_bad_taxons, file = "Taxons_associes_mauvaise_qualite_nutriments.xlsx", rowNames = FALSE)
 
 
-# Identifier les traits associés aux nutriments ---
+# Identifier les traits associés aux nutriments
 
 traits_degraded_conditions <- traits_weights_rlq[
   traits_weights_rlq[,chosen_axis] < 0 &
@@ -678,7 +679,7 @@ if (nrow(traits_degraded_conditions_sorted) > 0) {
 df_to_export_bad_traits <- data.frame(Trait = rownames(traits_degraded_conditions_sorted))
 write.xlsx(df_to_export_bad_traits, file = "Traits_associes_mauvaise_qualite_nutriments.xlsx", rowNames = FALSE)
 
-# --- Visualisation spécifique du gradient de nutriments ---
+# Visualisation spécifique du gradient de nutriments
 
 max_abs_score_station <- max(abs(stations_scores_rlq[,1]), abs(stations_scores_rlq[,2]))
 max_abs_score_taxon <- max(abs(taxons_scores_rlq[,1]), abs(taxons_scores_rlq[,2]))

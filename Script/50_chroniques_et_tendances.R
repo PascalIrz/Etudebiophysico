@@ -139,6 +139,7 @@ ggplot() +
 OVI <- filter(clean_minv,code_indice==8055)
 ovi_et_trend <- left_join(OVI,Tendance_OVI,by="code_station_hydrobio")
 
+# On créé les symboles pour le graphiques
 ovi_et_trend <- ovi_et_trend %>%
   mutate(
     symbole = case_when(
@@ -158,9 +159,10 @@ ovi_et_trend <- ovi_et_trend %>%
     )
   )
 
+#Objet sf
 ovi_et_trend_sf <- st_as_sf(ovi_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
 
-
+# Délimitations des départements
 departement_breton <- departements_metro_geo %>% 
   filter(DEP %in% c("22","29","35","56")) %>% 
   st_transform(crs = 4326)
@@ -187,6 +189,7 @@ ggplot() +
 POL <- filter(clean_minv,code_indice==8056)
 pol_et_trend <- left_join(POL,Tendance_POL,by="code_station_hydrobio")
 
+# Préparation pour le graphique
 pol_et_trend <- pol_et_trend %>%
   mutate(
     symbole = case_when(
@@ -206,9 +209,10 @@ pol_et_trend <- pol_et_trend %>%
     )
   )
 
+# Objet sf
 pol_et_trend_sf <- st_as_sf(pol_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
 
-
+# Délimitations départements
 departement_breton <- departements_metro_geo %>% 
   filter(DEP %in% c("22","29","35","56")) %>% 
   st_transform(crs = 4326)
@@ -235,9 +239,10 @@ ggplot() +
 SHA <- filter(clean_minv,code_indice==8058)
 sha_et_trend <- left_join(SHA,Tendance_SHA,by="code_station_hydrobio")
 
+# Objet sf
 sha_et_trend_sf <- st_as_sf(sha_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
 
-
+# Délimitations des départements
 departement_breton <- departements_metro_geo %>% 
   filter(DEP %in% c("22","29","35","56")) %>% 
   st_transform(crs = 4326)
@@ -263,6 +268,7 @@ ggplot() +
 RIC <- filter(clean_minv,code_indice==8054)
 ric_et_trend <- left_join(RIC,Tendance_RIC,by="code_station_hydrobio")
 
+# Préparation cartes
 ric_et_trend <- ric_et_trend %>%
   mutate(
     symbole = case_when(
@@ -282,9 +288,10 @@ ric_et_trend <- ric_et_trend %>%
     )
   )
 
+# Objet sf
 ric_et_trend_sf <- st_as_sf(ric_et_trend, coords = c("longitude", "latitude"), crs = 4326 )
 
-
+# Délimitations départements bretons
 departement_breton <- departements_metro_geo %>% 
   filter(DEP %in% c("22","29","35","56")) %>% 
   st_transform(crs = 4326)

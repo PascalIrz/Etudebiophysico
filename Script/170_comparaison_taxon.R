@@ -1,3 +1,5 @@
+# Chargement des données et des librairies
+
 load("Data/classe_i2m2.rda")
 load("Data/df_taxo.rda") 
 library(tidyverse)
@@ -21,14 +23,14 @@ nom_colonne_taxon_abondance <- "Cd_Taxon_norm"
 nom_colonne_valeur_abondance <- "abondance_rel"
 nom_colonne_groupe_taxo <- "GroupTaxo" # Nom de la colonne des groupes taxonomiques
 
-# Année choisie pour l'analyse
+# On choisit l'année pour l'analyse
 annee_choisie <- 2017
 
-# Définir les catégories I2M2 pour chaque groupe
+# On définit les catégories de classe
 categories_bon_etat <- c("Très Bon", "Bon")
 categories_mediocre_etat <- c("Médiocre", "Mauvais")
 
-# --- Filtrage initial des dataframes pour l'année choisie ---
+# Filtrage initial des dataframes pour l'année choisie
 df_i2m2_classification_filtered_year <- df_i2m2_classification[
   df_i2m2_classification[[nom_colonne_annee_i2m2]] == annee_choisie,
   , drop = FALSE
@@ -42,17 +44,15 @@ df_relative_abundance_filtered_year <- df_relative_abundance[
 message(paste("Observations d'abondance pour l'année", annee_choisie, ":", nrow(df_relative_abundance_filtered_year)))
 
 
-# --- Définition de la fonction d'analyse ---
+#Définition de la fonction d'analyse
 
-# Cette fonction prend le type de filtrage (par codes taxon ou par groupe taxo)
-# et les valeurs correspondantes.
 run_analysis_for_taxa <- function(
-    filter_by = c("taxon_codes", "group_names"), # "taxon_codes" ou "group_names"
+    filter_by = c("taxon_codes", "group_names"), 
     filter_values,
     analysis_name = "Taxon" 
 ) {
   
-  # --- Filtrage des abondances relatives selon le type de filtre ---
+  #Filtrage des abondances relatives selon le type de filtre
   if (filter_by == "taxon_codes") {
     selected_taxa_relative_abundance_filtered <- df_relative_abundance_filtered_year[
       df_relative_abundance_filtered_year[[nom_colonne_taxon_abondance]] %in% filter_values,
@@ -110,7 +110,7 @@ run_analysis_for_taxa <- function(
   ]
   message(paste0("Nombre d'observations (station-année) candidates 'médiocre état' pour ", analysis_name, " (", annee_choisie, ") : ", nrow(observations_mediocre_etat_df)))
   
-  # --- Sélection d'un échantillon aléatoire de 10 observations ---
+  #Sélection d'un échantillon aléatoire de 10 observations
   set.seed(789) # Pour la reproductibilité
   
   if (nrow(observations_bon_etat_df) >= 10) {
@@ -138,7 +138,7 @@ run_analysis_for_taxa <- function(
   message(paste0("\nObservations 'médiocre état' sélectionnées pour ", analysis_name, " (", annee_choisie, ") :"))
   print(selected_observations_mediocre_etat[, c("StationID", "Annee")])
   
-  # --- Extraire les abondances relatives ---
+  # Extraire les abondances relatives
   # Le nom de la colonne d'abondance relative dépend du 'analysis_name'
   col_name_abundance <- paste0("total_relative_", tolower(gsub(" ", "_", analysis_name)))
   
@@ -155,7 +155,7 @@ run_analysis_for_taxa <- function(
   message(paste0("\nAbondance relative TOTALE des ", analysis_name, " dans les observations 'médiocre état' pour ", annee_choisie, " :"))
   print(relative_mediocre_etat)
   
-  # --- Tester la signification de la différence ---
+  #Tester la signification de la différence
   all_relative_values <- c(relative_bon_etat, relative_mediocre_etat)
   group_labels_for_test <- factor(c(rep("Bon état", length(relative_bon_etat)),
                                     rep("Médiocre état", length(relative_mediocre_etat))))
@@ -175,7 +175,7 @@ run_analysis_for_taxa <- function(
   message(paste0("\nRésultat du test de Wilcoxon pour la différence d'abondance relative des ", analysis_name, " (Année ", annee_choisie, ") :"))
   print(wilcox_test_result)
   
-  # Visualisation (Boxplot)
+  # Boxplot
   boxplot(all_relative_values ~ group_labels_for_test,
           main = paste0("Abondance relative des ", analysis_name, " par classe I2M2 (Année ", annee_choisie, ")."),
           xlab = "Classe I2M2 (Observation station-année)",
@@ -189,7 +189,7 @@ run_analysis_for_taxa <- function(
   ))
 }
 
-# --- Exécution de la fonction pour les différents groupes ---
+#Exécution de la fonction pour les différents groupes
 
 
 # Pour les Gammares
@@ -217,7 +217,7 @@ filter_values = liste_codes_oligochetes,
 analysis_name = "Oligochètes"
 )
 
-# Pour les Chironomes (si c'est un groupe taxonomique)
+# Pour les Chironomes
 
 groupes_chironomes <- c("807")
 

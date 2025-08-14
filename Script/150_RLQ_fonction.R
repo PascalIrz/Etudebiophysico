@@ -23,7 +23,7 @@ traits <- traits %>%
 filter(gr_bio %in% c("a", "b", "h", "e") | gr_eco %in% c("A", "D", "F", "C"))
   
   
-#Créer un identifiant unique dans les deux jeux et filtrer par année ---
+#Créer un identifiant unique dans les deux jeux et filtrer par année
 df_taxo_filtered <- abondance_relative %>%
   mutate(station_annee = paste(code_station_hydrobio, annee, sep = "_")) %>%
   filter(annee == selected_year)
@@ -43,7 +43,7 @@ stations_taxo_uniques <- unique(df_taxo_filtered$station_annee)
 df_physo_filtered <- df_physo_filtered %>%
   filter(station_annee %in% stations_taxo_uniques)
   
-#Construction de la matrice R (Abondances) --- il y a eu confusion au niveau des noms, ça aurait du être la matrice L
+#Construction de la matrice R (Abondances) il y a eu confusion au niveau des noms, ça aurait du être la matrice L
 R <- df_taxo_filtered %>%
   group_by(station_annee, Cd_Taxon_norm) %>%
   summarise(abondance_rel = sum(abondance_rel), .groups = "drop") %>%
@@ -113,7 +113,7 @@ if (!all(colnames(R_final) == rownames(Q_final))) {
   stop("Erreur critique : les noms de colonnes de la matrice R (abondance) et les noms de lignes de la matrice Q (traits) ne correspondent pas après harmonisation initiale.")
   }
   
-#Filtration des lignes/colonnes avec variance ou somme nulle ---
+#Filtration des lignes/colonnes avec variance ou somme nulle
 R_final <- R_final[, colSums(R_final, na.rm = TRUE) > 0, drop = FALSE]
 R_final <- R_final[rowSums(R_final, na.rm = TRUE) > 0, , drop = FALSE]
   
@@ -123,7 +123,7 @@ L_final <- L_final[rowSums(is.na(L_final)) < ncol(L_final), , drop = FALSE]
 Q_final <- Q_final[, !sapply(Q_final, function(x) length(unique(x)) == 1), drop = FALSE]
 Q_final <- Q_final[rowSums(is.na(Q_final)) < ncol(Q_final), , drop = FALSE]
   
-#Ré-harmonisation ---
+#Ré-harmonisation
 common_stations_final <- intersect(rownames(R_final), rownames(L_final))
 R_final <- R_final[common_stations_final, , drop = FALSE]
 L_final <- L_final[common_stations_final, , drop = FALSE]
@@ -141,7 +141,7 @@ if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_fin
   message(paste("L (Physico) :", paste(dim(L_final), collapse = "x")))
   message(paste("Q (Traits) :", paste(dim(Q_final), collapse = "x")))
   
-  # --- Analyse RLQ ---
+  # Analyse RLQ
   dudi_L_species <- dudi.coa(R_final, scannf = FALSE, nf = 2)
   dudi_R_env <- dudi.pca(L_final, scannf = FALSE, nf = 2)
   dudi_R_env$lw <- dudi_L_species$lw
@@ -149,7 +149,7 @@ if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_fin
   
   rlq_result <- rlq(dudi_R_env, dudi_L_species, dudi_Q_traits, scannf = FALSE, nf = 2)
   
-  # --- Préparation des données pour le graphique combiné ---
+  #Préparation des données pour le graphique combiné
   taxon_scores <- dudi_L_species$co
   env_weights <- rlq_result$l1
   trait_weights <- rlq_result$c1
@@ -162,7 +162,7 @@ if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_fin
   scaling_factor_vectors <- ifelse(max_abs_weight > 0, max(max_abs_taxon_score_x, max_abs_taxon_score_y) / max_abs_weight * 0.8, 1)
   
   
-  # --- Création du graphique combiné ---
+  # Création du graphique combiné
   plot_xlim_dynamic <- range(taxon_scores[,1], env_weights[,1] * scaling_factor_vectors, trait_weights[,1] * scaling_factor_vectors, na.rm = TRUE) * 1.1
   plot_ylim_dynamic <- range(taxon_scores[,2], env_weights[,2] * scaling_factor_vectors, trait_weights[,2] * scaling_factor_vectors, na.rm = TRUE) * 1.1
   
@@ -194,13 +194,13 @@ if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_fin
   dev.off()
   
   
-  # --- Extraction des scores et poids ---
+  # Extraction des scores et poids
   stations_scores_rlq <- dudi_L_species$li
   taxons_scores_rlq <- dudi_L_species$co
   env_parameters_weights_rlq <- rlq_result$l1
   traits_weights_rlq <- rlq_result$c1
   
-  # --- Graphiques spécifiques (exemple pour un seul, mais peut être adapté) ---
+  # Graphiques spécifiques (exemple pour un seul, mais peut être adapté)
   png(file.path("Output", paste0("RLQ_Stations_Plot_", selected_year, ".png")), width = 800, height = 700, res = 100)
   s.label(stations_scores_rlq, clab = 0.8,
           xlim = range(stations_scores_rlq[,1], na.rm = TRUE)*1.2, ylim = range(stations_scores_rlq[,2], na.rm = TRUE)*1.2)
@@ -213,7 +213,7 @@ if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_fin
   write.xlsx(as.data.frame(env_parameters_weights_rlq), file.path("Output", paste0("env_weights_RLQ_", selected_year, ".xlsx")), rowNames = TRUE)
   write.xlsx(as.data.frame(traits_weights_rlq), file.path("Output", paste0("traits_weights_RLQ_", selected_year, ".xlsx")), rowNames = TRUE)
   
-  # --- Analyse des seuils et export des listes ---
+  # Analyse des seuils et export des listes
   seuil_bas_taxon <- quantile(taxons_scores_rlq[, 1], probs = 0.25, na.rm = TRUE)
   seuil_haut_taxon <- quantile(taxons_scores_rlq[, 1], probs = 0.75, na.rm = TRUE)
   seuil_bas_trait <- quantile(traits_weights_rlq[, 1], probs = 0.25, na.rm = TRUE)
@@ -225,7 +225,7 @@ if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_fin
   libelles_pression <- c()
   libelles_bonne_qualite <- c()
   
-  # --- Taxons et traits associés à la "pression" ---
+  # Taxons et traits associés à la "pression"
   taxons_pression <- taxons_scores_rlq[taxons_scores_rlq[, 1] < seuil_bas_taxon, , drop = FALSE]
   if (nrow(taxons_pression) > 0) {
     taxons_pression_sorted <- taxons_pression[order(taxons_pression[, 1], decreasing = TRUE), , drop = FALSE]
@@ -251,7 +251,7 @@ if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_fin
     message(paste("Aucun trait associé à la pression pour", selected_year, "."))
   }
   
-  # --- Taxons et traits associés à la "bonne qualité" ---
+  #Taxons et traits associés à la "bonne qualité"
   taxons_bonne_qualite <- taxons_scores_rlq[taxons_scores_rlq[, 1] > seuil_haut_taxon, , drop = FALSE]
   if (nrow(taxons_bonne_qualite) > 0) {
     taxons_bonne_qualite_sorted <- taxons_bonne_qualite[order(taxons_bonne_qualite[, 1], decreasing = FALSE), , drop = FALSE]
@@ -277,7 +277,7 @@ if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_fin
     message(paste("Aucun trait associé à la bonne qualité pour", selected_year, "."))
   }
   
-  # --- Identification des Stations, Taxons et Traits Associés aux Nutriments ---
+  # Identification des stations, taxons et traits associés aux nutriments
   nutrients_weights <- env_parameters_weights_rlq[rownames(env_parameters_weights_rlq) %in% nutrients_param_codes, , drop = FALSE]
   
   if (nrow(nutrients_weights) > 0) {
@@ -319,7 +319,7 @@ if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_fin
       message(paste("Aucun trait dégradé par les nutriments trouvé pour", selected_year, "."))
     }
     
-    # --- Visualisation spécifique du gradient de nutriments ---
+    # Visualisation spécifique du gradient de nutriments
     png(file.path("Output", paste0("RLQ_Nutrients_Gradient_Plot_", selected_year, ".png")), width = 1200, height = 1000, res = 100)
     
     max_abs_score_station <- ifelse(length(stations_scores_rlq) > 0, max(abs(stations_scores_rlq), na.rm = TRUE), 1)
@@ -369,7 +369,7 @@ if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_fin
   
   message(paste0("--- Analyse RLQ pour l'année ", selected_year, " terminée. ---"))
   
-  # Retourner les résultats pour d'autres analyses (ex: tests stat)
+  # Retourner les résultats pour d'autres analyses
   return(list(
     selected_year = selected_year,
     rlq_result = rlq_result,
@@ -386,19 +386,16 @@ if (nrow(R_final) == 0 || ncol(R_final) == 0 || nrow(L_final) == 0 || ncol(L_fin
   ))
 }
 
-# --- Créer un dossier "Output" si non existant ---
+# Créer un dossier "Output" si non existant
 if (!dir.exists("Output")) {
   dir.create("Output")
 }
 
-# --- Exécution pour plusieurs années ---
+# Exécution pour plusieurs années
 
-# Définissez les années que vous souhaitez analyser
+# On définit les années analysées
 années_a_analyser <- c(2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023) # Ajouter ou modifier les années
 
-# Utilisez purrr::map pour appliquer la fonction à chaque année
-# `map` retourne une liste. `safely` capture les erreurs sans arrêter l'exécution.
-# `.f = ~run_rlq_analysis(.x)` est une fonction anonyme qui passe chaque année (.x) à votre fonction.
 liste_resultats_rlq <- purrr::map(années_a_analyser, function(annee) {
   tryCatch({
     run_rlq_analysis(selected_year = annee)
@@ -416,7 +413,7 @@ liste_resultats_rlq <- purrr::compact(liste_resultats_rlq)
 
 message("\n--- Analyse de toutes les années terminée. ---")
 
-# : Comparaison par paires des listes de taxons (pression/qualité) SANS BOUCLE FOR ---
+#Comparaison par paires des listes de taxons (pression/qualité)
 message("\n--- Démarrage des comparaisons par paires des listes de taxons 'pression' et 'bonne qualité' ---")
 
 # Collecter tous les libellés de taxons uniques sur l'ensemble des années pour la "population" totale
@@ -520,16 +517,15 @@ if (length(all_taxons_observed) == 0) {
   }
 }
 
-# --- FIN DE LA NOUVELLE SECTION ---
 
-# --- Exemples de tests statistiques entre les années ---)
+#Exemples de tests statistiques entre les années
 
-# Supposons que vous voulez comparer les scores des taxons entre 2018 et 2019
+#entre 2018 et 2019
 if ("2018" %in% names(liste_resultats_rlq) && "2019" %in% names(liste_resultats_rlq)) {
   scores_taxons_2018 <- liste_resultats_rlq[["2018"]]$taxons_scores
   scores_taxons_2019 <- liste_resultats_rlq[["2019"]]$taxons_scores # Correction ici pour 2019
   
-  # Pour un test robuste, vous devriez aligner les taxons communs et choisir un axe
+  # Alignement des taxons
   common_taxons_test <- intersect(rownames(scores_taxons_2018), rownames(scores_taxons_2019))
   
   if (length(common_taxons_test) > 0) {
@@ -550,7 +546,7 @@ if ("2018" %in% names(liste_resultats_rlq) && "2019" %in% names(liste_resultats_
         print(wilcox_test_result_ax1)
       }
       
-      # Vous pouvez répéter pour l'Axe 2 si pertinent
+      # Pour axe 2
       if (ncol(scores_taxons_2018) >= 2 && ncol(scores_taxons_2019) >= 2) {
         scores_2018_common_ax2 <- scores_taxons_2018[common_taxons_test, 2] # Axe 2
         scores_2019_common_ax2 <- scores_taxons_2019[common_taxons_test, 2] # Axe 2
@@ -576,15 +572,3 @@ if ("2018" %in% names(liste_resultats_rlq) && "2019" %in% names(liste_resultats_
   }
 }
 
-# --- Autre exemple : Comparaison des valeurs propres (variance expliquée) ---
-message("\n--- Inertie expliquée par les deux premiers axes RLQ pour chaque année ---")
-purrr::iwalk(liste_resultats_rlq, ~{
-  if (!is.null(.x$rlq_result)) {
-    total_eig <- sum(.x$rlq_result$eig)
-    eig_perc_ax1 <- round(.x$rlq_result$eig[1] / total_eig * 100, 2)
-    eig_perc_ax2 <- round(.x$rlq_result$eig[2] / total_eig * 100, 2)
-    message(paste0("Année ", .y, ": Axe 1 = ", eig_perc_ax1, "%, Axe 2 = ", eig_perc_ax2, "%"))
-  } else {
-    message(paste0("Année ", .y, ": Résultats RLQ non disponibles."))
-  }
-})

@@ -1,4 +1,4 @@
-# --- Charger les packages ---
+#Charger les packages
 library(readxl)
 library(dplyr)
 library(tidyr)
@@ -7,14 +7,14 @@ library(ade4)
 library(wordcloud)
 library(openxlsx)
 
-# --- Chargement des données brutes ---
+#Chargement des données brutes
 load("Data/abondance_diat.rda")        
 load("Data/physico_moyenne_annuelle.rda") 
 carayon <- read_excel(path ="C:/Users/ilona.garcia/Documents/RstudioGIT/Etudebiophysico/Data/carayon_diat.xlsx")
 carayon <- na.omit(carayon)
 
 
-# Créer un identifiant unique dans les deux jeux et filtrer par année ---
+# Créer un identifiant unique dans les deux jeux et filtrer par année
 selected_year <- 2022
 
 df_taxo_diat <- abondance_taxo_diat_filtre %>%
@@ -25,13 +25,13 @@ df_physo <- physico_moyenne_annee %>%
   mutate(station_annee = paste(code_station_hydrobio, annee, sep = "_")) %>%
   filter(annee == selected_year)
 
-# --- Ne conserver que les lignes de physico présentes en taxo ---
+#Ne conserver que les lignes de physico présentes en taxo
 stations_taxo_uniques_diat <- unique(df_taxo_diat$station_annee)
 
 df_physo <- df_physo %>%
   filter(station_annee %in% stations_taxo_uniques_diat)
 
-# --- Construction de la matrice R (Abondances) ---
+#Construction de la matrice R (Abondances)
 R_diat <- df_taxo_diat %>%
   group_by(station_annee, code_appel_taxon) %>%
   summarise(abondance_rel = sum(abondance_rel), .groups = "drop") %>%
@@ -46,7 +46,7 @@ R_diat <- df_taxo_diat %>%
 message(paste("Nombre de lignes dans la matrice d'abondance (R):", nrow(R_diat)))
 
 
-# --- Construction de la matrice L (Physico-chimique) ---
+#Construction de la matrice L (Physico-chimique)
 
 L_diat <- df_physo %>%
   select(station_annee, code_parametre, para_moy_periode) %>%
@@ -61,7 +61,7 @@ L_diat <- df_physo %>%
 message(paste("Nombre de lignes dans la matrice physico-chimique (L):", nrow(L_diat)))
 
 
-# --- Préparer la matrice Q (Traits) ---
+#Préparer la matrice Q (Traits)
 carayon_map <- abondance_taxo_diat_filtre %>%
   select(code_appel_taxon, libelle_appel_taxon) %>% 
   distinct() %>%
@@ -87,7 +87,7 @@ Q_final_diat <- Q_data_diat %>%
 message(paste("Nombre de lignes dans la matrice de traits (Q):", nrow(Q_final_diat)))
 
 
-# --- Harmonisation finale des matrices R, L, Q ---
+#Harmonisation finale des matrices R, L, Q
 
 # Harmonisation des stations (lignes de R et L)
 common_stations_diat <- intersect(rownames(R_diat), rownames(L_diat))
@@ -116,7 +116,7 @@ if (!all(colnames(R_final_diat) == rownames(Q_final_diat))) {
   stop("Erreur critique : les noms de colonnes de la matrice R (abondance) et les noms de lignes de la matrice Q (traits) ne correspondent pas après harmonisation initiale.")
 }
 
-# --- Filtration des lignes/colonnes avec variance ou somme nulle ---
+#Filtration des lignes/colonnes avec variance ou somme nulle
 R_final_diat <- R_final_diat[, colSums(R_final_diat, na.rm = TRUE) > 0, drop = FALSE] 
 R_final_diat <- R_final_diat[rowSums(R_final_diat, na.rm = TRUE) > 0, , drop = FALSE]
 
@@ -127,7 +127,7 @@ Q_final_diat <- Q_final_diat[, !sapply(Q_final_diat, function(x) length(unique(x
 Q_final_diat <- Q_final_diat[rowSums(is.na(Q_final_diat)) < ncol(Q_final_diat), , drop = FALSE]
 
 
-# --- Ré-harmonisation ---
+#Ré-harmonisation
 
 # Ré-harmonisation des stations entre R et L
 common_stations_final_diat <- intersect(rownames(R_final_diat), rownames(L_final_diat))
@@ -163,11 +163,11 @@ dudi_R_env_diat$lw <- dudi_L_species_diat$lw
 dudi_Q_carayon_diat <- dudi.hillsmith(Q_final_diat, scannf = FALSE, nf = 2, row.w = dudi_L_species_diat$cw)
 
 
-# --- RLQ ---
+#RLQ
 # L'ordre des arguments doit être: R (Environnement), L (Taxons), Q (Traits)
 rlq_result_diat <- rlq(dudi_R_env_diat, dudi_L_species_diat, dudi_Q_carayon_diat, scannf = FALSE, nf = 2)
 
-# --- Fourth-corner test ---
+#Fourth-corner test
 summary(rlq_result_diat)
 plot(rlq_result_diat)
 
@@ -176,7 +176,7 @@ plot(rlq_result_diat)
 ##############################################################################
 
 
-# --- Préparation des données pour le graphique combiné ---
+#Préparation des données pour le graphique combiné
 
 #TAXONS 
 taxon_scores_diat <- dudi_L_species_diat$co
@@ -206,7 +206,7 @@ plot_ylim <- c(min(taxon_scores_diat[,2], env_weights_diat[,2] * scaling_factor_
                max(taxon_scores_diat[,2], env_weights_diat[,2] * scaling_factor_vectors_diat, carayon_weights[,2] * scaling_factor_vectors_diat) * 1.1)
 
 
-# --- Création du graphique combiné ---
+#Création du graphique combiné
 new_xlim <- c(-0.7,4)
 new_ylim <- c(-4.8,8)
 
@@ -264,7 +264,7 @@ env_parameters_weights_rlq_diat <- rlq_result_diat$l1
 # Poids canoniques des traits (rlq_result$c1)
 traits_weights_rlq_diat <- rlq_result_diat$c1
 
-# --- Refaire les graphiques spécifiques avec zoom ---
+#Refaire les graphiques spécifiques avec zoom
 
 # Graphique des R row scores (stations paramètres physico)
 s.label(stations_scores_rlq_diat, clab = 0.8,
@@ -308,7 +308,7 @@ abline(h = 0, v = 0, lty = 2, col = "gray")
 symbols(0, 0, circles = 1, inches = FALSE, add = TRUE, fg = "gray")
 
 
-# --- Graphiques spécifiques combinés ---
+#Graphiques spécifiques combinés
 
 max_abs_taxon_score_x_diat <- max(abs(taxons_scores_rlq_diat[,1]))
 max_abs_taxon_score_y_diat <- max(abs(taxons_scores_rlq_diat[,2]))
@@ -362,7 +362,7 @@ max_abs_lim <- max(abs(plot_xlim), abs(plot_ylim))
 plot_xlim <- c(-max_abs_lim, max_abs_lim)
 plot_ylim <- c(-max_abs_lim, max_abs_lim)
 
-# --- Création du graphique combiné ---
+#Création du graphique combiné
 par(mar = c(5, 5, 4, 2) + 0.1)
 
 plot(NULL, type = "n", asp = 1,
@@ -377,7 +377,7 @@ abline(h = 0, v = 0, lty = 2, col = "gray")
 # Ajouter le cercle unitaire
 symbols(0, 0, circles = 1, inches = FALSE, add = TRUE, fg = "gray", lty = 2)
 
-# --- Ajouter les vecteurs de traits ---
+#Ajouter les vecteurs de traits
 arrows(0, 0, traits_weights_rlq_diat[,1], traits_weights_rlq_diat[,2],
        length = 0.1, angle = 20, col = "purple", lwd = 1.5)
 textplot(x = traits_weights_rlq_diat[,1], y = traits_weights_rlq_diat[,2],
@@ -385,14 +385,14 @@ textplot(x = traits_weights_rlq_diat[,1], y = traits_weights_rlq_diat[,2],
          cex = 0.8, col = "purple",
          new = FALSE)
 
-# --- Ajouter les vecteurs des paramètres environnementaux ---
+#Ajouter les vecteurs des paramètres environnementaux
 arrows(0, 0, env_parameters_weights_rlq_diat[,1] * scaling_factor_env,
        env_parameters_weights_rlq_diat[,2] * scaling_factor_env,
        length = 0.1, angle = 20, col = "darkblue", lwd = 1.5)
 text(env_parameters_weights_rlq_diat[,1]*1.1, env_parameters_weights_rlq_diat[,2]*1.1, 
      labels = rownames(env_parameters_weights_rlq_diat), cex = 0.8, col = "blue")
 
-# --- Légende ---
+#Légende
 legend("topleft",
        legend = c("Traits Écologiques", "Paramètres Environnementaux"),
        lty = c(1, 1), lwd = c(1.5, 1.5),
@@ -434,7 +434,7 @@ seuil_bas_trait_diat <- quantile(carayon_weights[, 1], probs = 0.25, na.rm = TRU
 seuil_haut_trait_diat <- quantile(carayon_weights[,1], probs = 0.75, na.rm = TRUE) # Correction ici
 
 
-# --- Extraire les taxons et traits associés à la "pression" ---
+#Extraire les taxons et traits associés à la "pression"
 
 # Taxons
 taxons_pression_diat <- taxon_scores_diat[taxon_scores_diat[, 1] < seuil_bas_taxon_diat, ] # Correction ici
@@ -497,7 +497,7 @@ df_to_export_traits_pression_diat <- data.frame(Trait = rownames(traits_pression
 write.xlsx(df_to_export_traits_pression_diat, file = "Traits_associes_pressions_diat.xlsx", rowNames = FALSE)
 
 
-# --- Extraire les taxons et traits associés à la "Bonne Qualité" ---
+#Extraire les taxons et traits associés à la "Bonne qualité"
   
 # Taxons
 taxons_bonne_qualite_diat <- taxon_scores_diat[taxon_scores_diat[, 1] > seuil_haut_taxon_diat, ]
@@ -570,7 +570,7 @@ mean_nutrient_direction_Ax1_diat <- mean(nutrients_weights_diat[,1])
 mean_nutrient_direction_Ax2_diat <- mean(nutrients_weights_diat[,2])
 
 
-# --- Automatisation du choix de l'axe le plus pertinent pour les nutriments ---
+#Automatisation du choix de l'axe le plus pertinent pour les nutriments
 if (abs(mean_nutrient_direction_Ax1_diat) >= abs(mean_nutrient_direction_Ax2_diat)) { 
   chosen_axis_diat <- 1
   mean_nutrient_direction_diat <- mean_nutrient_direction_Ax1_diat
@@ -585,9 +585,9 @@ seuil_bas_station_diat <- quantile(stations_scores_rlq_diat[, 1], probs = 0.25, 
 seuil_haut_station_diat <- quantile(stations_scores_rlq_diat[,1], probs = 0.75, na.rm = TRUE)
 
 
-### Identification des Stations, Taxons et Traits Associés aux Nutriments
+### Identification des stations, taxons et traits associés aux nutriments
 
-# Identifier les Stations dégradées par les nutriments ---
+# Identifier les Stations dégradées par les nutriments
 
 degraded_stations_diat <- stations_scores_rlq_diat[
   stations_scores_rlq_diat[,chosen_axis_diat] < 0 & 
@@ -604,7 +604,7 @@ if (nrow(degraded_stations_sorted_diat) > 0) {
   print(message_no_station_diat)
 }
 
-# --- Étape 4 : Identifier les Taxons associés aux nutriments ---
+#Identifier les Taxons associés aux nutriments
 taxons_degraded_conditions_diat <- taxon_scores_diat[ 
   taxon_scores_diat[,chosen_axis_diat] < 0 & 
     taxon_scores_diat[,chosen_axis_diat] < seuil_bas_taxon_diat, ] 
@@ -654,7 +654,7 @@ df_to_export_bad_taxons_diat <- data.frame(LibelleTaxon = liste_libelles_sans_na
 write.xlsx(df_to_export_bad_taxons_diat, file = "Taxons_associes_mauvaise_qualite_nutriments_diat.xlsx", rowNames = FALSE) 
 
 
-# --- Étape 5 : Identifier les Traits associés aux nutriments ---
+#Identifier les traits associés aux nutriments
 
 traits_degraded_conditions_diat <- carayon_weights[ 
   carayon_weights[,chosen_axis_diat] < 0 &
@@ -670,11 +670,9 @@ if (nrow(traits_degraded_conditions_sorted_diat) > 0) {
 df_to_export_bad_traits_diat <- data.frame(Trait = rownames(traits_degraded_conditions_sorted_diat)) 
 write.xlsx(df_to_export_bad_traits_diat, file = "Traits_associes_mauvaise_qualite_nutriments_diat.xlsx", rowNames = FALSE)
 
----
-  
-  # --- Visualisation spécifique du gradient de nutriments ---
 
-  max_abs_score_station_diat <- max(abs(stations_scores_rlq_diat[,1]), abs(stations_scores_rlq_diat[,2])) 
+#Visualisation spécifique du gradient de nutriments 
+max_abs_score_station_diat <- max(abs(stations_scores_rlq_diat[,1]), abs(stations_scores_rlq_diat[,2])) 
 max_abs_score_taxon_diat <- max(abs(taxon_scores_diat[,1]), abs(taxon_scores_diat[,2]))
 max_abs_weight_combined_diat <- max(abs(env_weights_diat), abs(carayon_weights_diat))
 

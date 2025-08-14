@@ -44,12 +44,12 @@ ggplot(data_presence_complet,
   theme_light(base_size = 5) +
   theme(
     panel.grid.major = element_line(color = "#ffffff", size = 0.1),
-    panel.grid.minor = element_line(color = "#ffffff",size = 0.1),
+    panel.grid.minor = element_line(color = "#ffffff", size = 0.1),
     panel.background = element_rect(fill = "red"),
     legend.position = "bottom"
   ) +
   scale_y_discrete(guide = guide_axis(n.dodge = 2)) +
-scale_x_discrete(expand = c(0.05, 0.05))
+  scale_x_discrete(expand = c(0.05, 0.05))
 
 #################################################################################
 #                       IBD                                                     #
@@ -91,7 +91,7 @@ ggplot(data_presence_complet_ibd,
   theme_light(base_size = 5) +
   theme(
     panel.grid.major = element_line(color = "#ffffff", size = 0.1),
-    panel.grid.minor = element_line(color = "#ffffff",size = 0.1),
+    panel.grid.minor = element_line(color = "#ffffff", size = 0.1),
     panel.background = element_rect(fill = "red"),
     legend.position = "bottom"
   ) +
@@ -104,8 +104,8 @@ ggplot(data_presence_complet_ibd,
 
 #Préparation des données : présence/absence
 data_presence_pc <- parametres_physico %>%
-  filter(code_parametre%in%code_pc) %>%
-  group_by(code_station_hydrobio,annee,mois) %>%
+  filter(code_parametre %in% code_pc) %>%
+  group_by(code_station_hydrobio, annee, mois) %>%
   summarise(presence = ifelse(n() > 0, 1, 0), .groups = "drop")
 
 #On joint les libellés des stations au dataframe
@@ -124,10 +124,8 @@ ggplot(data_presence_complet_pc,
          y = factor(libelle_station),
          fill = as.factor(presence)
        )) +
-  geom_tile(
-    color = "black",
-    size = 0.1
-  ) +
+  geom_tile(color = "black",
+            size = 0.1) +
   scale_fill_manual(values = c("0" = "grey", "1" = "blue"), name = "Présence") +
   labs(title = "Présence des données par station et par année",
        x = "Année",
@@ -136,15 +134,9 @@ ggplot(data_presence_complet_pc,
   theme_light(base_size = 5) +
   theme(
     panel.grid.major = element_line(color = "#ffffff", size = 0.1),
-    panel.grid.minor = element_line(color = "#ffffff", size=0.1),
+    panel.grid.minor = element_line(color = "#ffffff", size = 0.1),
     panel.background = element_rect(fill = "red"),
     legend.position = "bottom"
   ) +
   scale_y_discrete(guide = guide_axis(n.dodge = 2)) +
   scale_x_discrete(expand = c(0.05, 0.05))
-
-
-
-
-
-
